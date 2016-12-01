@@ -39,7 +39,7 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
   dr = calc_dr( R, center )
   # Setup potential
   V_ionic = init_V_harm_3d( PW, dr )
-  
+
   Potentials = PotentialsT( V_ionic, zeros(Npoints), zeros(Npoints) )
 
   Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0 )
@@ -62,7 +62,13 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
   Etot, psi = E_min_sd!( PW, Energies, Potentials, Focc, psi, verbose=true, NiterMax=10 )
   Etot, psi = E_min_pcg!( PW, Energies, Potentials, Focc, psi, verbose=true, NiterMax=200 )
 
-  HH = psi' * apply_H( PW, Potentials, Focc, psi )
+  #HH = psi' * apply_H( PW, Potentials, Focc, psi )
+  # Alternatively: recalculate local potentials
+  rho = calc_rho( PW, Focc, psi )
+  Potentials.Hartree = real( G_to_R( PW.Ns, solve_poisson( PW, rho ) ) )
+  Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
+  #
+  HH = psi' * apply_H( PW, Potentials.Hartree + Potentials.Ionic + Potentials.XC, psi )
   evals, evecs = eig(HH)
   evecs = psi*evecs
   for st = 1:Nstates
@@ -72,5 +78,3 @@ end
 
 #@code_native test_main( 2,2,2 )
 @time test_main( 30,30,30 )
-
-
