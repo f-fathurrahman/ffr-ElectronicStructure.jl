@@ -1,3 +1,5 @@
+sandbox_*
+
 *.jl.cov
 *.jl.*.cov
 *.jl.mem
