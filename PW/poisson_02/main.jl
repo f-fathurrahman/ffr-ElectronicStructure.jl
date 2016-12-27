@@ -1,4 +1,4 @@
-include("../common/PWGrid_v01.jl")
+include("../pwgrid_03/PWGrid_v02.jl")
 include("../common/wrappers_fft_v01.jl")
 
 include("gen_dr.jl")
@@ -6,16 +6,22 @@ include("gen_rho.jl")
 include("solve_poisson.jl")
 
 function test_main()
+
+  const ecutwfc = 35 * 0.5 # in Ha
+  const LatVecs = diagm( [16.0, 16.0, 16.0] )
   #
-  const Ns = [64, 64, 64]
-  const LatVecs = 16.0*diagm( ones(3) )
+  pw = PWGrid( ecutwfc, LatVecs )
+
   #
-  pw = PWGrid( Ns, LatVecs )
-  #
-  const Npoints = pw.Npoints
-  const Ω = pw.Ω
-  const R = pw.R
-  const Ns = pw.Ns
+  Ns = pw.Ns
+  Npoints = prod(Ns)
+  Ω = pw.Ω
+  R = pw.R
+
+  @printf("Number of G-vectors: %d\n", pw.gvectors.Ng)
+  @printf("Number of real space sampling points: %d\n", Npoints)
+  @printf("Percentage G/R = %f\n", 100.0*pw.gvectors.Ng/Npoints)
+
   #
   # Generate array of distances
   #

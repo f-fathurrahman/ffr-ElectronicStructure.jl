@@ -10,21 +10,26 @@ end
 
 function ewald()
 
-  Ns = [40, 40, 40]
-  const alat = 10.0
-  LatVecs = latvec_hexagonal( alat, ca=2.0 )
+  Ns = [60, 60, 60]
+  const alat = 16.0
+  LatVecs = alat*diamg(ones(3))
   pw = PWGrid( Ns, LatVecs )
 
-  atpos = 0.5*ones(3)
+  atpos = [0.0, 0.0, 0.0]
 
-  nat = 2
+  nat = 1
   ntyp = 1
-  ityp = [1, 1]  # ityp(nat)
-  zv = [1.0]     # zv(ntyp)
+  ityp = [1]  # ityp(nat)
+  zv = [1.0]     # zv(ntyp)  # need to conform with `ntypx` in PWSCF ?
   at = LatVecs'/alat
   bg = inv(at')
   #bg = pw.RecVecs'/(2*pi) # ???
   tau = atpos/alat
+  omega = pw.Ω
+  g  = pw.G
+  gg = pw.G2
+  ngm = prod(Ns) # for the moment
+  gcutm =
 
   println( at )
   println( bg )

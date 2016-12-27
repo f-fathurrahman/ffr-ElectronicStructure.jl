@@ -1,4 +1,4 @@
-# Testing `PWGrid.jl`
+# Testing `PWGrid.jl`: Visualizing sampling points
 
 In this example, sampling points in real and reciprocal space are visualized as
 "ghost" atoms in XSF file.
