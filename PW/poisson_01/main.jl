@@ -1,6 +1,6 @@
-include("PWGrid.jl")
-include("R_to_G.jl")
-include("G_to_R.jl")
+include("../common/PWGrid_v01.jl")
+include("../common/wrappers_fft_v01.jl")
+
 include("gen_dr.jl")
 include("gen_rho.jl")
 include("solve_poisson.jl")

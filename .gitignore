@@ -1,4 +1,5 @@
 sandbox_*
+*.o
 
 *.jl.cov
 *.jl.*.cov

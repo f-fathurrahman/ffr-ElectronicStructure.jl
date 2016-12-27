@@ -1,0 +1,11 @@
+!  direct and reciprocal lattice primitive vectors
+!  at(:,i) are the lattice vectors of the simulation cell, a_i,
+!          in alat units: a_i(:) = at(:,i)/alat
+!  bg(:,i) are the reciprocal lattice vectors, b_i,
+!          in tpiba=2pi/alat units: b_i(:) = bg(:,i)/tpiba
+REAL(DP) :: at(3,3) = RESHAPE( (/ 0.0_DP /), (/ 3, 3 /), (/ 0.0_DP /) )
+REAL(DP) :: bg(3,3) = RESHAPE( (/ 0.0_DP /), (/ 3, 3 /), (/ 0.0_DP /) )
+
+
+REAL(DP) :: ecutrho = 0.0_DP ! energy cut-off for charge density
+REAL(DP) :: gcutm = 0.0_DP   ! ecutrho/(2 pi/a)^2, cut-off for |G|^2
