@@ -1,0 +1,5 @@
+# Solving Schrodinger equation
+
+
+
+
