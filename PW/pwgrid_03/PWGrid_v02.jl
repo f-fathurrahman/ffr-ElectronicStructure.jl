@@ -1,4 +1,3 @@
-
 type GVectors
   Ng::Int
   G::Array{Float64,2}
@@ -29,9 +28,9 @@ function PWGrid( ecutwfc::Float64, LatVecs::Array{Float64,2} )
   LatVecsLen[3] = norm(LatVecs[3,:])
 
   Ns = zeros(Int64,3)
-  Ns[1] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[1]/pi ) + 2
-  Ns[2] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[2]/pi ) + 2
-  Ns[3] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[3]/pi ) + 2
+  Ns[1] = 2*(round( Int, sqrt(ecutrho/2)*LatVecsLen[1]/pi ) + 1) + 1
+  Ns[2] = 2*(round( Int, sqrt(ecutrho/2)*LatVecsLen[2]/pi ) + 1) + 1
+  Ns[3] = 2*(round( Int, sqrt(ecutrho/2)*LatVecsLen[3]/pi ) + 1) + 1
 
   @printf("Sampling points: (%8d,%8d,%8d)\n", Ns[1], Ns[2], Ns[3])
 
