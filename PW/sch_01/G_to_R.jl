@@ -1,5 +1,5 @@
 function G_to_R( Ns::Array{Int,1}, fG::Array{Complex128,1} )
-  out = reshape( ifft( reshape(psi,Ns[1],Ns[2],Ns[3]) ),
+  out = reshape( ifft( reshape(fG,Ns[1],Ns[2],Ns[3]) ),
         size(fG) )
 end
 

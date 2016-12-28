@@ -1,8 +1,6 @@
 include("../common/PWGrid_v01.jl")
 include("../common/ortho_gram_schmidt.jl")
-
-include("R_to_G.jl")
-include("G_to_R.jl")
+include("../common/wrappers_fft.jl")
 
 include("gen_dr.jl")
 include("init_pot_harm_3d.jl")
