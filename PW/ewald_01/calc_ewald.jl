@@ -1,22 +1,23 @@
 """
 An implementation of simple method to calculate Ewald energy
 """
-function calc_ewald( pw_grid::PWGrid, Xpos, Sf; sigma=0.25 )
+function calc_ewald( pw::PWGrid, Xpos, Sf; sigma=0.25 )
   #
-  const Npoints = pw_grid.Npoints
-  const Ω  = pw_grid.Ω
-  const R  = pw_grid.R
-  const Ns = pw_grid.Ns
-  const G2 = pw_grid.G2
+  const Npoints = pw.Npoints
+  const Ω  = pw.Ω
+  const R  = pw.R
+  const Ns = pw.Ns
+  const G2 = pw.G2
   #
   # Generate array of distances
-  center = sum(pw_grid.LatVecs,2)/2
+  center = sum(pw.LatVecs,2)/2
   dr = gen_dr( R, center )
   #
   # Generate charge density
   rho = gen_rho( Ns, dr, sigma, Sf )
-  #intrho = sum(rho)*Ω/Npoints
-  #@printf("sigma, int_rho: %4.1f %20.16f\n", sigma, intrho)
+  intrho = sum(rho)*Ω/Npoints
+  @printf("sigma, int_rho: %10.5f %18.10f\n", sigma, intrho)
+
   #
   # Solve Poisson equation and calculate Hartree energy
   ctmp = 4.0*pi*R_to_G( Ns, rho )

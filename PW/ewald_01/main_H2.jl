@@ -13,9 +13,14 @@ function test_main()
   # Atomic positions and nuclear charge
   Xpos = reshape( [0.0, 0.0, 0.0,
                    1.5, 0.0, 0.0], (3,2) )
+  println("Xpos =")
+  println(Xpos)
+
   Z = 1.0
   # Calculate structure factor
   Sf = structure_factor( Xpos, pw_grid.G )
+
+  print("sum(Sf)="); println(sum(Sf))
 
   E_nn = calc_ewald( pw_grid, Xpos, Sf )
   @printf("E_nn = %18.10f\n", E_nn)

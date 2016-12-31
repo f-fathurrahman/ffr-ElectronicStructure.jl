@@ -4,7 +4,7 @@ type PWGrid
   RecVecs::Array{Float64,2}
   Npoints::Int
   Ω::Float64
-  R::Array{Float64,2}
+  r::Array{Float64,2}
   G::Array{Float64,2}
   G2::Array{Float64}
 end
