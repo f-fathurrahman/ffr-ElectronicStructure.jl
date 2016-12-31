@@ -12,12 +12,14 @@ function test_main()
 
   # Atomic positions and nuclear charge
   Xpos = reshape( [0.0, 0.0, 0.0,
-                   1.5, 0.0, 0.0], (3,2) )
+                   1.5, 0.0, 0.0,
+                   0.0, 1.5, 0.0], (3,3) )
+  println(Xpos)
 
-  Nspecies = 2
-  atmsymb = ["H", "C"] # unique list of atomic symbols
-  atm2species = [1, 2]  # mapping from atom to species
-  Zv = [1.0, 4.0]  # only valence ?
+  Nspecies = 1
+  atmsymb = ["H"] # unique list of atomic symbols
+  atm2species = [1, 1, 1]  # mapping from atom to species
+  Zv = [1.0]  # only valence ?
 
   # Calculate structure factor
   Sf = calc_strfact( Xpos, Nspecies, atm2species, pw.G )
@@ -26,7 +28,6 @@ function test_main()
 
   E_nn = calc_ewald( pw, Sf, Xpos, Nspecies, atm2species, Zv )
   @printf("E_nn = %18.10f\n", E_nn)
-
 end
 
 @time test_main()
