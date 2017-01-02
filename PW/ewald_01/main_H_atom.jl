@@ -16,7 +16,7 @@ function test_main()
   #
   const Npoints = pw.Npoints
   const Ω = pw.Ω
-  const R = pw.R
+  const r = pw.r
   const G = pw.G
   const G2 = pw.G2
   const Ns = pw.Ns

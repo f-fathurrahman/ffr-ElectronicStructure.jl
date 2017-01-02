@@ -16,7 +16,7 @@ type PWGrid
   LatVecs::Array{Float64,2}
   RecVecs::Array{Float64,2}
   Ω::Float64
-  R::Array{Float64,2}
+  r::Array{Float64,2}
   gvec::GVectors
   gvecw::GVectorsW
 end
@@ -45,12 +45,12 @@ function PWGrid( ecutwfc::Float64, LatVecs::Array{Float64,2} )
   @printf("Sampling points: (%8d,%8d,%8d)\n", Ns[1], Ns[2], Ns[3])
 
   Npoints = prod(Ns)
-  R = init_grid_R( Ns, LatVecs )
+  r = init_grid_R( Ns, LatVecs )
 
   gvec = init_grid_G( Ns, RecVecs )
   gvecw = init_gvecw( ecutwfc, gvec.G2 )
 
-  return PWGrid( ecutwfc, ecutrho, Ns, LatVecs, RecVecs, Ω, R, gvec, gvecw )
+  return PWGrid( ecutwfc, ecutrho, Ns, LatVecs, RecVecs, Ω, r, gvec, gvecw )
 end
 
 function mm_to_nn(mm::Int,S::Int)

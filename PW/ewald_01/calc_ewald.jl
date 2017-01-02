@@ -5,13 +5,13 @@ function calc_ewald( pw::PWGrid, Xpos, Sf; sigma=0.25 )
   #
   const Npoints = pw.Npoints
   const Ω  = pw.Ω
-  const R  = pw.R
+  const r  = pw.r
   const Ns = pw.Ns
   const G2 = pw.G2
   #
   # Generate array of distances
   center = sum(pw.LatVecs,2)/2
-  dr = gen_dr( R, center )
+  dr = gen_dr( r, center )
   #
   # Generate charge density
   rho = gen_rho( Ns, dr, sigma, Sf )

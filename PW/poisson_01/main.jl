@@ -15,13 +15,13 @@ function test_main()
   #
   const Npoints = pw.Npoints
   const Ω = pw.Ω
-  const R = pw.R
+  const r = pw.r
   const Ns = pw.Ns
   #
   # Generate array of distances
   #
   center = sum(LatVecs,2)/2
-  dr = gen_dr( R, center )
+  dr = gen_dr( r, center )
   #
   # Generate charge density
   #

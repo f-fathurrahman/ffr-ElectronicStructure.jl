@@ -23,14 +23,14 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
   #
   const Npoints = pw.Npoints
   const Ω  = pw.Ω
-  const R  = pw.R
+  const r  = pw.r
   const G  = pw.G
   const G2 = pw.G2
   #
   # Generate array of distances
   #
   center = sum(LatVecs,2)/2
-  dr = gen_dr( R, center )
+  dr = gen_dr( r, center )
   #
   # Setup potential
   #

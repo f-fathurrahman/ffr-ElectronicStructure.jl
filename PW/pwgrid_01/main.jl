@@ -58,7 +58,7 @@ function test_main()
   #LL = latvec_bcc(16.0)
 
   pwgrid = PWGrid( Ns, LL )
-  atpos = pwgrid.R
+  atpos = pwgrid.r
 
   write_XSF("R_grid.xsf", LL, atpos)
 

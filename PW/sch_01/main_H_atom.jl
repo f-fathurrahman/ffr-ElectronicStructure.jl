@@ -23,13 +23,14 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
 
   const Npoints = pw.Npoints
   const Ω = pw.Ω
-  const R = pw.R
+  const r = pw.r
   const G = pw.G
   const G2 = pw.G2
 
   Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
 
   Sf = structure_factor( Xpos, G )
+
   Vg = zeros(Complex128,Npoints)
   prefactor = -4*pi/Ω
   for ig=2:Npoints

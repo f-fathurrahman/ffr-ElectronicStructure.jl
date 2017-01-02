@@ -27,7 +27,7 @@ function test_main()
 
   center = 0.5*a*ones(3)
   println(center)
-  dr = gen_dr( pwgrid.R, center )
+  dr = gen_dr( pwgrid.r, center )
   rho = gen_rho( Ns, dr, 0.25, Sf )
 
   sumSf = sum(Sf)
