@@ -14,10 +14,14 @@ include("schsolve_Emin_sd.jl")
 include("schsolve_Emin_cg.jl")
 include("structure_factor.jl")
 
+include("gen_rho.jl")
+include("gen_dr.jl")
+include("calc_ewald.jl")
+
 function test_main( ns1::Int,ns2::Int,ns3::Int )
 
   Ns = [ns1,ns2,ns3]
-  const LatVecs = 70.0*diagm( ones(3) )
+  const LatVecs = 50.0*diagm( ones(3) )
 
   pw = PWGrid( Ns, LatVecs )
 
@@ -30,6 +34,8 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
   Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
 
   Sf = structure_factor( Xpos, G )
+
+  E_nn = calc_ewald( pw, Xpos, Sf )
 
   Vg = zeros(Complex128,Npoints)
   prefactor = -4*pi/Ω
@@ -67,6 +73,9 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
   for st = 1:Nstates
     @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
   end
+
+  @printf("E_nn    = %18.10f\n", E_nn)
+  @printf("E total = %18.10f\n", E_nn + Etot)
 
 end
 
