@@ -1,7 +1,6 @@
 include("../common/PWGrid_v01.jl")
 include("../common/gen_lattice.jl")
 include("gen_dr.jl")
-include("write_xsf.jl")
 
 function test_main(Ns; verbose=false)
 
@@ -12,7 +11,6 @@ function test_main(Ns; verbose=false)
   println(LatVecs)
 
   pw = PWGrid( Ns, LatVecs )
-  write_xsf( "fcc_R_grid.xsf", LatVecs, pw.R )
 
   dr = gen_dr( pw.R, LatVecs )
 
