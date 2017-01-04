@@ -1,4 +1,4 @@
-function calc_dr( r, center )
+function gen_dr( r, center )
   Npoints = size(r)[2]
   dr = Array(Float64,Npoints)
   #

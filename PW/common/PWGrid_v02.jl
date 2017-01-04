@@ -33,16 +33,14 @@ function PWGrid( ecutwfc::Float64, LatVecs::Array{Float64,2} )
   LatVecsLen[3] = norm(LatVecs[3,:])
 
   Ns = zeros(Int64,3)
-  Ns[1] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[1]/pi ) + 1
-  Ns[2] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[2]/pi ) + 1
-  Ns[3] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[3]/pi ) + 1
+  Ns[1] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[1]/pi ) + 4
+  Ns[2] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[2]/pi ) + 4
+  Ns[3] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[3]/pi ) + 4
 
   # Use even sampling numbers
   Ns[1] = Ns[1] % 2 == 1 ? Ns[1] + 1 : Ns[1]
   Ns[2] = Ns[2] % 2 == 1 ? Ns[2] + 1 : Ns[2]
   Ns[3] = Ns[3] % 2 == 1 ? Ns[3] + 1 : Ns[3]
-
-  @printf("Sampling points: (%8d,%8d,%8d)\n", Ns[1], Ns[2], Ns[3])
 
   Npoints = prod(Ns)
   r = init_grid_R( Ns, LatVecs )

@@ -6,3 +6,10 @@ type EnergiesT
   XC::Float64
 end
 
+function print_Energies( Energies::EnergiesT )
+  @printf("Total   energy: %18.10f\n", Energies.Total )
+  @printf("Kinetic energy: %18.10f\n", Energies.Kinetic )
+  @printf("Ionic   energy: %18.10f\n", Energies.Ionic )
+  @printf("Hartree energy: %18.10f\n", Energies.Hartree )
+  @printf("XC      energy: %18.10f\n", Energies.XC )
+end

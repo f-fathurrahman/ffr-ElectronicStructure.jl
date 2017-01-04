@@ -2,16 +2,20 @@ include("../common/PWGrid_v01.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
 
+include("EnergiesT.jl")
+include("PotentialsT.jl")
 include("gen_dr.jl")
 include("init_pot_harm_3d.jl")
 include("apply_K.jl")
-include("apply_Vpot.jl")
+include("apply_V_loc.jl")
 include("apply_H.jl")
 include("calc_rho.jl")
 include("gradE.jl")
-include("calc_Etot.jl")
-include("schsolve_Emin_sd.jl")
-include("schsolve_Emin_cg.jl")
+include("calc_Energies.jl")
+include("kssolve_Emin_sd.jl")
+include("kssolve_Emin_cg.jl")
+include("solve_poisson.jl")
+include("LDA_VWN.jl")
 include("Kprec.jl")
 
 function test_main( ns1::Int,ns2::Int,ns3::Int )
@@ -34,19 +38,20 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
   #
   # Setup potential
   #
-  Vpot = init_pot_harm_3d( pw, dr )
-  print("sum(Vpot)*Ω/Npoints = $(sum(Vpot)*Ω/Npoints)\n");
+  V_ionic = init_pot_harm_3d( pw, dr )
+  print("sum(Vpot)*Ω/Npoints = $(sum(V_ionic)*Ω/Npoints)\n");
   #
   const Nstates = 4
-  srand(2222)
-  psi  = randn(Npoints,Nstates) + im*randn(Npoints,Nstates)
-  psi = ortho_gram_schmidt(psi)
+  Focc = 2.0*ones(Nstates)
   #
-  psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
-  psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
+  #psi, Energies, Potentials = kssolve_Emin_sd( pw, V_ionic, Focc, Nstates, NiterMax=10 )
+  #psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates,
+  #                            NiterMax=1000, Potentials0=Potentials, psi0=psi )
+  psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  #psi, Energies = kssolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
   #
   Y = ortho_gram_schmidt(psi)
-  mu = Y' * apply_H( pw, Vpot, Y )
+  mu = Y' * apply_H( pw, Potentials, Y )
   evals, evecs = eig(mu)
   Psi = Y*evecs
   for st = 1:Nstates
