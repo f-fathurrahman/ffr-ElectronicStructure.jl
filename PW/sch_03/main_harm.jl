@@ -1,4 +1,4 @@
-include("../common/PWGrid_v02.jl")
+include("../common/PWGrid_v03.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
 
@@ -14,22 +14,22 @@ include("schsolve_Emin_sd.jl")
 include("schsolve_Emin_cg.jl")
 include("Kprec.jl")
 include("diag_lobpcg.jl")
-include("diag_davidson.jl")
 
-
-function test_main( Ns )
+function test_main( ecutwfc_Ry::Float64 )
 
   const LatVecs = 6.0*diagm( ones(3) )
 
-  pw = PWGrid( Ns, LatVecs )
+  pw = PWGrid( 0.5*ecutwfc_Ry, LatVecs )
 
   const Ω  = pw.Ω
   const r  = pw.r
   const G  = pw.gvec.G
   const G2 = pw.gvec.G2
+  const Ns = pw.Ns
   const Npoints = prod(Ns)
   const Ngwx = pw.gvecw.Ngwx
 
+  @printf("ecutwfc (Ha) = %f\n", ecutwfc_Ry*0.5)
   @printf("Ns   = (%d,%d,%d)\n", Ns[1], Ns[2], Ns[3])
   @printf("Ngwx = %d\n", Ngwx)
 
@@ -59,8 +59,7 @@ function test_main( Ns )
   #evals, evecs = eig(mu)
   #Psi = Y*evecs
 
-  #evals, psi = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
-  evals, psi = diag_davidson( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
+  evals, psi = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
 
   for st = 1:Nstates
     @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
@@ -68,4 +67,4 @@ function test_main( Ns )
 
 end
 
-@time test_main( [30, 30, 30] )
+@time test_main( 40.0 )

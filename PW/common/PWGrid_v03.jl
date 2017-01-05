@@ -10,6 +10,8 @@ type GVectors
 end
 
 type PWGrid
+  ecutwfc::Float64
+  ecutrho::Float64
   Ns::Array{Int64}
   LatVecs::Array{Float64,2}
   RecVecs::Array{Float64,2}
@@ -19,13 +21,9 @@ type PWGrid
   gvecw::GVectorsW
 end
 
-function PWGrid( Ns, LatVecs::Array{Float64,2} )
-
-  if any( Ns%2 .== 1 )
-    @printf("Error: Ns must be even numbers\n")
-    exit()
-  end
-
+function PWGrid( ecutwfc::Float64, LatVecs::Array{Float64,2} )
+  ecutrho = 4.0*ecutwfc
+  #
   RecVecs = 2*pi*inv(LatVecs')
   Ω = det(LatVecs)
   #
@@ -34,13 +32,23 @@ function PWGrid( Ns, LatVecs::Array{Float64,2} )
   LatVecsLen[2] = norm(LatVecs[2,:])
   LatVecsLen[3] = norm(LatVecs[3,:])
 
+  Ns = zeros(Int64,3)
+  Ns[1] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[1]/pi ) + 1
+  Ns[2] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[2]/pi ) + 1
+  Ns[3] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[3]/pi ) + 1
+
+  # Use even sampling numbers
+  Ns[1] = Ns[1] % 2 == 1 ? Ns[1] + 1 : Ns[1]
+  Ns[2] = Ns[2] % 2 == 1 ? Ns[2] + 1 : Ns[2]
+  Ns[3] = Ns[3] % 2 == 1 ? Ns[3] + 1 : Ns[3]
+
   Npoints = prod(Ns)
   r = init_grid_R( Ns, LatVecs )
 
   gvec = init_grid_G( Ns, RecVecs )
-  gvecw = init_gvecw( Ns, gvec.G2 )
+  gvecw = init_gvecw( ecutwfc, gvec.G2 )
 
-  return PWGrid( Ns, LatVecs, RecVecs, Ω, r, gvec, gvecw )
+  return PWGrid( ecutwfc, ecutrho, Ns, LatVecs, RecVecs, Ω, r, gvec, gvecw )
 end
 
 function mm_to_nn(mm::Int,S::Int)
@@ -78,12 +86,8 @@ function init_grid_G( Ns, RecVecs )
   return GVectors( Ng, G, G2 )
 end
 
-function init_gvecw( Ns, G2 )
-  edges = find_edges( Ns )
-  G2mx = minimum( G2[edges] )
-  @printf("G2mx = %f\n", G2mx)
-  @printf("ecutwfc = %f\n", G2mx/4)
-  idx_gw2r = findn( G2 .< G2mx/4 )
+function init_gvecw( ecutwfc, G2 )
+  idx_gw2r = findn( 0.5*G2 .< ecutwfc )
   Ngwx = length(idx_gw2r)
   return GVectorsW( Ngwx, idx_gw2r )
 end

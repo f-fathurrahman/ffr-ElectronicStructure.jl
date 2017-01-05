@@ -1,4 +1,4 @@
-include("../common/PWGrid_v02.jl")
+include("../common/PWGrid_v03.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
 
@@ -18,19 +18,21 @@ include("gen_rho.jl")
 include("gen_dr.jl")
 include("calc_ewald.jl")
 
-function test_main( Ns )
+function test_main( ecutwfc_Ry::Float64 )
 
   const LatVecs = 16.0*diagm( ones(3) )
 
-  pw = PWGrid( Ns, LatVecs )
+  pw = PWGrid( 0.5*ecutwfc_Ry, LatVecs )
 
   const Ω  = pw.Ω
   const r  = pw.r
   const G  = pw.gvec.G
   const G2 = pw.gvec.G2
+  const Ns = pw.Ns
   const Npoints = prod(Ns)
   const Ngwx = pw.gvecw.Ngwx
 
+  @printf("ecutwfc (Ha) = %f\n", ecutwfc_Ry*0.5)
   @printf("Ns   = (%d,%d,%d)\n", Ns[1], Ns[2], Ns[3])
   @printf("Ngwx = %d\n", Ngwx)
 
@@ -86,4 +88,4 @@ function test_main( Ns )
 
 end
 
-@time test_main( [100, 100, 100] )
+@time test_main( 60.0 )

@@ -1,5 +1,4 @@
-function diag_lobpcg( pw::PWGrid, Vpot, X0;
-                      tol=1e-5, tol_avg=1e-7, NiterMax=200, verbose=false )
+function diag_lobpcg( pw_grid::PWGrid, Vpot, X0; tol=1e-5, tol_avg=1e-7, maxit=200, verbose=false )
   # get size info
   ncols = size(X0)[2]
   if ncols <= 0
@@ -7,9 +6,9 @@ function diag_lobpcg( pw::PWGrid, Vpot, X0;
    return
   end
   # orthonormalize the initial wave functions.
-  X = ortho_gram_schmidt(X0)  # normalize (again)?
+  X = ortho_gram_schmidt(X0)  # normalize (again)
 
-  HX = apply_H( pw, Vpot, X )
+  HX = apply_H( pw_grid, Vpot, X )
 
   nconv = 0
   iter = 1
@@ -18,7 +17,7 @@ function diag_lobpcg( pw::PWGrid, Vpot, X0;
   sum_evals = 0.0
   sum_evals_old = 0.0
   conv = 0.0
-  while iter <= NiterMax && nconv < ncols
+  while iter <= maxit && nconv < ncols
     # Rayleigh quotient (approximate eigenvalue, obj func)
     S = X'*HX
     lambda = real(eigvals(S))  #
@@ -44,11 +43,11 @@ function diag_lobpcg( pw::PWGrid, Vpot, X0;
     end
     #
     # apply preconditioner
-    W = Kprec(pw,R)
+    W = Kprec(pw_grid,R)
     #
     # nlock == 0
     #
-    HW = apply_H( pw, Vpot, W )
+    HW = apply_H( pw_grid, Vpot, W )
     #
     C  = W'*W
     C = ( C + C' )/2

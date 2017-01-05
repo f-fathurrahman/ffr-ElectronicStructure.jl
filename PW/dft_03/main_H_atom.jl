@@ -2,35 +2,41 @@ include("../common/PWGrid_v02.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
 
+include("EnergiesT.jl")
+include("PotentialsT.jl")
+include("gen_dr.jl")
 include("apply_K.jl")
-include("apply_Vpot.jl")
+include("apply_V_loc.jl")
 include("apply_H.jl")
 include("calc_rho.jl")
-include("calc_Etot.jl")
-include("Kprec.jl")
-include("diag_lobpcg.jl")
 include("gradE.jl")
-include("schsolve_Emin_sd.jl")
-include("schsolve_Emin_cg.jl")
-include("structure_factor.jl")
+include("calc_Energies.jl")
+include("kssolve_Emin_sd.jl")
+include("kssolve_Emin_cg.jl")
+include("solve_poisson.jl")
+include("LDA_VWN.jl")
+include("Kprec.jl")
 
+include("structure_factor.jl")
 include("gen_rho.jl")
 include("gen_dr.jl")
 include("calc_ewald.jl")
 
-function test_main( Ns )
+function test_main( ecutwfc_Ry::Float64 )
 
   const LatVecs = 16.0*diagm( ones(3) )
 
-  pw = PWGrid( Ns, LatVecs )
+  pw = PWGrid( 0.5*ecutwfc_Ry, LatVecs )
 
   const Ω  = pw.Ω
   const r  = pw.r
   const G  = pw.gvec.G
   const G2 = pw.gvec.G2
+  const Ns = pw.Ns
   const Npoints = prod(Ns)
   const Ngwx = pw.gvecw.Ngwx
 
+  @printf("ecutwfc (Ha) = %f\n", ecutwfc_Ry*0.5)
   @printf("Ns   = (%d,%d,%d)\n", Ns[1], Ns[2], Ns[3])
   @printf("Ngwx = %d\n", Ngwx)
 
@@ -49,31 +55,26 @@ function test_main( Ns )
   for ig=2:Npoints
     Vg[ig] = prefactor/G2[ig]
   end
-  Vpot = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
+  V_ionic = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
 
   println("sum(Sf) = $(sum(Sf))")
   println("sum(Vg) = $(sum(Vg))")
-  println("sum(Vpot) = $(sum(Vpot))")
+  println("sum(V_ionic) = $(sum(V_ionic))")
   for ip = 1:10
-    @printf("%8d %18.10f\n", ip, Vpot[ip])
+    @printf("%8d %18.10f\n", ip, V_ionic[ip])
   end
   @printf("Ω = %f\n", Ω)
-  @printf("maximum(Vpot) = %18.10f\n", maximum(Vpot))
-  @printf("minimum(Vpot) = %18.10f\n", minimum(Vpot))
+  @printf("maximum(Vpot) = %18.10f\n", maximum(V_ionic))
+  @printf("minimum(Vpot) = %18.10f\n", minimum(V_ionic))
 
   #
   const Nstates = 1
-  srand(2222)
-  psi = randn(Ngwx,Nstates) + im*randn(Ngwx,Nstates)
-  psi = ortho_gram_schmidt(psi)
-  #
-  #evals, evecs = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
+  Focc = [1.0]
+  psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
-  psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
-  psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
   #
   Y = ortho_gram_schmidt(psi)
-  mu = Y' * apply_H( pw, Vpot, Y )
+  mu = Y' * apply_H( pw, Potentials, Y )
   evals, evecs = eig(mu)
   psi = Y*evecs
 
@@ -82,8 +83,9 @@ function test_main( Ns )
   end
 
   @printf("E_nn    = %18.10f\n", E_nn)
-  @printf("E total = %18.10f\n", E_nn + Etot)
+  @printf("E total = %18.10f\n", E_nn + Energies.Total)
 
 end
 
-@time test_main( [100, 100, 100] )
+@code_native test_main(1.0)
+@time test_main( 35.0 )

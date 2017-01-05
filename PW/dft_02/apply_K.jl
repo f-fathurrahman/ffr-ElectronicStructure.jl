@@ -13,5 +13,6 @@ function apply_K( pw::PWGrid, psi::Array{Complex128,2} )
       out[ig,is] = psi[ig,is]*G2[ig]
     end
   end
+
   return 0.5*out # two minus signs
 end

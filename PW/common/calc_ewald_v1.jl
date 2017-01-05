@@ -4,11 +4,11 @@ An implementation of simple method to calculate Ewald energy
 function calc_ewald( pw::PWGrid, Sf, Xpos, Nspecies::Int, atm2species,
                      Zv::Array{Float64}; sigma=nothing )
   #
-  Npoints = pw.Npoints
   Ω  = pw.Ω
   r  = pw.r
   Ns = pw.Ns
-  G2 = pw.G2
+  G2 = pw.gvec.G2
+  Npoints = prod(Ns)
   LatVecs = pw.LatVecs
   #
   # Generate array of distances

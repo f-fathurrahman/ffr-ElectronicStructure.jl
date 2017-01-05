@@ -2,21 +2,29 @@ include("../common/PWGrid_v02.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
 
+include("EnergiesT.jl")
+include("PotentialsT.jl")
+include("gen_dr.jl")
 include("apply_K.jl")
-include("apply_Vpot.jl")
+include("apply_V_loc.jl")
 include("apply_H.jl")
 include("calc_rho.jl")
-include("calc_Etot.jl")
-include("Kprec.jl")
-include("diag_lobpcg.jl")
 include("gradE.jl")
-include("schsolve_Emin_sd.jl")
-include("schsolve_Emin_cg.jl")
-include("structure_factor.jl")
+include("calc_Energies.jl")
+include("kssolve_Emin_sd.jl")
+include("kssolve_Emin_cg.jl")
+include("solve_poisson.jl")
+include("LDA_VWN.jl")
+include("Kprec.jl")
 
+include("structure_factor.jl")
 include("gen_rho.jl")
 include("gen_dr.jl")
 include("calc_ewald.jl")
+
+include("diag_lobpcg.jl")
+include("kssolve_scf.jl")
+
 
 function test_main( Ns )
 
@@ -49,41 +57,28 @@ function test_main( Ns )
   for ig=2:Npoints
     Vg[ig] = prefactor/G2[ig]
   end
-  Vpot = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
-
-  println("sum(Sf) = $(sum(Sf))")
-  println("sum(Vg) = $(sum(Vg))")
-  println("sum(Vpot) = $(sum(Vpot))")
-  for ip = 1:10
-    @printf("%8d %18.10f\n", ip, Vpot[ip])
-  end
-  @printf("Ω = %f\n", Ω)
-  @printf("maximum(Vpot) = %18.10f\n", maximum(Vpot))
-  @printf("minimum(Vpot) = %18.10f\n", minimum(Vpot))
+  V_ionic = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
 
   #
   const Nstates = 1
-  srand(2222)
-  psi = randn(Ngwx,Nstates) + im*randn(Ngwx,Nstates)
-  psi = ortho_gram_schmidt(psi)
-  #
-  #evals, evecs = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
+  Focc = [1.0]
 
-  psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
-  psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
+  #psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
   #
-  Y = ortho_gram_schmidt(psi)
-  mu = Y' * apply_H( pw, Vpot, Y )
-  evals, evecs = eig(mu)
-  psi = Y*evecs
+  #Y = ortho_gram_schmidt(psi)
+  #mu = Y' * apply_H( pw, Potentials, Y )
+  #evals, evecs = eig(mu)
+  #psi = Y*evecs
+
+  Energies, Potentials, psi, evals = kssolve_scf( pw, V_ionic, Focc, Nstates )
 
   for st = 1:Nstates
     @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
   end
 
   @printf("E_nn    = %18.10f\n", E_nn)
-  @printf("E total = %18.10f\n", E_nn + Etot)
+  @printf("E total = %18.10f\n", E_nn + Energies.Total)
 
 end
 
-@time test_main( [100, 100, 100] )
+@time test_main( [64,64,64] )
