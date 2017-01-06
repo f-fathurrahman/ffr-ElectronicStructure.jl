@@ -98,6 +98,6 @@ function diag_lobpcg( pw::PWGrid, Potentials, X0;
       @printf("eigval[%2d] = %18.10f, resnrm = %18.10e\n", j, lambda[j], resnrm[j] )
     end
   end
-  @printf("LOBPCG converge: %d iter\n", iter)
+  #@printf("LOBPCG converge: %d iter\n", iter)
   return lambda, X
 end

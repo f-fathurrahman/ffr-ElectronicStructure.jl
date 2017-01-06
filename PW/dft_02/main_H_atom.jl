@@ -59,6 +59,9 @@ function test_main( Ns )
   end
   V_ionic = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
 
+  println("sum(Sf) = ", sum(Sf))
+  exit()
+
   #
   const Nstates = 1
   Focc = [1.0]

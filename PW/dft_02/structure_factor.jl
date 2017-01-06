@@ -6,9 +6,7 @@ function structure_factor( Xpos::Array{Float64,2}, G::Array{Float64,2} )
   Sf = zeros(Complex128,Ng)
   for ia = 1:Na
     for ig = 1:Ng
-      GX = Xpos[1,ia]*G[1,ig] +
-           Xpos[2,ia]*G[2,ig] +
-           Xpos[3,ia]*G[3,ig]
+      GX = Xpos[1,ia]*G[1,ig] + Xpos[2,ia]*G[2,ig] + Xpos[3,ia]*G[3,ig]
       Sf[ig] = Sf[ig] + cos(GX) - im*sin(GX)
     end
   end

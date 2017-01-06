@@ -96,7 +96,8 @@ function test_main( Ns )
 
   V_ionic = real( G_to_R(Ns, Vps .* Sf) ) * Npoints
 
-  # needed to sum up over Nspecies for more than one species
+  # Need to sum up over Nspecies for more than one species type
+  # We simply need reshape because we only have one species type here.
   V_ionic = reshape( V_ionic, (Npoints) )
 
   const Nstates = 16
