@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt]{extarticle}
+\documentclass[a4paper,11pt]{extarticle}
 \usepackage[a4paper]{geometry}
 \geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=2cm,rmargin=2cm}
 
@@ -30,41 +30,16 @@
 
 \section{Introduction}
 
-{\ttfamily ffr-ElectronicStructure.jl} is a collection of programs\footnote{or scripts}
+verb|ffr-ElectronicStructure.jl| is a collection of programs\footnote{or scripts}
 for learning electronic structure calculations.
 
+Design of the package
 
-\section{Short introduction to {\tt Julia}}
+Introduction to electronic structure calculation based on DFT
 
-ℍ
+\section{Short introduction to Julia programming languange}
 
-\begin{juliacode}
-ℍ
-type CircleT
-  radius::Float64
-end
-\end{juliacode}
-
-\begin{Verbatim}[commandchars=\\\{\}]
-\PYG{n}{ℍ}
-\PYG{k}{type}\PYG{n+nc}{ CircleT}
-  \PYG{n}{radius}\PYG{p}{::}\PYG{k+kt}{Float64}
-\PYG{k}{end}
-\end{Verbatim}
-
-
-\section{Formulae}
-
-Plane wave basis $b_{\alpha}(\mathbf{r})$:
-\begin{equation}
-b_{\alpha}(\mathbf{r}) = \frac{1}{\sqrt{\Omega}} e^{\mathbf{G}_{\alpha}\cdot\mathbf{r}}
-\end{equation}
-
-Structure factor:
-\begin{equation}
-S_{I}(\mathbf{G}) = \sum_{\mathbf{G}} e^{ -\mathbf{G}\cdot\mathbf{X}_{I} }
-\end{equation}
-
+Common program structure that is employed in {\tt ffr-ElectronicStructure.jl}.
 
 
 \end{document}

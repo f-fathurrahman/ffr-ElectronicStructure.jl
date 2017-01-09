@@ -1,8 +1,8 @@
-function gen_lattice_hexagonal(a; ca=1.0)
+function gen_lattice_hexagonal(a; coa=8.0/3.0)
   LL = zeros(3,3)
   LL[1,:] = [1.0, 0.0, 0.0]
   LL[2,:] = [cos(pi/3.0), sin(pi/3.0), 0.0]
-  LL[3,:] = [0.0, 0.0, ca]
+  LL[3,:] = [0.0, 0.0, coa]
   return a*LL
 end
 

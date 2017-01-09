@@ -1,4 +1,5 @@
 include("../common/PWGrid_v01.jl")
+include("../common/gen_lattice.jl")
 
 function write_XSF( filnam, LL, atpos; molecule=false )
   #
@@ -23,49 +24,39 @@ function write_XSF( filnam, LL, atpos; molecule=false )
 end
 
 
-function latvec_hexagonal(a; ca=1.0)
-  LL = zeros(3,3)
-  LL[1,:] = [1.0, 0.0, 0.0]
-  LL[2,:] = [cos(pi/3.0), sin(pi/3.0), 0.0]
-  LL[3,:] = [0.0, 0.0, ca]
-  return a*LL
-end
-
-function latvec_fcc(a)
-  LL = zeros(3,3)
-  LL[1,:] = [-1.0, 0.0, 1.0]
-  LL[2,:] = [ 0.0, 1.0, 1.0]
-  LL[3,:] = [-1.0, 1.0, 0.0]
-  return 0.5*a*LL
-end
-
-
-function latvec_bcc(a)
-  LL = zeros(3,3)
-  LL[1,:] = [ 1.0,  1.0, 1.0]
-  LL[2,:] = [-1.0,  1.0, 1.0]
-  LL[3,:] = [-1.0, -1.0, 1.0]
-  return 0.5*a*LL
-end
-
-
-function test_main()
-  Ns = [15, 15, 15]
+function test_main_hexagonal()
 
   #LL = 16.0*diagm([1.0, 1.0, 1.0])
-  LL = latvec_hexagonal(16.0, ca=2.0)
-  #LL = latvec_fcc(16.0)
-  #LL = latvec_bcc(16.0)
+  #LL = gen_lattice_fcc(16.0)
+  #LL = gen_lattice_bcc(16.0)
 
-  pwgrid = PWGrid( Ns, LL )
-  atpos = pwgrid.r
+  Ns = [10, 10, 20]
+  LL = gen_lattice_hexagonal(10.0, coa=2.0)
+  pw = PWGrid( Ns, LL )
+  atpos = pw.r
 
-  write_XSF("R_grid.xsf", LL, atpos)
+  println(pw.LatVecs)
+  println(pw.RecVecs)
 
-  Rec = pwgrid.RecVecs*Ns[1]/2.0
-  atpos = pwgrid.G
-  write_XSF("G_grid.xsf", LL, atpos, molecule=true)
+  write_XSF("R_grid_hexagonal.xsf", LL, atpos)
+
+  Rec = pw.RecVecs*Ns[1]/2.0
+  atpos = pw.G
+  write_XSF("G_grid_hexagonal.xsf", LL, atpos, molecule=true)
+
+
+  for ii = 1:3
+    @printf("LatVecLen %d %18.10f\n", ii, norm(pw.LatVecs[ii,:]))
+  end
+  @printf("Ratio coa: %18.10f\n", norm(pw.LatVecs[1,:])/norm(pw.LatVecs[3,:]))
+
+  @printf("\n")
+  for ii = 1:3
+    @printf("RecVecLen %d %18.10f\n", ii, norm(pw.RecVecs[ii,:]))
+  end
+  @printf("Ratio coa: %18.10f\n", norm(pw.RecVecs[1,:])/norm(pw.RecVecs[3,:]))
+
 end
 
 
-test_main()
+test_main_hexagonal()
