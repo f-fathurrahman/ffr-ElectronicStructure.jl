@@ -1,4 +1,4 @@
-include("../common/PWGrid_v02.jl")
+include("../common/PWGrid_v03.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
 
@@ -45,16 +45,8 @@ function test_main( ecutwfc_Ry::Float64 )
   @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
   # diamond lattice in cubic cell
-  Xpos = zeros(3,8)
-  Xpos[:,1] = [0.00 0.00 0.00]
-  Xpos[:,2] = [0.25 0.25 0.25]
-  Xpos[:,3] = [0.00 0.50 0.50]
-  Xpos[:,4] = [0.25 0.75 0.75]
-  Xpos[:,5] = [0.50 0.00 0.50]
-  Xpos[:,6] = [0.75 0.25 0.75]
-  Xpos[:,7] = [0.50 0.50 0.00]
-  Xpos[:,8] = [0.75 0.75 0.25]
-  Xpos = a*Xpos[:,:]
+  Xpos = zeros(3,1)
+  Xpos[:,1] = [0.0, 0.0, 0.0]
 
   for ia = 1:size(Xpos)[2]
     @printf("Ge %18.10f %18.10f %18.10f\n", Xpos[1,ia], Xpos[2,ia], Xpos[3,ia] )
@@ -64,7 +56,7 @@ function test_main( ecutwfc_Ry::Float64 )
 
   Nspecies = 1
   atmsymb = ["Ge"] # unique list of atomic symbols
-  atm2species = [1, 1, 1, 1, 1, 1, 1, 1]  # mapping from atom to species
+  atm2species = [1]  # mapping from atom to species
   Zv = [4.0]  # only valence ?
 
   Sf = calc_strfact( Xpos, Nspecies, atm2species, pw.gvec.G )
@@ -112,8 +104,8 @@ function test_main( ecutwfc_Ry::Float64 )
   @printf("maximum(V_ionic) = %18.10f\n", maximum(V_ionic))
   @printf("minimum(V_ionic) = %18.10f\n", minimum(V_ionic))
 
-  const Nstates = 16
-  Focc = 2.0*ones(Nstates)
+  const Nstates = 4
+  Focc = [2.0, 2/3, 2/3, 2/3]
 
   psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
   #psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates,
@@ -130,8 +122,6 @@ function test_main( ecutwfc_Ry::Float64 )
 
   @printf("E_nn    = %18.10f\n", E_nn)
   @printf("E total = %18.10f\n", E_nn + Energies.Total)
-
-  @printf("\nE total (eV per atom)= %18.10f\n", (E_nn + Energies.Total)/8*27.21 )
 
 end
 
