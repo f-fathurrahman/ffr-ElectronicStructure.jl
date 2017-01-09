@@ -34,16 +34,17 @@
 
 \section{Introduction}
 
+This document is part of package
 {\tt ffr-ElectronicStructure.jl} using plane wave basis set.
 
 \section{ {\tt PWGrid\_xx.jl} }
 
-{\tt xx} stands for {\tt 01}, {\tt 02}, and {\tt 03}.
+\verb|xx| stands for the version (or variant) of \verb|PWGrid|.
 
 
 \subsection{ {\tt PWGrid\_01.jl} }
 
-In this file, a type {\tt PWGrid} is defined:
+In this file, a type \verb|PWGrid| is defined:
 \begin{juliacode}
 type PWGrid
   Ns::Array{Int64}
@@ -168,12 +169,15 @@ In the directory \verb|pwgrid_01|, we visualize grid points in real space
 using Xcrysden program. Originally Xcrysden, is meant to visualize crystalline structure,
 however, we also can use it to visualize grid points, taking periodic boundary
 conditions into consideration.
+This is useful to check whether grid points are generated correctly or not.
 
 \begin{figure}
 \centering
 \includegraphics[scale=0.25]{images/R_grid_hexagonal.png}
 \par
 \end{figure}
+
+
 
 \section{Formulae}
 

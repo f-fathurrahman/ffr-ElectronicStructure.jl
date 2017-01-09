@@ -1,3 +1,5 @@
+const PWGRID_VERSION = 3
+
 type GVectorsW
   Ngwx::Int
   idx_gw2r::Array{Int}

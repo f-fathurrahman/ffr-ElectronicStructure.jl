@@ -1,4 +1,5 @@
 include("../common/PWGrid_v02.jl")
+
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
 
@@ -16,8 +17,7 @@ include("Kprec.jl")
 include("diag_lobpcg.jl")
 include("diag_davidson.jl")
 
-
-function test_main( Ns )
+function test_main( Ns; solution_method="diag_lobpcg" )
 
   const LatVecs = 6.0*diagm( ones(3) )
 
@@ -37,6 +37,8 @@ function test_main( Ns )
   const theor = 1/(4*pi*0.25^3/3)
   @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
+  exit()
+
   # Generate array of distances
   center = 6.0*ones(3)/2
   dr = gen_dr( r, center )
@@ -50,17 +52,26 @@ function test_main( Ns )
   srand(2222)
   psi  = randn(Ngwx,Nstates) + im*randn(Ngwx,Nstates)
   psi = ortho_gram_schmidt(psi)
-  #
-  #psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
-  #psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
 
-  #Y = ortho_gram_schmidt(psi)
-  #mu = Y' * apply_H( pw, Vpot, Y )
-  #evals, evecs = eig(mu)
-  #Psi = Y*evecs
 
-  #evals, psi = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
-  evals, psi = diag_davidson( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
+  if solution_method == "Emin"
+
+    psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
+    psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
+
+    Y = ortho_gram_schmidt(psi)
+    mu = Y' * apply_H( pw, Vpot, Y )
+    evals, evecs = eig(mu)
+    Psi = Y*evecs
+
+  else
+
+    evals, psi = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
+
+  end
+
+  # Davidson diagonalization is not working yet
+  #evals, psi = diag_davidson( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
 
   for st = 1:Nstates
     @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
@@ -68,4 +79,5 @@ function test_main( Ns )
 
 end
 
-@time test_main( [30, 30, 30] )
+
+test_main( [30, 30, 30] )

@@ -14,7 +14,6 @@ function gen_lattice_fcc(a)
   return 0.5*a*LL
 end
 
-
 function gen_lattice_bcc(a)
   LL = zeros(3,3)
   LL[1,:] = [ 1.0,  1.0, 1.0]

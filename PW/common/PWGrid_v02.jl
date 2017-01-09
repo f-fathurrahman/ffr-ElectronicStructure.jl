@@ -1,3 +1,5 @@
+const PWGRID_VERSION = 2
+
 type GVectorsW
   Ngwx::Int
   idx_gw2r::Array{Int}
@@ -81,8 +83,8 @@ end
 function init_gvecw( Ns, G2 )
   edges = find_edges( Ns )
   G2mx = minimum( G2[edges] )
-  @printf("G2mx = %f\n", G2mx)
-  @printf("ecutwfc = %f\n", G2mx/4)
+  #@printf("G2mx = %f\n", G2mx)
+  @printf("ecutwfc_Ry = %f\n", G2mx/4)
   idx_gw2r = findn( G2 .< G2mx/4 )
   Ngwx = length(idx_gw2r)
   return GVectorsW( Ngwx, idx_gw2r )

@@ -3,8 +3,8 @@ function diag_lobpcg( pw::PWGrid, Vpot, X0;
   # get size info
   ncols = size(X0)[2]
   if ncols <= 0
-   @printf("diag_lobpcg requires at least one initial wave function!\n");
-   return
+    @printf("diag_lobpcg requires at least one initial wave function!\n");
+    return
   end
   # orthonormalize the initial wave functions.
   X = ortho_gram_schmidt(X0)  # normalize (again)?
