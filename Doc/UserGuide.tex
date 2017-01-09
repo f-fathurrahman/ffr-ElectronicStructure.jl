@@ -1,8 +1,70 @@
-\documentclass[a4paper,12pt]{extreport}
+\documentclass[a4paper,12pt]{extarticle}
+\usepackage[a4paper]{geometry}
+\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=2cm,rmargin=2cm}
 
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+%\setmainfont{Linux Libertine O}
+\setmainfont{FreeSerif}
+%\setmonofont{Fira Mono}
+\setmonofont{FreeMono}
+
+\setlength{\parindent}{0cm}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{xcolor}
+
+\usepackage{minted}
+%\newminted{julia}{breaklines,fontsize=\footnotesize}
+\newminted{julia}{breaklines}
 
 \begin{document}
 
-User Guide for \verb|ffr-ElectronicStructure.jl|
+\title{User Guide for {\ttfamily ffr-ElectronicStructure.jl}}
+\author{Fadjar Fathurrahman}
+\date{}
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+{\ttfamily ffr-ElectronicStructure.jl} is a collection of programs\footnote{or scripts}
+for learning electronic structure calculations.
+
+
+\section{Short introduction to {\tt Julia}}
+
+ℍ
+
+\begin{juliacode}
+ℍ
+type CircleT
+  radius::Float64
+end
+\end{juliacode}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{ℍ}
+\PYG{k}{type}\PYG{n+nc}{ CircleT}
+  \PYG{n}{radius}\PYG{p}{::}\PYG{k+kt}{Float64}
+\PYG{k}{end}
+\end{Verbatim}
+
+
+\section{Formulae}
+
+Plane wave basis $b_{\alpha}(\mathbf{r})$:
+\begin{equation}
+b_{\alpha}(\mathbf{r}) = \frac{1}{\sqrt{\Omega}} e^{\mathbf{G}_{\alpha}\cdot\mathbf{r}}
+\end{equation}
+
+Structure factor:
+\begin{equation}
+S_{I}(\mathbf{G}) = \sum_{\mathbf{G}} e^{ -\mathbf{G}\cdot\mathbf{X}_{I} }
+\end{equation}
+
+
 
 \end{document}
