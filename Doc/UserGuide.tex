@@ -30,7 +30,7 @@
 
 \section{Introduction}
 
-verb|ffr-ElectronicStructure.jl| is a collection of programs\footnote{or scripts}
+\verb|ffr-ElectronicStructure.jl| is a collection of programs\footnote{or scripts}
 for learning electronic structure calculations.
 
 Design of the package
@@ -40,6 +40,27 @@ Introduction to electronic structure calculation based on DFT
 \section{Short introduction to Julia programming languange}
 
 Common program structure that is employed in {\tt ffr-ElectronicStructure.jl}.
-id
+
+I tried to make it simple to follow, although the design is clearly not considered
+good practice in software engineering.
+
+Tried to make it modular, but no serious attempts to make the generic code
+this result in a lot of code repetition
+
+Using include, instead of module
+
+\begin{juliacode}
+# file main.jl
+
+include("func1.jl")
+include("func2.jl")
+
+function main()
+  # do something here
+end
+
+# call main function
+main()
+\end{juliacode}
 
 \end{document}

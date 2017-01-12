@@ -125,4 +125,6 @@ function test_main( Ns )
 
 end
 
-@time test_main( [48,48,48] )
+#@time test_main( [48,48,48] )
+test_main( [46, 46, 46] )
+

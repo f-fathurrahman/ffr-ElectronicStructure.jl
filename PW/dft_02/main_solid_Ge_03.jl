@@ -135,4 +135,4 @@ function test_main( ecutwfc_Ry::Float64 )
 
 end
 
-@time test_main( 40.0 )
+@time test_main( 46.0 )
