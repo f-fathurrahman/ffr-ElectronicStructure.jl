@@ -37,7 +37,7 @@ function test_main( Ns; solution_method="diag_lobpcg" )
   const theor = 1/(4*pi*0.25^3/3)
   @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
-  exit()
+  #exit()
 
   # Generate array of distances
   center = 6.0*ones(3)/2
@@ -66,12 +66,11 @@ function test_main( Ns; solution_method="diag_lobpcg" )
 
   else
 
-    evals, psi = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
+    #evals, psi = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
+    # Davidson diagonalization is not working yet
+    evals, psi = diag_davidson( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
 
   end
-
-  # Davidson diagonalization is not working yet
-  #evals, psi = diag_davidson( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
 
   for st = 1:Nstates
     @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
