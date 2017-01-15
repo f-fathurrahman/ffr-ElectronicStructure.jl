@@ -101,18 +101,8 @@ function diag_davidson( pw::PWGrid, Vpot, X0;
       print(ic); print(" "); println(λ_red[ic])
     end
 
-    #exit()
-
     X  = X  * X_red[set1,set1] + R  * X_red[set2,set1]
     HX = HX * X_red[set1,set1] + HR * X_red[set2,set1]
-
-    #X = ortho_gram_schmidt(X)
-
-    #@printf("\n")
-    #for i = 1:Ncols
-    #  R[:,i] = evals[i]*X[:,i] - HX[:,i]
-    #  @printf("%4d %18.10f %18.10f\n", i, evals[i], norm(R[:,i]))
-    #end
 
     # Calculate residuals
     for ic = 1:Ncols
