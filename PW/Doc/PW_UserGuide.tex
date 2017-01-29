@@ -97,9 +97,7 @@ function init_grids( Ns, LatVecs, RecVecs )
 
 First, grid points in real space are initialized:
 \begin{juliacode}
-  #
   Npoints = prod(Ns)
-  #
   r = Array(Float64,3,Npoints)
   ip = 0
   for k in 0:Ns[3]-1
@@ -178,6 +176,9 @@ This is useful to check whether grid points are generated correctly or not.
 \end{figure}
 
 
+\input{poisson}
+
+\input{sch}
 
 \section{Formulae}
 

@@ -1,0 +1,64 @@
+\section{Solving Poisson equation}
+
+Poisson equation is relatively easy to solve in periodic
+boundary condition using Fourier method (FFT). This is different
+from other discretization method, such as finite difference or Lagrange
+function.
+
+An example a program to solve Poisson equation is given in directory
+{\tt poisson\_01}. In this program, a charge density is constructed
+from difference between two Gaussian charge density. Total charge
+(integrated charge density) is restricted to zero.
+From this charge density, we calculate the electrostatic (Hartree) potential
+by solving Poisson equation.
+
+Function to generate vector \verb|dr|:
+\begin{juliacode}
+function gen_dr( r, center )
+  Npoints = size(r)[2]
+  dr = Array(Float64,Npoints)
+  for ip=1:Npoints
+    dx2 = ( r[1,ip] - center[1] )^2
+    dy2 = ( r[2,ip] - center[2] )^2
+    dz2 = ( r[3,ip] - center[3] )^2
+    dr[ip] = sqrt( dx2 + dy2 + dz2 )
+  end
+  return dr
+end
+\end{juliacode}
+
+
+Function to generate charge density:
+\begin{juliacode}
+function gen_rho( dr, σ1, σ2 )
+  Npoints = size(dr)[1]
+  rho = Array( Float64, Npoints )
+  c1 = 2*σ1^2
+  c2 = 2*σ2^2
+  cc1 = sqrt(2*pi*σ1^2)^3
+  cc2 = sqrt(2*pi*σ2^2)^3
+  for ip=1:Npoints
+    g1 = exp(-dr[ip]^2/c1)/cc1
+    g2 = exp(-dr[ip]^2/c2)/cc2
+    rho[ip] = g2 - g1
+  end
+  return rho
+end
+\end{juliacode}
+
+Function to solve Poisson equation:
+\begin{juliacode}
+function solve_poisson( pw_grid::PWGrid, rho )
+  Ω  = pw_grid.Ω
+  G2 = pw_grid.G2
+  Ns = pw_grid.Ns
+  Npoints = pw_grid.Npoints
+  ctmp = 4.0*pi*R_to_G( Ns, rho )
+  for ip = 2:Npoints
+    ctmp[ip] = ctmp[ip] / G2[ip]
+  end
+  ctmp[1] = 0.0
+  phi = real( G_to_R( Ns, ctmp ) )
+  return phi
+end
+\end{juliacode}

@@ -1,8 +1,11 @@
-
 # System
 
 - Complete implementation of `latgen_*`, for both PWSCF and ASE version.
 - ASE `Atoms`-like data structure
+
+# Poisson solver
+
+- Implement Poisson solver for isolated, polymer and surface boundary condition.
 
 # Iterative diagonalization
 
@@ -28,4 +31,3 @@
 # Hamiltonian
 
 - Non-local pseudopotentials
-
