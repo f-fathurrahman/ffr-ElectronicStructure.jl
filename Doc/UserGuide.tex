@@ -19,6 +19,12 @@
 %\newminted{julia}{breaklines,fontsize=\footnotesize}
 \newminted{julia}{breaklines}
 
+\definecolor{mintedbg}{rgb}{0.95,0.95,0.95}
+\usepackage{mdframed}
+
+\BeforeBeginEnvironment{minted}{\begin{mdframed}[backgroundcolor=mintedbg]}
+\AfterEndEnvironment{minted}{\end{mdframed}}
+
 \begin{document}
 
 \title{User Guide for {\ttfamily ffr-ElectronicStructure.jl}}
