@@ -1,4 +1,4 @@
-function apply_K( pw::PWGrid, psi::Array{Complex128,2} )
+function op_K( pw::PWGrid, psi::Array{Complex128,2} )
   out = zeros(Complex128,size(psi))
   Ncol = size(psi,2)
   Ω  = pw.Ω
