@@ -11,7 +11,7 @@ type LF3dGrid
   Nx::Int64
   Ny::Int64
   Nz::Int64
-  # XXX probably these variable are not important
+  # XXX probably these variables are not important
   Lx::Float64
   Ly::Float64
   Lz::Float64
