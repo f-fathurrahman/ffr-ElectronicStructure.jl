@@ -1,0 +1,59 @@
+\documentclass[a4paper,10pt]{extarticle}
+\usepackage[a4paper]{geometry}
+\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=2cm,rmargin=2cm}
+
+\usepackage{fontspec}
+%\defaultfontfeatures{Ligatures=TeX}
+%\setmainfont{Linux Libertine O}
+\setmainfont{FreeSerif}
+%\setmonofont{Fira Mono}
+\setmonofont{FreeMono}
+
+%\setmainfont{CMU Serif}
+%\setmonofont{CMU Typewriter Text}
+
+\setlength{\parindent}{0cm}
+
+\usepackage{float}
+\usepackage{graphicx}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{amsmath}
+
+\usepackage{minted}
+%\newminted{julia}{breaklines,fontsize=\footnotesize}
+\newminted{julia}{breaklines}
+
+\definecolor{mintedbg}{rgb}{0.95,0.95,0.95}
+\usepackage{mdframed}
+
+\BeforeBeginEnvironment{minted}{\begin{mdframed}[backgroundcolor=mintedbg]}
+\AfterEndEnvironment{minted}{\end{mdframed}}
+
+\begin{document}
+
+\title{Annotated PW codes (more or less ...)}
+\author{Fadjar Fathurrahman}
+\date{}
+\maketitle
+
+\section{PWGrid version 1}
+
+\begin{mdframed}[backgroundcolor=mintedbg]
+\inputminted[breaklines]{julia}{../common/PWGrid_v01.jl}
+\end{mdframed}
+
+\section{Solving Poisson equation}
+
+\begin{mdframed}[backgroundcolor=mintedbg]
+\inputminted[breaklines]{julia}{../poisson_01/main.jl}
+\end{mdframed}
+
+
+\section{Solving Schrodinger equation}
+
+
+\end{document}
+
