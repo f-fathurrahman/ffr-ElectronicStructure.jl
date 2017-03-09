@@ -1,14 +1,12 @@
 \documentclass[a4paper,10pt]{extarticle}
 \usepackage[a4paper]{geometry}
-\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=2cm,rmargin=2cm}
+\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=1cm,rmargin=1cm}
 
 \usepackage{fontspec}
-%\defaultfontfeatures{Ligatures=TeX}
-%\setmainfont{Linux Libertine O}
 \setmainfont{FreeSerif}
-%\setmonofont{Fira Mono}
 \setmonofont{FreeMono}
 
+% BROKEN ???
 %\setmainfont{CMU Serif}
 %\setmonofont{CMU Typewriter Text}
 
@@ -39,18 +37,11 @@
 \date{}
 \maketitle
 
-\section{PWGrid version 1}
 
-\begin{mdframed}[backgroundcolor=mintedbg]
-\inputminted[breaklines]{julia}{../common/PWGrid_v01.jl}
-\end{mdframed}
+\input{PWGrid_01}
 
-\section{Solving Poisson equation}
 
-\begin{mdframed}[backgroundcolor=mintedbg]
-\inputminted[breaklines]{julia}{../poisson_01/main.jl}
-\end{mdframed}
-
+\input{poisson_01}
 
 \section{Solving Schrodinger equation}
 
