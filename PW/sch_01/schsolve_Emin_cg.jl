@@ -13,7 +13,7 @@ function schsolve_Emin_cg( pw_grid::PWGrid, Vpot, psi::Array{Complex128,2};
   Etot = 0.0
   #
   for iter = 1:NiterMax
-    g = gradE( pw_grid, Vpot,  psi)
+    g = calc_grad( pw_grid, Vpot,  psi)
     nrm = 0.0
     for is = 1:Nstates
       nrm = nrm + real( dot( g[:,is], g[:,is] ) )
@@ -26,7 +26,7 @@ function schsolve_Emin_cg( pw_grid::PWGrid, Vpot, psi::Array{Complex128,2};
     end
     d = -Kprec(pw_grid, g) + beta * d_old
     psic = ortho_gram_schmidt(psi + alphat*d)
-    gt = gradE( pw_grid, Vpot, psic )
+    gt = calc_grad( pw_grid, Vpot, psic )
     if real(trace((g-gt)'*d)) != 0.0
       alpha = abs(alphat*real(trace(g'*d))/real(trace((g-gt)'*d)))
     else

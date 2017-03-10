@@ -4,9 +4,9 @@ include("../common/ortho_gram_schmidt.jl")
 
 include("gen_dr.jl")
 include("init_pot_harm_3d.jl")
-include("apply_K.jl")
-include("apply_Vpot.jl")
-include("apply_H.jl")
+include("op_K.jl")
+include("op_Vpot.jl")
+include("op_H.jl")
 
 include("calc_rho.jl")
 include("calc_Etot.jl")

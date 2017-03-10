@@ -4,7 +4,7 @@ function calc_Etot( pw::PWGrid, Vpot, psi::Array{Complex128,2} )
   Npoints = pw.Npoints
   Nstates = size(psi)[2]
 
-  Kpsi = apply_K( pw, psi )
+  Kpsi = op_K( pw, psi )
   Ekin = 0.0
   for is = 1:Nstates
     Ekin = Ekin + real( dot( psi[:,is], Kpsi[:,is] ) )

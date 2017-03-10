@@ -8,7 +8,7 @@ function diag_lobpcg( pw_grid::PWGrid, Vpot, X0; tol=1e-5, tol_avg=1e-7, maxit=2
   # orthonormalize the initial wave functions.
   X = ortho_gram_schmidt(X0)  # normalize (again)
 
-  HX = apply_H( pw_grid, Vpot, X )
+  HX = op_H( pw_grid, Vpot, X )
 
   nconv = 0
   iter = 1
@@ -47,7 +47,7 @@ function diag_lobpcg( pw_grid::PWGrid, Vpot, X0; tol=1e-5, tol_avg=1e-7, maxit=2
     #
     # nlock == 0
     #
-    HW = apply_H( pw_grid, Vpot, W )
+    HW = op_H( pw_grid, Vpot, W )
     #
     C  = W'*W
     C = ( C + C' )/2

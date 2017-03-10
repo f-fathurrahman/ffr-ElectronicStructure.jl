@@ -1,4 +1,4 @@
-function apply_K( pw_grid::PWGrid, psi::Array{Complex128,2} )
+function op_K( pw_grid::PWGrid, psi::Array{Complex128,2} )
   out = zeros(Complex128,size(psi))
   Ncol = size(psi,2)
   Ω = pw_grid.Ω
@@ -12,7 +12,7 @@ function apply_K( pw_grid::PWGrid, psi::Array{Complex128,2} )
   return 0.5*out # two minus signs
 end
 
-function apply_K( pw_grid::PWGrid, psi::Array{Complex128,1} )
+function op_K( pw_grid::PWGrid, psi::Array{Complex128,1} )
   G2 = pw_grid.G2
   Npoints = pw_grid.Npoints
   out = zeros( size(psi) )
