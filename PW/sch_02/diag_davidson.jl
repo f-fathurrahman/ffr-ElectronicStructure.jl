@@ -19,7 +19,7 @@ function diag_davidson( pw::PWGrid, Vpot, X0;
   res      = zeros(Float64, Ncols)
   res_norm = zeros(Float64, Ncols)
 
-  HX = apply_H( pw, Vpot, X )
+  HX = op_H( pw, Vpot, X )
 
   # Initial eigenvalues
   for ic = 1:Ncols
@@ -49,7 +49,7 @@ function diag_davidson( pw::PWGrid, Vpot, X0;
   const set1 = 1:Ncols
   const set2 = Ncols+1:2*Ncols
 
-  for iter = 1:60
+  for iter = 1:NiterMax
 
     @printf("iter = %d\n", iter)
     res_norm[:] = 1.0
@@ -68,7 +68,7 @@ function diag_davidson( pw::PWGrid, Vpot, X0;
 
     R = Kprec(pw, R)
 
-    HR = apply_H( pw, Vpot, R )
+    HR = op_H( pw, Vpot, R )
 
     # FIXME: Pull this outside the loop?
     if iter == 1
@@ -97,9 +97,9 @@ function diag_davidson( pw::PWGrid, Vpot, X0;
 
     evals[:] = λ_red[1:Ncols]
 
-    for ic = 1:2*Ncols
-      print(ic); print(" "); println(λ_red[ic])
-    end
+    #for ic = 1:2*Ncols
+    #  print(ic); print(" "); println(λ_red[ic])
+    #end
 
     X  = X  * X_red[set1,set1] + R  * X_red[set2,set1]
     HX = HX * X_red[set1,set1] + HR * X_red[set2,set1]
@@ -116,12 +116,12 @@ function diag_davidson( pw::PWGrid, Vpot, X0;
       for ig = 1:Ngwx
         res[ic] = res[ic] + real( R[ig,ic] * conj(R[ig,ic]) )
       end
-      res[ic] = sqrt( res[ic] )
+      #res[ic] = sqrt( res[ic] )
       @printf("%4d %18.10f %18.10f\n", ic, evals[ic], res[ic] )
     end
 
   end
 
-  exit()
+  return evals, X
 
 end

@@ -3,11 +3,11 @@ include("../common/wrappers_fft.jl")
 
 include("gen_dr.jl")
 include("init_pot_harm_3d.jl")
-include("apply_K.jl")
-include("apply_Vpot.jl")
-include("apply_H.jl")
+include("op_K.jl")
+include("op_Vpot.jl")
+include("op_H.jl")
 include("calc_rho.jl")
-include("gradE.jl")
+include("calc_grad.jl")
 include("calc_Etot.jl")
 include("schsolve_Emin_sd.jl")
 include("schsolve_Emin_cg.jl")
@@ -82,7 +82,7 @@ function test_main( ; Ns_in=nothing, ecutwfc_Ry=nothing,
     psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
 
     Y = ortho_gram_schmidt(psi)
-    mu = Y' * apply_H( pw, Vpot, Y )
+    mu = Y' * op_H( pw, Vpot, Y )
     evals, evecs = eig(mu)
     Psi = Y*evecs
 

@@ -1,4 +1,4 @@
-function apply_Vpot( pw::PWGrid, Vpot, psi::Array{Complex128,2} )
+function op_Vpot( pw::PWGrid, Vpot, psi::Array{Complex128,2} )
   #
   Ns = pw.Ns
   Ω  = pw.Ω

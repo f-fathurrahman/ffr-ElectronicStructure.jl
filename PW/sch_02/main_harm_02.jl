@@ -5,11 +5,11 @@ include("../common/wrappers_fft.jl")
 
 include("gen_dr.jl")
 include("init_pot_harm_3d.jl")
-include("apply_K.jl")
-include("apply_Vpot.jl")
-include("apply_H.jl")
+include("op_K.jl")
+include("op_Vpot.jl")
+include("op_H.jl")
 include("calc_rho.jl")
-include("gradE.jl")
+include("calc_grad.jl")
 include("calc_Etot.jl")
 include("schsolve_Emin_sd.jl")
 include("schsolve_Emin_cg.jl")
@@ -60,15 +60,15 @@ function test_main( Ns; solution_method="diag_lobpcg" )
     psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
 
     Y = ortho_gram_schmidt(psi)
-    mu = Y' * apply_H( pw, Vpot, Y )
+    mu = Y' * op_H( pw, Vpot, Y )
     evals, evecs = eig(mu)
     Psi = Y*evecs
 
   else
 
     #evals, psi = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
-    # Davidson diagonalization is not working yet
-    evals, psi = diag_davidson( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
+    evals, psi = diag_davidson( pw, Vpot, psi, verbose=true, tol_avg=1e-10, NiterMax=20 )
+    evals, psi = diag_davidson( pw, Vpot, psi, verbose=true, tol_avg=1e-10, NiterMax=20 )
 
   end
 
