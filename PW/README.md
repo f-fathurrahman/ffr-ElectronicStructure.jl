@@ -39,3 +39,9 @@ Electronic structure calculation using plane wave basis set.
 - Directory `sch_03` several test programs that solve Schrodinger equation with
   k-points using iterative diagonalization method. *Energy minimization method is
   not yet tested*.
+
+- Directory `dft_01` contains several test programs for simple DFT calculations.
+  It uses `PWGrid_v01.jl`.
+
+- Directory `dft_02` contains similar tests as `dft_01`, but uses `PWGrid_v02.jl`
+  and `PWGrid_v03.jl` instead.
