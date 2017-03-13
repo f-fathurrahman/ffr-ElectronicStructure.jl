@@ -24,7 +24,7 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
   const LatVecs = diagm( [6.0, 6.0, 6.0] )
   #
   pw = PWGrid( Ns, LatVecs )
-  #
+  # Shortcuts
   const Npoints = pw.Npoints
   const Ω  = pw.Ω
   const r  = pw.r
