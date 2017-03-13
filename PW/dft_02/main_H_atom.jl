@@ -4,7 +4,6 @@ include("../common/wrappers_fft.jl")
 
 include("EnergiesT.jl")
 include("PotentialsT.jl")
-include("gen_dr.jl")
 include("apply_K.jl")
 include("apply_V_loc.jl")
 include("apply_H.jl")
