@@ -56,6 +56,24 @@ psi, Energies, Potentials = kssolve_Emin_sd( pw, V_ionic, Focc, Nstates, NiterMa
 psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 ```
 
+## Setting up potential for hydrogen atom
+
+For hydrogen atom case, the potential is initialized in G-space and then
+transformed back to real space.
+
+```julia
+Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
+Sf = structure_factor( Xpos, G )
+E_nn = calc_ewald( pw, Xpos, Sf )
+Vg = zeros(Complex128,Npoints)
+prefactor = -4*pi/Ω
+for ig=2:Npoints
+  Vg[ig] = prefactor/G2[ig]
+end
+V_ionic = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
+```
+
+
 ## Steepest descent minization
 
 
