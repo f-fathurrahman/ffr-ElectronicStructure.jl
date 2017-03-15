@@ -60,11 +60,6 @@ function test_main()
     @printf("%d %8.5f %8.5f %8.5f\n", ik, kpts[1,ik], kpts[2,ik], kpts[3,ik])
   end
 
-  #@printf("Number of Gk-vectors\n")
-  #for ik = 1:length(Ngw)
-  #  @printf("%3d %8d\n", ik, Ngw[ik])
-  #end
-
   Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
   Sf = structure_factor( Xpos, pw.gvec.G )
   Vg = zeros(Complex128,Npoints)
@@ -84,14 +79,6 @@ function test_main()
     Ngwk = Ngw[ik]
     psi  = randn(Ngwk,Nstates) + im*randn(Ngwk,Nstates)
     psi = ortho_gram_schmidt(psi)
-
-    #Kpsi_k = apply_K( pw, psi, ik )
-    #ss = sum(Kpsi_k)
-    #@printf("Kin: %5d (%18.10f,%18.10f)\n", ik, real(ss), imag(ss))
-
-    #Vpsi_k = apply_Vpot( pw, Vpot, psi, ik )
-    #ss = sum(Vpsi_k)
-    #@printf("Pot: %5d (%18.10f,%18.10f)\n", ik, real(ss), imag(ss))
 
     evals[:,ik], psi = diag_lobpcg( pw, Vpot, psi, ik, verbose=true, tol_avg=1e-7 )
   end
