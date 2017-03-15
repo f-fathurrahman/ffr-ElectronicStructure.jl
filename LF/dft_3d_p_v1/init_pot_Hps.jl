@@ -16,6 +16,7 @@ function init_pot_Hps( LF, center )
 end
 
 
+# Probably this should not be used in the periodic system
 function init_pot_Hps_HGH( LF, center )
   Npoints = LF.Nx * LF.Ny * LF.Nz
   Vpot = zeros( Float64,Npoints )
@@ -28,9 +29,15 @@ function init_pot_Hps_HGH( LF, center )
   # TODO Add journal reference
   for ip = 1:Npoints
     r = norm( LF.lingrid[:,ip] - center[:] )
-    rrloc = r/rloc
-    Vpot[ip] = -Zion/r * erf( r/(sqrt(2.0)*rloc) ) +
+    if r < 1e-7
+      println("WARNING: small r:", r);
+      println("Using limiting value:")
+      Vpot[ip] = -2*Zion/(sqrt(2*pi)*rloc) + C1
+    else
+      rrloc = r/rloc
+      Vpot[ip] = -Zion/r * erf( r/(sqrt(2.0)*rloc) ) +
                (C1 + C2*rrloc^2)*exp(-0.5*(rrloc)^2)
+    end
   end
   return Vpot
 end

@@ -34,8 +34,8 @@ include("diag_lobpcg.jl")
 function test_main( ; method = "Emin_cg" )
   # LF parameters
   NN = [45, 45, 45]
-  AA = [-5.0, -5.0, -5.0] + 1e-9
-  BB = [ 5.0,  5.0,  5.0]
+  AA = [0.0, 0.0, 0.0]
+  BB = [16.0, 16.0, 16.0]
 
   Npoints = prod(NN)
 
@@ -48,7 +48,7 @@ function test_main( ; method = "Emin_cg" )
   Gv = GvectorsT( NN, diagm(L) )
 
   # Parameter for potential
-  center = [0.0, 0.0, 0.0]
+  center = 0.5*(BB-AA)
   # Potential
   V_ionic = init_pot_Hps_HGH( LF, center )
   println("sum(V_ionic): ", sum(V_ionic))
