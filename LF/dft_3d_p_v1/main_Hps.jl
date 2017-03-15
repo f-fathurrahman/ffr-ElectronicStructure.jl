@@ -62,7 +62,6 @@ function test_main( ; method = "Emin_cg" )
     @printf("Building preconditioner ...")
     precH = prec_mkl_ilu0( -0.5*∇2 + spdiagm(V_ionic) )
     @printf("... done\n")
-    #precH = speye(Npoints)
     Energies, evecs, Potentials = kssolve_Emin_pcg( LF, Gv, ∇2, precH,
                                     V_ionic, Focc, Ncols, verbose=true )
     evals = calc_evals( LF, ∇2, Potentials, evecs )
