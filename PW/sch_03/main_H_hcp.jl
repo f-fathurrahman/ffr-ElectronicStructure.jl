@@ -10,6 +10,8 @@ include("apply_H.jl")
 include("diag_lobpcg.jl")
 include("Kprec.jl")
 
+include("structure_factor.jl")
+
 include("plot_band_structure.jl")
 
 function test_main()
@@ -64,9 +66,16 @@ function test_main()
   #  @printf("%3d %8d\n", ik, Ngw[ik])
   #end
 
-  Vpot = zeros(Npoints)  # no external potential
+  Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
+  Sf = structure_factor( Xpos, pw.gvec.G )
+  Vg = zeros(Complex128,Npoints)
+  prefactor = -4*pi/pw.Ω
+  for ig=2:Npoints
+    Vg[ig] = prefactor/pw.gvec.G2[ig]
+  end
+  Vpot = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
 
-  const Nstates = 5
+  const Nstates = 4
   srand(1234)
 
   evals = zeros(Float64, Nstates, Nkpts )  # what is the optimal shape?
@@ -88,7 +97,7 @@ function test_main()
     evals[:,ik], psi = diag_lobpcg( pw, Vpot, psi, ik, verbose=true, tol_avg=1e-7 )
   end
 
-  plot_band_structure( evals, kpts, filename="band_hcp_free.pdf" )
+  plot_band_structure( evals, kpts, filename="band_hcp_H.pdf" )
 
 end
 

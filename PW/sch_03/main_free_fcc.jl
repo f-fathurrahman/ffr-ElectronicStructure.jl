@@ -10,6 +10,8 @@ include("apply_H.jl")
 include("diag_lobpcg.jl")
 include("Kprec.jl")
 
+include("plot_band_structure.jl")
+
 function test_main()
   const LatConst = 5.
   LatVecs = gen_lattice_fcc( LatConst )
@@ -86,33 +88,9 @@ function test_main()
     evals[:,ik], psi = diag_lobpcg( pw, Vpot, psi, ik, verbose=true, tol_avg=1e-7 )
   end
 
-  plot_band_structure( evals, kpts )
+  plot_band_structure( evals, kpts, filename="band_fcc_free.pdf" )
 
 end
 
-using PyPlot
-const plt = PyPlot
-
-function plot_band_structure( evals, kpath )
-
-  Nkpts = size(kpath)[2]
-  Nstates = size(evals)[1]
-
-  Xcoords = zeros(Float64,Nkpts)
-  Xcoords[1] = 0.0
-  for ik = 2:Nkpts
-    dk = kpath[:,ik] - kpath[:,ik-1]
-    Xcoords[ik] = Xcoords[ik-1] + norm( dk )
-  end
-
-  println(size(evals[1,:]'))
-  println(size(Xcoords[:]))
-  plt.clf()
-  for is = 1:Nstates
-    y = evals[is,:]'  # need transpose, UGH !
-    plt.plot( Xcoords[:], y, marker="o")
-  end
-  plt.savefig("band_fcc_free.pdf")
-end
 
 test_main()
