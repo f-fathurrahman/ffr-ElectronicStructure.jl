@@ -70,7 +70,7 @@ function schsolve_Emin_pcg( LF::LF3dGrid,
     end
     if abs(Etot-Etot_old) < 1.e-7
       if verbose
-        @printf("Emin CG converges in %8d iterations\n", iter)
+        @printf("Emin PCG converges in %8d iterations\n", iter)
       end
       break
     end

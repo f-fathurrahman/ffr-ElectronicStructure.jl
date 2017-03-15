@@ -21,9 +21,9 @@ include("diag_lobpcg.jl")
 
 function test_main( ; method = "Emin_cg" )
   # LF parameters
-  NN = [40, 40, 40]
+  NN = [25, 25, 25]
   AA = [0.0, 0.0, 0.0]
-  BB = [10.0, 10.0, 10.0]
+  BB = [6.0, 6.0, 6.0]
 
   Npoints = prod(NN)
 
@@ -74,6 +74,6 @@ function test_main( ; method = "Emin_cg" )
 end
 
 @code_native test_main()
-@time test_main(method="Emin_cg_sparse")
-#@time test_main(method="diag_lobpcg")
+#@time test_main(method="Emin_cg_sparse")
+@time test_main(method="diag_lobpcg")
 #@time test_main(method="Emin_cg")
