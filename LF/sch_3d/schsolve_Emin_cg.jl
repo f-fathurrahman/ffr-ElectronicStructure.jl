@@ -30,7 +30,7 @@ function schsolve_Emin_cg( LF::LF3dGrid, Vpot, Ncol::Int64;
   β = 0
   α = 0
   for iter = 1:Niter
-    g = gradE( LF, Vpot, v )
+    g = calc_grad( LF, Vpot, v )
     #
     if iter != 1
       β = trace( g' * g)/trace( g_old'*g_old )
@@ -42,7 +42,7 @@ function schsolve_Emin_cg( LF::LF3dGrid, Vpot, Ncol::Int64;
     # compute gradient at trial step
     #
     v2 = orthonormalize(LF, v + α_t*d)
-    g_t = gradE( LF, Vpot, v2 )
+    g_t = calc_grad( LF, Vpot, v2 )
     #
     # compute estimate of best step and update current trial vectors
     #

@@ -1,4 +1,4 @@
-function gradE( LF, Vpot, v::Array{Float64,2} )
+function calc_grad( LF, Vpot, v::Array{Float64,2} )
   Npoints = size(Vpot)[1]
   Ncol = size(v)[2]
   ΔV = LF.LFx.h * LF.LFy.h * LF.LFz.h
@@ -15,7 +15,7 @@ function gradE( LF, Vpot, v::Array{Float64,2} )
 end
 
 
-function gradE( LF, ∇2::SparseMatrixCSC{Float64,Int64}, Vpot, v::Array{Float64,2} )
+function calc_grad( LF, ∇2::SparseMatrixCSC{Float64,Int64}, Vpot, v::Array{Float64,2} )
   Npoints = size(Vpot)[1]
   Ncol = size(v)[2]
   ΔV = LF.LFx.h * LF.LFy.h * LF.LFz.h

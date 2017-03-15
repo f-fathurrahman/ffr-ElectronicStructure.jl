@@ -9,7 +9,7 @@ include("EnergiesT.jl")
 include("op_nabla2.jl")
 include("op_H.jl")
 include("calc_Energies.jl")
-include("gradE.jl")
+include("calc_grad.jl")
 
 function test_grad()
   # LF parameters
@@ -41,7 +41,7 @@ function test_grad()
     v[i,i] = 1.0/sqrt(ΔV)
   end
 
-  grad = gradE( LF, Vpot, v )
+  grad = calc_grad( LF, Vpot, v )
   println(sum(grad))
 
   Energies = calc_Energies( LF, Vpot, v)

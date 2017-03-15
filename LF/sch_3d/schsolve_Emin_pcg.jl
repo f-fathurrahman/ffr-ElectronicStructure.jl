@@ -34,7 +34,7 @@ function schsolve_Emin_pcg( LF::LF3dGrid,
   β = 0
   α = 0
   for iter = 1:Niter
-    g = gradE( LF, ∇2, Vpot, v )
+    g = calc_grad( LF, ∇2, Vpot, v )
     for ic = 1:Ncol
       Kg[:,ic] = apply_prec_ilu0( prec, g[:,ic] )
     end
@@ -49,7 +49,7 @@ function schsolve_Emin_pcg( LF::LF3dGrid,
     # compute gradient at trial step
     #
     v2 = orthonormalize(LF, v + α_t*d)
-    g_t = gradE( LF, ∇2, Vpot, v2 )
+    g_t = calc_grad( LF, ∇2, Vpot, v2 )
     #
     # compute estimate of best step and update current trial vectors
     #
