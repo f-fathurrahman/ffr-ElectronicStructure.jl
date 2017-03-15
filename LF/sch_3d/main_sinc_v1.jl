@@ -11,6 +11,7 @@ include("op_H.jl")
 include("calc_Energies.jl")
 include("calc_grad.jl")
 include("schsolve_Emin_cg.jl")
+include("schsolve_Emin_pcg.jl")
 include("calc_evals.jl")
 include("calc_rho.jl")
 include("../LF_common/sparse_LF3d.jl")
@@ -20,7 +21,7 @@ include("diag_lobpcg.jl")
 
 function test_main( ; method = "Emin_cg" )
   # LF parameters
-  NN = [40, 40, 40]
+  NN = [20, 20, 20]
   hh = [0.3, 0.3, 0.3]
 
   Npoints = prod(NN)
@@ -31,17 +32,19 @@ function test_main( ; method = "Emin_cg" )
 
   # Parameter for potential
   center = [0.0, 0.0, 0.0]
-  # ω = 2.0
-  #Vpot = init_pot_harm_3d( LF, ω, center )
-  Vpot = init_pot_Hcoul( LF, center )
 
-  Ncols = 1
+  ω = 2.0
+  Vpot = init_pot_harm_3d( LF, ω, center )
+  Ncols = 4
+
+  #Vpot = init_pot_Hcoul( LF, center )
+  #Ncols = 1
 
   if method == "Emin_cg_sparse"
     #
     ∇2 = get_Laplacian3d_kron(LF)
     prec = prec_mkl_ilu0( -0.5*∇2 + spdiagm(Vpot) )
-    Energies, evecs = schsolve_Emin_cg( LF, ∇2, prec, Vpot, Ncols, verbose=true )
+    Energies, evecs = schsolve_Emin_pcg( LF, ∇2, prec, Vpot, Ncols, verbose=true )
     evals = calc_evals( LF, Vpot, evecs )
     #
   elseif method == "diag_lobpcg"
@@ -75,4 +78,3 @@ end
 @time test_main(method="Emin_cg_sparse")
 #@time test_main(method="diag_lobpcg")
 #@time test_main(method="Emin_cg")
-
