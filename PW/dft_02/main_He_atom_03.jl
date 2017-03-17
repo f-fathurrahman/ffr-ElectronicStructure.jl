@@ -1,4 +1,4 @@
-include("../common/PWGrid_v02.jl")
+include("../common/PWGrid_v03.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
 
@@ -21,23 +21,21 @@ include("gen_rho.jl")
 include("gen_dr.jl")
 include("calc_ewald.jl")
 
-include("diag_lobpcg.jl")
-include("kssolve_scf.jl")
-
-
-function test_main( Ns )
+function test_main( ecutwfc_Ry::Float64 )
 
   const LatVecs = 16.0*diagm( ones(3) )
 
-  pw = PWGrid( Ns, LatVecs )
+  pw = PWGrid( 0.5*ecutwfc_Ry, LatVecs )
 
   const Ω  = pw.Ω
   const r  = pw.r
   const G  = pw.gvec.G
   const G2 = pw.gvec.G2
+  const Ns = pw.Ns
   const Npoints = prod(Ns)
   const Ngwx = pw.gvecw.Ngwx
 
+  @printf("ecutwfc (Ha) = %f\n", ecutwfc_Ry*0.5)
   @printf("Ns   = (%d,%d,%d)\n", Ns[1], Ns[2], Ns[3])
   @printf("Ngwx = %d\n", Ngwx)
 
@@ -45,42 +43,32 @@ function test_main( Ns )
   const theor = 1/(4*pi*0.25^3/3)
   @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
+  # He atom
+  const Zatm = 2;
+  const Nstates = 1
+  const Focc = [2.0]
+
   Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
 
   Sf = structure_factor( Xpos, G )
 
   E_nn = calc_ewald( pw, Xpos, Sf )
 
-  # Set up potential, using HGH pseudopotential for H
-  # contains only local pseudopotential
-  const Zion = 1.0
-  const rloc = 0.2
-  const c1 = -4.180237
-  const c2 = 0.725075
   Vg = zeros(Complex128,Npoints)
-  pre1 = -4*pi*Zion/Ω
-  pre2 = sqrt(8*pi^3)*rloc^3/Ω
-  #
+  prefactor = -4*pi*Zatm/Ω
   for ig=2:Npoints
-    Gr = sqrt(G2[ig])*rloc
-    expGr2 = exp(-0.5*Gr^2)
-    Vg[ig] = pre1/G2[ig]*expGr2 + pre2*expGr2 * (c1 + c2*(3-Gr^2) )
+    Vg[ig] = prefactor/G2[ig]
   end
-  Vg[1] = 2*pi*rloc^2 + (2*pi)^1.5 * rloc^3 * (c1 + 3.0*c2) # limiting value
   V_ionic = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
 
-  #
-  const Nstates = 1
-  Focc = [1.0]
 
   psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
+  #
   Y = ortho_gram_schmidt(psi)
   mu = Y' * op_H( pw, Potentials, Y )
   evals, evecs = eig(mu)
   psi = Y*evecs
-
-  #Energies, Potentials, psi, evals = kssolve_scf( pw, V_ionic, Focc, Nstates )
 
   for st = 1:Nstates
     @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
@@ -91,5 +79,5 @@ function test_main( Ns )
 
 end
 
-@code_native test_main( [64,64,64] )
-@time test_main( [64,64,64] )
+@code_native test_main(1.0)
+@time test_main( 100.0 )

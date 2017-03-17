@@ -56,16 +56,6 @@ function test_main( ecutwfc_Ry::Float64 )
   end
   V_ionic = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
 
-  println("sum(Sf) = $(sum(Sf))")
-  println("sum(Vg) = $(sum(Vg))")
-  println("sum(V_ionic) = $(sum(V_ionic))")
-  for ip = 1:10
-    @printf("%8d %18.10f\n", ip, V_ionic[ip])
-  end
-  @printf("Ω = %f\n", Ω)
-  @printf("maximum(Vpot) = %18.10f\n", maximum(V_ionic))
-  @printf("minimum(Vpot) = %18.10f\n", minimum(V_ionic))
-
   #
   const Nstates = 1
   Focc = [1.0]
