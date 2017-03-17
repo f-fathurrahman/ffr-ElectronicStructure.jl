@@ -1,5 +1,3 @@
-include("PrintMatrix.jl")
-
 type PsPot_HGH
   itype::Int
   atsymb::ASCIIString
@@ -9,14 +7,15 @@ type PsPot_HGH
   rloc::Float64
   rc::Array{Float64}   # indexed (l+1), l=0,1,2,3
   c::Array{Float64}    # indexed 1,2,3,4
-  h::Array{Float64,3}  # indexed [0:3,1:3,1:3]
+  h::Array{Float64,3}  # originally indexed [0:3,1:3,1:3]
   k::Array{Float64,3}  # indexed [0:3,1:3,1:3]
 end
 
 
+# Constructor
 function PsPot_HGH( itype, atsymb, filename )
 
-  # Default values
+  # Initialze with default values
   psp = PsPot_HGH( itype, atsymb, 0.0, 0, 0, 0.0, zeros(Float64,4), zeros(Float64,4),
                    zeros(Float64, 4,3,3), zeros(Float64, 4,3,3) )
 
@@ -126,24 +125,19 @@ function PsPot_HGH( itype, atsymb, filename )
     end
   end
 
+  return psp
+end
+
+
+function info_PsPot_HGH( psp::PsPot_HGH )
+
+  const ANGMOM = ["s", "p", "d", "f"]
+
   @printf("rloc: %f, c: %f, %f, %f, %f\n", psp.rloc, psp.c[1], psp.c[2], psp.c[3], psp.c[4])
   for k=1:4
     @printf("Angular momentum: %s, rc = %f\n", ANGMOM[k], psp.rc[k])
     @printf("h = \n")
     PrintMatrix( reshape(psp.h[k,:,:],(3,3) ) )
-    #@printf("k = \n")
-    #PrintMatrix( reshape(psp.k[k,:,:],(3,3) ) )
   end
 
-  return psp
 end
-
-
-function test_main()
-  #psp1 = PsPot_HGH(1, "H" , "LDA_HGH/1h.1.hgh")
-  #psp2 = PsPot_HGH(2, "Ti", "LDA_HGH/22ti.12.hgh")
-  #psp3 = PsPot_HGH(3, "Sm", "LDA_HGH/62sm.16.hgh")
-  psp4 = PsPot_HGH(4, "Pt", "LDA_HGH/78pt.18.hgh")
-end
-
-test_main()
