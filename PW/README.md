@@ -35,6 +35,9 @@ Electronic structure calculation using plane wave basis set.
 
 - Directory `sch_02` contains similar test programs as `sch_01` does. The main
   difference is that `sch_02` uses `PWGrid_v02.jl` and `PWGrid_v03.jl`.
+  In `PWGrid_v02`, plane wave basis is generated using similar arguments
+  as `PWGrid_v01`, while in `PWGrid_v03` a cut off energy (in Ha) is used
+  instead.
 
 - Directory `sch_03` several test programs that solve Schrodinger equation with
   k-points using iterative diagonalization method. *Energy minimization method is
