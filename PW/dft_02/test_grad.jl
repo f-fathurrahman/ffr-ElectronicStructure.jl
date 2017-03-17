@@ -6,10 +6,10 @@ include("EnergiesT.jl")
 include("PotentialsT.jl")
 include("gen_dr.jl")
 include("init_pot_harm_3d.jl")
-include("apply_K.jl")
-include("apply_V_loc.jl")
-include("apply_H.jl")
-include("gradE.jl")
+include("op_K.jl")
+include("op_V_loc.jl")
+include("op_H.jl")
+include("calc_grad.jl")
 include("calc_rho.jl")
 include("solve_poisson.jl")
 include("LDA_VWN.jl")
@@ -47,7 +47,7 @@ function ∇E( pw::PWGrid, Potentials, Focc, W::Array{Complex128,2} )
   grad = zeros( Complex128, Ngwx, Nstates )
 
   F = diagm(Focc)
-  HW = apply_H( pw, Potentials, W )
+  HW = op_H( pw, Potentials, W )
 
   U = W' * W
   U_sqrt = sqrtm( inv(U) )
@@ -127,7 +127,7 @@ function test_main( Ns )
   Potentials.Hartree = real( G_to_R( Ns, solve_poisson(pw, rho) ) )
   Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
 
-  grad2 = gradE( pw, Potentials, Focc, psi )
+  grad2 = calc_grad( pw, Potentials, Focc, psi )
 
   grad1 = ∇E( pw, Potentials, Focc, psi )
 

@@ -1,4 +1,4 @@
-function apply_V_loc( pw::PWGrid, V_loc, psi::Array{Complex128,2} )
+function op_V_loc( pw::PWGrid, V_loc, psi::Array{Complex128,2} )
   #
   Ns = pw.Ns
   Ω  = pw.Ω

@@ -29,7 +29,7 @@ function kssolve_Emin_sd( pw::PWGrid, V_ionic, Focc, Nstates::Int;
   Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0 )
 
   for iter = 1:NiterMax
-    psi = psi - α_t*gradE( pw, Potentials, Focc, psi )
+    psi = psi - α_t*calc_grad( pw, Potentials, Focc, psi )
 
     psi = ortho_gram_schmidt(psi)
 

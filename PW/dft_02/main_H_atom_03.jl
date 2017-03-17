@@ -4,11 +4,11 @@ include("../common/wrappers_fft.jl")
 
 include("EnergiesT.jl")
 include("PotentialsT.jl")
-include("apply_K.jl")
-include("apply_V_loc.jl")
-include("apply_H.jl")
+include("op_K.jl")
+include("op_V_loc.jl")
+include("op_H.jl")
 include("calc_rho.jl")
-include("gradE.jl")
+include("calc_grad.jl")
 include("calc_Energies.jl")
 include("kssolve_Emin_sd.jl")
 include("kssolve_Emin_cg.jl")
@@ -73,7 +73,7 @@ function test_main( ecutwfc_Ry::Float64 )
 
   #
   Y = ortho_gram_schmidt(psi)
-  mu = Y' * apply_H( pw, Potentials, Y )
+  mu = Y' * op_H( pw, Potentials, Y )
   evals, evecs = eig(mu)
   psi = Y*evecs
 

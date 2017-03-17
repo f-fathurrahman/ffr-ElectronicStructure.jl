@@ -1,4 +1,4 @@
-function gradE( pw::PWGrid, Potentials, Focc, psi::Array{Complex128,2} )
+function calc_grad( pw::PWGrid, Potentials, Focc, psi::Array{Complex128,2} )
 
   Ngwx    = size(psi)[1]
   Nstates = size(psi)[2]
@@ -7,7 +7,7 @@ function gradE( pw::PWGrid, Potentials, Focc, psi::Array{Complex128,2} )
   #
   grad = zeros( Complex128, Ngwx, Nstates )
 
-  H_psi = apply_H( pw, Potentials, psi )
+  H_psi = op_H( pw, Potentials, psi )
   for i = 1:Nstates
     grad[:,i] = H_psi[:,i]
     for j = 1:Nstates

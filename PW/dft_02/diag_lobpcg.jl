@@ -10,7 +10,7 @@ function diag_lobpcg( pw::PWGrid, Potentials, X0;
   # orthonormalize the initial wave functions.
   X = ortho_gram_schmidt(X0)  # normalize (again)
 
-  HX = apply_H( pw, Potentials, X )
+  HX = op_H( pw, Potentials, X )
 
   nconv = 0
   iter = 1
@@ -49,7 +49,7 @@ function diag_lobpcg( pw::PWGrid, Potentials, X0;
     #
     # nlock == 0
     #
-    HW = apply_H( pw, Potentials, W )
+    HW = op_H( pw, Potentials, W )
     #
     C  = W'*W
     C = ( C + C' )/2
