@@ -16,9 +16,9 @@ include("solve_poisson.jl")
 include("LDA_VWN.jl")
 include("Kprec.jl")
 
-include("../common/calc_strfact_v1.jl")
 include("../common/gen_dr_center.jl")
-include("../common/calc_ewald_v1.jl")
+include("../common/calc_strfact_v2.jl")
+include("../common/calc_ewald_v2.jl")
 
 include("diag_lobpcg.jl")
 include("kssolve_scf.jl")

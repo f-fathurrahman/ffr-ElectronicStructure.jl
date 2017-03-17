@@ -18,8 +18,8 @@ include("LDA_VWN.jl")
 include("Kprec.jl")
 
 include("../common/gen_dr_center.jl")
-include("../common/calc_strfact_v1.jl")
-include("../common/calc_ewald_v1.jl")
+include("../common/calc_strfact_v2.jl")
+include("../common/calc_ewald_v2.jl")
 
 function test_main( ecutwfc_Ry::Float64 )
 

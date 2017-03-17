@@ -16,10 +16,9 @@ include("solve_poisson.jl")
 include("LDA_VWN.jl")
 include("Kprec.jl")
 
-include("structure_factor.jl")
-include("gen_rho.jl")
+include("calc_strfact_v1.jl")
 include("gen_dr.jl")
-include("calc_ewald.jl")
+include("calc_ewald_v1.jl")
 
 include("diag_lobpcg.jl")
 include("kssolve_scf.jl")
@@ -47,7 +46,7 @@ function test_main( Ns )
 
   Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
 
-  Sf = structure_factor( Xpos, G )
+  Sf = calc_strfact( Xpos, G )
 
   E_nn = calc_ewald( pw, Xpos, Sf )
 

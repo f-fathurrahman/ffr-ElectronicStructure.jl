@@ -2,6 +2,12 @@
 An implementation of simple method to calculate Ewald energy
 """
 function calc_ewald( pw::PWGrid, Xpos, Sf; sigma=0.25 )
+
+  @printf("\n***************************************************************\n")
+  @printf("Calculating Ewald energy.\n")
+  @printf("WARNING: This function should be called only for hydrogen atom.\n")
+  @printf("***************************************************************\n")
+
   #
   const Ω  = pw.Ω
   const r  = pw.r
@@ -32,4 +38,20 @@ function calc_ewald( pw::PWGrid, Xpos, Sf; sigma=0.25 )
   E_nn = Ehartree - Eself
   #@printf("Ehartree, Eself, E_nn = %20.16f %20.16f %20.16f\n", Ehartree, Eself, E_nn)
   return E_nn
+end
+
+
+function gen_rho( Ns, dr, sigma, Sf )
+  Npoints = size(dr)[1]
+  g1 = Array( Float64, Npoints )
+  c1 = 2*sigma^2
+  cc1 = sqrt(2*pi*sigma^2)^3
+  for ip=1:Npoints
+    g1[ip] = exp(-dr[ip]^2/c1)/cc1
+  end
+  ctmp = R_to_G(Ns,g1)
+  for ip=1:Npoints
+    ctmp[ip] = ctmp[ip]*Sf[ip]
+  end
+  return real(G_to_R(Ns,ctmp))
 end
