@@ -6,9 +6,12 @@ include("basfun.jl")
 include("overlap.jl")
 include("kinetic.jl")
 include("nuclear.jl")
+#include("pyquante.jl")
 
 test_pgbf()
 test_cgbf()
 test_kinetic()
 
 test_fgamma()
+test_one()
+test_na2()

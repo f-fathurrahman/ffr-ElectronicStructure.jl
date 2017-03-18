@@ -1,12 +1,11 @@
-# coding: utf-8
 """
-# PyQuante in Julia
+PyQuante in Julia
 Experimenting with writing quantum chemistry in Julia
 
 """
 
 """
-## Two electron integrals
+Two electron integrals
 """
 
 function coulomb(aexpn::Float64,ax::Float64,ay::Float64,az::Float64,
