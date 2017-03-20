@@ -15,3 +15,6 @@ test_kinetic()
 test_fgamma()
 test_one()
 test_na2()
+
+include("two_el.jl")
+test_two_terms()
