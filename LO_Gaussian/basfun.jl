@@ -3,7 +3,7 @@
 # things flattened as much as possible (to be as fast as possible, I guess). Curlys
 # preserve the list structure the way I would expect from Python
 
-const sto3g = {
+const sto3g = Any[
   # H
   [('S',
     [(3.4252509099999999, 0.15432897000000001),
@@ -118,8 +118,8 @@ const sto3g = {
      [(8.2463151000000003, 0.15591627),
     (1.9162661999999999, 0.60768372000000004),
       (0.62322929999999999, 0.39195739000000002)])]
-}
-const basis_set_data = {"sto3g" => sto3g};
+]
+const basis_set_data = Dict{Any,Any}("sto3g" => sto3g);
 
 
 # ## Basis function definitions
@@ -258,8 +258,8 @@ function build_basis(mol::Molecule,name="sto3g")
   return basis_set
 end
 
-const sym2power = {
+const sym2power = Dict{Any,Any}(
   'S' => [(0,0,0)],
   'P' => [(1,0,0),(0,1,0),(0,0,1)],
   'D' => [(2,0,0),(0,2,0),(0,0,2),(1,1,0),(1,0,1),(0,1,1)]
-  }
+  )

@@ -18,3 +18,6 @@ test_na2()
 
 include("two_el.jl")
 test_two_terms()
+test_coul1()
+test_vrr()
+test_hrr()
