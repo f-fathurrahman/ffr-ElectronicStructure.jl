@@ -141,3 +141,100 @@ function info_PsPot_HGH( psp::PsPot_HGH )
   end
 
 end
+
+# Evaluate HGH projector function in G-space
+function eval_HGH_proj_G( psp, l, iproj, G, Ω )
+
+  # G is magnitude of G-vectors
+  Ng = size(G)[1]
+
+  Vprj = zeros(Ng)
+
+  rrl = psp.rc[l+1]
+
+  # s-channel
+  if l == 0
+
+    if iproj==1
+
+      for ig = 1:Ng
+        Gr2 = ( G[ig]*rrl )^2
+        Vprj[ig] = exp( -0.5*Gr2 )
+      end
+
+    elseif iproj==2
+
+      for ig = 1:Ng
+        Gr2 = ( G[ig]*rrl )^2
+        Vprj[ig] = 2.0/sqrt(15.0) * exp( -0.5*Gr2 ) * ( 3.0 - Gr2 )
+      end
+
+    elseif iproj==3
+
+      for ig = 1:Ng
+        Gr2 = ( G[ig]*rrl )^2
+        Vprj[ig] = (4.0/3.0)/sqrt(105.0) * exp( -0.5*Gr2 ) * (15.0 - 10.*Gr2 + Gr2^2)
+       end
+
+    end  # if iproj
+
+  # p-channel
+  elseif l == 1
+
+    if iproj == 1
+
+      for ig = 1:Ng
+        Gr2 = ( G[ig]*rrl )^2
+        Vprj[ig] = (1.0/sqrt(3.0)) * exp(-0.5*Gr2) * G[ig]
+      end
+
+    elseif iproj == 2
+
+      for ig = 1:Ng
+        Gr2 = (G[ig]*rrl)^2
+        Vprj[ig] = (2./sqrt(105.)) * exp(-0.5*Gr2) * G[ig]*(5. - Gr2)
+      end
+
+    elseif iproj == 3
+
+      for ig = 1:Ng
+        Gr2 = ( G[ig]*rrl)^2
+        Vprj[ig] = (4./3.)/sqrt(1155.) * exp(-0.5*Gr2) * G[ig] * (35. - 14.*Gr2 + Gr2^2)
+      end
+
+    end # if iproj
+
+  # d-channel
+  elseif l == 2
+
+    if iproj == 1
+
+      for ig = 1:Ng
+        Gr2 = ( G[ig]*rrl )^2
+        Vprj[ig] = (1.0/sqrt(15.0)) * exp(-0.5*Gr2) * G[ig]^2
+      end
+
+    elseif iproj == 2
+
+      for ig = 1:Ng
+        Gr2 = (G[ig]*rrl)^2
+        Vprj[ig] = (2./3.)/sqrt(105.) * exp(-0.5*Gr2) * G[ig]^2 * (7.-Gr2)
+      end
+
+    end # if iproj
+
+  # f-channel
+  elseif l == 3
+
+    for ig = 1:Ng
+      Gr2 = ( G[ig]*rrl )^2
+      Vprj[ig] = G[ig]^3 * exp(-0.5*Gr2)
+    end
+
+  end  # if l
+
+  pre =  4 * pi^(5./4.) * sqrt( 2.^(l+1) * rrl^(2*l+3) / Ω )
+
+  Vprj[:] = pre * Vprj[:]
+
+end
