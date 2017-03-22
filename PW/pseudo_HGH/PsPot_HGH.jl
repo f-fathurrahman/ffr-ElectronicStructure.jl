@@ -143,6 +143,35 @@ function info_PsPot_HGH( psp::PsPot_HGH )
 end
 
 # Evaluate HGH projector function in G-space
+function eval_HGH_Vloc_G( psp, G2, Ω )
+
+  Ng = size(G2)[1]
+  Vg = zeros(Ng)
+
+  rloc = psp.rloc
+  zval = psp.zval
+  c1 = psp.c[1]
+  c2 = psp.c[2]
+  c3 = psp.c[3]
+  c4 = psp.c[4]
+
+  pre1 = -4*pi*zval/Ω
+  pre2 = sqrt(8*pi^3)*rloc^3/Ω
+  #
+  for ig=2:Ng
+    Gr = sqrt(G2[ig])*rloc
+    expGr2 = exp(-0.5*Gr^2)
+    Vg[ig] = pre1/G2[ig]*expGr2 + pre2*expGr2 * (c1 + c2*(3-Gr^2) +
+             c3*(15 - 10*Gr^2 + Gr^4) + c4*(105 - 105*Gr^2 + 21*Gr^4 - Gr^6) )
+  end
+  # limiting value, with minus sign ?
+  #Vg[1] = - (2*pi*zval*rloc^2 + (2*pi)^1.5 * rloc^3 * (c1 + 3.0*c2 + 15*c3 + 105*c4))
+
+  return Vg
+end
+
+
+# Evaluate HGH projector function in G-space
 function eval_HGH_proj_G( psp, l, iproj, G, Ω )
 
   # G is magnitude of G-vectors
@@ -236,5 +265,7 @@ function eval_HGH_proj_G( psp, l, iproj, G, Ω )
   pre =  4 * pi^(5./4.) * sqrt( 2.^(l+1) * rrl^(2*l+3) / Ω )
 
   Vprj[:] = pre * Vprj[:]
+
+  return Vprj
 
 end
