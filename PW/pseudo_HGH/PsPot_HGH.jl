@@ -165,7 +165,7 @@ function eval_HGH_Vloc_G( psp, G2, Ω )
              c3*(15 - 10*Gr^2 + Gr^4) + c4*(105 - 105*Gr^2 + 21*Gr^4 - Gr^6) )
   end
   # limiting value, with minus sign ?
-  #Vg[1] = - (2*pi*zval*rloc^2 + (2*pi)^1.5 * rloc^3 * (c1 + 3.0*c2 + 15*c3 + 105*c4))
+  Vg[1] = 2*pi*zval*rloc^2 + (2*pi)^1.5 * rloc^3 * (c1 + 3.0*c2 + 15*c3 + 105*c4)
 
   return Vg
 end
