@@ -14,11 +14,11 @@ function test_main( NN::Array{Int64} )
   BB = [16.0, 16.0, 16.0]
 
   # Initialize LF
-  LF = init_LF3d_c( NN, AA, BB, verbose=true )
+  LF = init_LF3d_p( NN, AA, BB, verbose=true )
 
   @printf("Using loop\n\n")
   @time Lx_v1 = build_nabla2_x(LF)
-  #println(Lx_v1)
+  println(Lx_v1)
 
   #@printf("Using Kronecker product directly")
   #@time Lx_v2 = LF.LFx.D2jl ⊗ speye(Ny) ⊗ speye(Nz)
@@ -67,4 +67,5 @@ function build_nabla2_x(LF)
 end
 
 
-test_main([90,100,100])
+test_main([3,3,5])
+
