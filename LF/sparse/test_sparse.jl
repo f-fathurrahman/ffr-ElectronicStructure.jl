@@ -16,12 +16,14 @@ function test_main( NN::Array{Int64} )
   # Initialize LF
   LF = init_LF3d_c( NN, AA, BB, verbose=true )
 
-  #@time Lx_v1 = build_nabla2_x(LF)
-  build_nabla2_x(LF)
+  @printf("Using loop\n\n")
+  @time Lx_v1 = build_nabla2_x(LF)
+  #println(Lx_v1)
 
+  #@printf("Using Kronecker product directly")
   #@time Lx_v2 = LF.LFx.D2jl ⊗ speye(Ny) ⊗ speye(Nz)
   #println(Lx_v1 - Lx_v2)
-  #println(Lx_v1)
+  #println(Lx_v2)
 
 end
 
@@ -34,30 +36,35 @@ function build_nabla2_x(LF)
 
   # initialize with
   rowval = [0]  # start with dummy value 0
-  colptr = [1]
+  colptr = zeros(Int64,Npoints+1)
+  colptr[1] = 1
   nzval = [0.0]  # start with dummy value 0.0
 
-  for jx=1:Nx
-    j = (jx-1)*Ny*Nz + 1
-    nnzc = 0
-    for ix=1:Nx
-      i = (ix-1)*Ny*Nz + 1
-      for dd = 1:Ny*Nz
-        nnzc = nnzc + 1
-        append!( rowval, [i+dd-1])
-        append!( nzval, [D2jl[ix,jx]] )
+  for colLoc = 1:Nx
+    colGbl_start = (colLoc-1)*(Ny*Nz)+1
+    colGbl_stop = colLoc*Ny*Nz
+    #println("")
+    #println("colGbl_start = ", colGbl_start)
+    #println("colGbl_stop  = ", colGbl_stop)
+    for colGbl = colGbl_start:colGbl_stop
+      for rowLoc = 1:Nx
+        rowGbl = (rowLoc-1)*Ny*Nz + colGbl - (colLoc-1)*Ny*Nz
+        #println(colLoc, " ", rowGbl)
+        append!( rowval, [rowGbl] )
+        append!( nzval, [D2jl[rowLoc,colLoc]] )
       end
-      append!( colptr, [colptr[end] + Nx])
+      colptr[colGbl+1] = colptr[colGbl] + Nx
     end
-  end
+  end # colLoc
+  @printf("Finished looping\n")
 
-  @printf("Converting to sparse matrix ..\n");
-  println(size(colptr))
-  println(rowval[2:end])
-  #return sparse( rows[2:end], cols[2:end], vals[2:end] )
-  #return SparseMatrixCSC( Npoints, Npoints, colptr, rowval[2:end], nzval[2:end] )
-  exit()
+
+  #println(size(rowval[2:end]))
+  #println(size(nzval[2:end]))
+  #println(size(colptr))
+  #println(colptr)
+  return SparseMatrixCSC( Npoints, Npoints, colptr, rowval[2:end], nzval[2:end] )
 end
 
 
-test_main([3,3,3])
+test_main([90,100,100])
