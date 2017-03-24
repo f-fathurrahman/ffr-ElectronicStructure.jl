@@ -1,5 +1,6 @@
 from sympy import *
 
+# TODO: Create variable programmatically
 Nx = 3
 # Symbols for matrix elements
 x_11, x_12, x_13 = symbols("x_11 x_12 x_13")
@@ -58,14 +59,34 @@ def do_kron( A, B ):
 
 tmp = do_kron(DDX,Iy)
 nablax = do_kron(tmp,Iz)
-#print(latex(nablax))
+print("")
+print("\\newpage")
+print("\\begin{equation*}")
+print(latex(nablax))
+print("\\end{equation*}")
+print("")
 
 tmp = do_kron(Ix,DDY)
 nablay = do_kron(tmp,Iz)
-#print(latex(nablay))
+print("")
+print("\\newpage")
+print("\\begin{equation*}")
+print(latex(nablay))
+print("\\end{equation*}")
+print("")
 
 tmp = do_kron(Ix,Iy)
 nablaz = do_kron(tmp,DDZ)
-#print(latex(nablaz))
+print("")
+print("\\newpage")
+print("\\begin{equation*}")
+print(latex(nablaz))
+print("\\end{equation*}")
+print("")
 
+print("")
+print("\\newpage")
+print("\\begin{equation*}")
 print(latex(nablax + nablay + nablaz))
+print("\\end{equation*}")
+print("")
