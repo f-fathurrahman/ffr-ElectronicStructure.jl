@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.11.14)  23 MAR 2017 21:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.11.14)  25 MAR 2017 00:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**Laplacia.tex
-(./Laplacia.tex
+**Laplacian.tex
+(./Laplacian.tex
 LaTeX2e <2016/02/01>
 Babel <3.9q> and hyphenation patterns for 81 language(s) loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -126,8 +126,8 @@ LaTeX Info: Redefining \] on input line 2736.
 LaTeX Warning: Unused global option(s):
     [a3paper,9pt].
 
-(./Laplacia.aux)
-\openout1 = `Laplacia.aux'.
+(./Laplacian.aux)
+\openout1 = `Laplacian.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 6.
 LaTeX Font Info:    ... okay on input line 6.
@@ -183,24 +183,29 @@ Package geometry Warning: The marginal notes overrun the paper.
 (./nabla_3_2_3.tex [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-[2]) [3] (./Laplacia.aux) ) 
+[2] [3]
+Overfull \hbox (490.01648pt too wide) detected at line 18
+ $[]$ 
+ []
+
+) [4] (./Laplacian.aux) ) 
 Here is how much of TeX's memory you used:
  1358 strings out of 493029
- 17121 string characters out of 6136233
- 96365 words of memory out of 5000000
+ 17130 string characters out of 6136233
+ 97365 words of memory out of 5000000
  4931 multiletter control sequences out of 15000+600000
  6140 words of font info for 23 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 27i,9n,24p,1647b,179s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/am
-sfonts/cmextra/cmex8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
-/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pf
-b>
-Output written on Laplacia.pdf (3 pages, 32355 bytes).
+ 27i,9n,24p,2242b,179s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cmextra/cmex8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb>
+
+Output written on Laplacian.pdf (4 pages, 33603 bytes).
 PDF statistics:
- 30 PDF objects out of 1000 (max. 8388607)
- 20 compressed objects within 1 object stream
+ 33 PDF objects out of 1000 (max. 8388607)
+ 22 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
