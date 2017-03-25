@@ -30,7 +30,7 @@ def do_kron( A, B ):
     return Z
 
 
-STR_START = """
+LATEX_START = """
 \\documentclass[fleqn,a3paper,9pt]{article}
 \\usepackage[a3paper]{geometry}
 \\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=2cm,rmargin=2cm}
@@ -43,12 +43,42 @@ STR_START = """
 {\\footnotesize
 """
 
-STR_END = """
+LATEX_END = """
 }
 \\end{document}
 """
 
-def do_latex( Nx, Ny, Nz ):
+HTML_START = """
+<!DOCTYPE html>
+<html>
+<head>
+<title>Laplacian Matrix</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {inlineMath: [["$","$"],]}
+  });
+</script>
+<script type="text/javascript"
+  src="/home/efefer/mysoftwares/MathJax-master/MathJax.js?config=TeX-AMS_HTML-full">
+</script>
+
+</head>
+<body>
+"""
+
+HTML_END = """
+</body>
+</html>
+"""
+
+
+# Create Laplacian matrix and its components
+def create_nabla2( Nx, Ny, Nz ):
 
     DDX = createMatrix( "x", Nx )
     DDY = createMatrix( "y", Ny )
@@ -60,43 +90,107 @@ def do_latex( Nx, Ny, Nz ):
     Iz = eye(Nz)
 
     tmp = do_kron(DDX,Iy)
-    nablax = do_kron(tmp,Iz)
-
-    print(STR_START)
-
-    print("")
-    print("\\newpage")
-    print("\\begin{equation*}")
-    print(latex(nablax))
-    print("\\end{equation*}")
-    print("")
+    nabla2x = do_kron(tmp,Iz)
 
     tmp = do_kron(Ix,DDY)
-    nablay = do_kron(tmp,Iz)
-    print("")
-    print("\\newpage")
-    print("\\begin{equation*}")
-    print(latex(nablay))
-    print("\\end{equation*}")
-    print("")
+    nabla2y = do_kron(tmp,Iz)
 
     tmp = do_kron(Ix,Iy)
-    nablaz = do_kron(tmp,DDZ)
-    print("")
-    print("\\newpage")
-    print("\\begin{equation*}")
-    print(latex(nablaz))
-    print("\\end{equation*}")
-    print("")
+    nabla2z = do_kron(tmp,DDZ)
 
-    print("")
-    print("\\newpage")
-    print("\\begin{equation*}")
-    print(latex(nablax + nablay + nablaz))
-    print("\\end{equation*}")
-    print("")
-
-    print(STR_END)
+    return nabla2x, nabla2y, nabla2z
 
 
-do_latex( 3, 3, 3 )
+
+
+
+def output_latex( Nx, Ny, Nz, nabla2x, nabla2y, nabla2z ):
+
+    filname = "Laplacian_" + str(Nx) + "_" + str(Ny) + "_" + str(Nz) + ".tex"
+
+    f = open(filname, "w")
+    f.writelines(LATEX_START)
+
+    f.write("\n")
+    f.write("\\newpage\n")
+    f.write("\\begin{equation*}\n")
+    f.write(latex(nabla2x))
+    f.write("\\end{equation*}\n")
+    f.write("\n")
+
+    f.write("\n")
+    f.write("\\newpage\n")
+    f.write("\\begin{equation*}\n")
+    f.write(latex(nabla2y))
+    f.write("\\end{equation*}\n")
+    f.write("\n")
+
+    f.write("\n")
+    f.write("\\newpage\n")
+    f.write("\\begin{equation*}\n")
+    f.write(latex(nabla2z))
+    f.write("\\end{equation*}\n")
+    f.write("\n")
+
+    f.write("\n")
+    f.write("\\newpage\n")
+    f.write("\\begin{equation*}\n")
+    f.write(latex(nabla2x + nabla2y + nabla2z))
+    f.write("\\end{equation*}\n")
+    f.write("\n")
+
+    f.writelines(LATEX_END)
+
+    f.close()
+
+def output_html( Nx, Ny, Nz, nabla2x, nabla2y, nabla2z ):
+
+    filname = "Laplacian_" + str(Nx) + "_" + str(Ny) + "_" + str(Nz) + ".html"
+
+    f = open(filname, "w")
+    f.writelines(HTML_START)
+
+    f.write("\n")
+    f.write("\\begin{equation*}\n")
+    f.write(latex(nabla2x))
+    f.write("\\end{equation*}\n")
+    f.write("\n")
+
+    f.write("\n")
+    f.write("\\begin{equation*}\n")
+    f.write(latex(nabla2y))
+    f.write("\\end{equation*}\n")
+    f.write("\n")
+
+    f.write("\n")
+    f.write("\\begin{equation*}\n")
+    f.write(latex(nabla2z))
+    f.write("\\end{equation*}\n")
+    f.write("\n")
+
+    f.write("\n")
+    f.write("\\begin{equation*}\n")
+    f.write(latex(nabla2x + nabla2y + nabla2z))
+    f.write("\\end{equation*}\n")
+    f.write("\n")
+
+    f.writelines(HTML_END)
+
+    f.close()
+
+
+
+import sys
+
+Nargs = len(sys.argv)
+
+if ( Nargs < 4 ):
+    print("Error: this script needs 3 integer numbers as arguments")
+    exit()
+
+Nx = int( sys.argv[1] )
+Ny = int( sys.argv[2] )
+Nz = int( sys.argv[3] )
+
+nablax, nablay, nablaz = create_nabla2( Nz, Ny, Nx )
+output_html( Nx, Ny, Nz, nablax, nablay, nablaz )
