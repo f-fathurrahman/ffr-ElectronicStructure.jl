@@ -14,15 +14,17 @@ function test_main( NN::Array{Int64} )
   BB = [16.0, 16.0, 16.0]
 
   # Initialize LF
-  LF = init_LF3d_p( NN, AA, BB, verbose=true )
+  LF = init_LF3d_c( NN, AA, BB, verbose=true )
 
-  @printf("Using loop\n\n")
+  @printf("Using loop")
   @time Lx_v1 = build_nabla2_x(LF)
-  println(Lx_v1)
+  #println(Lx_v1)
 
-  #@printf("Using Kronecker product directly")
-  #@time Lx_v2 = LF.LFx.D2jl ⊗ speye(Ny) ⊗ speye(Nz)
-  #println(Lx_v1 - Lx_v2)
+  @printf("Using Kronecker product directly")
+  @time Lx_v2 = LF.LFx.D2jl ⊗ speye(Ny) ⊗ speye(Nz)
+
+  # Check whether there are any differences between the two matrices
+  println(Lx_v1 - Lx_v2)
   #println(Lx_v2)
 
 end
@@ -35,11 +37,12 @@ function build_nabla2_x(LF)
   Npoints = Nx*Ny*Nz
 
   # initialize with
-  rowval = [0]  # start with dummy value 0
+  rowval = zeros(Int64,Nx*Npoints)
   colptr = zeros(Int64,Npoints+1)
   colptr[1] = 1
-  nzval = [0.0]  # start with dummy value 0.0
+  nzval = zeros(Float64,Nx*Npoints)
 
+  idx = 1
   for colLoc = 1:Nx
     colGbl_start = (colLoc-1)*(Ny*Nz)+1
     colGbl_stop = colLoc*Ny*Nz
@@ -49,23 +52,25 @@ function build_nabla2_x(LF)
     for colGbl = colGbl_start:colGbl_stop
       for rowLoc = 1:Nx
         rowGbl = (rowLoc-1)*Ny*Nz + colGbl - (colLoc-1)*Ny*Nz
+        rowval[idx] = rowGbl
+        nzval[idx] = D2jl[rowLoc,colLoc]
+        idx = idx + 1
         #println(colLoc, " ", rowGbl)
-        append!( rowval, [rowGbl] )
-        append!( nzval, [D2jl[rowLoc,colLoc]] )
+        #append!( rowval, [rowGbl] )
+        #append!( nzval, [D2jl[rowLoc,colLoc]] )
       end
       colptr[colGbl+1] = colptr[colGbl] + Nx
     end
   end # colLoc
-  @printf("Finished looping\n")
+  #@printf("Finished looping\n")
 
 
   #println(size(rowval[2:end]))
   #println(size(nzval[2:end]))
   #println(size(colptr))
   #println(colptr)
-  return SparseMatrixCSC( Npoints, Npoints, colptr, rowval[2:end], nzval[2:end] )
+  return SparseMatrixCSC( Npoints, Npoints, colptr, rowval, nzval )
 end
 
 
-test_main([3,3,5])
-
+test_main([65,65,65])
