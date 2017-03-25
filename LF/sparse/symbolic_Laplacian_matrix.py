@@ -192,5 +192,5 @@ Nx = int( sys.argv[1] )
 Ny = int( sys.argv[2] )
 Nz = int( sys.argv[3] )
 
-nablax, nablay, nablaz = create_nabla2( Nz, Ny, Nx )
+nablax, nablay, nablaz = create_nabla2( Nx, Ny, Nz )
 output_html( Nx, Ny, Nz, nablax, nablay, nablaz )
