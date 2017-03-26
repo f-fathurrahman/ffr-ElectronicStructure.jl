@@ -32,7 +32,6 @@ function build_nabla2_y(LF)
       colGbl_start = (colLoc-1)*Nz + 1 + (ix-1)*Ny*Nz
       colGbl_stop = colLoc*Nz + (ix-1)*Ny*Nz
       for colGbl = colGbl_start:colGbl_stop
-        #rowGbl[:] = rowGbl_init[:] + colGbl - 1 - (colLoc-1)*Nz - (ix-1)*Ny*Nz # shift
         for rowLoc = 1:Ny
           idx = idx + 1
           rowval[idx] = rowGbl_init[rowLoc] + colGbl - 1 - (colLoc-1)*Nz - (ix-1)*Ny*Nz
