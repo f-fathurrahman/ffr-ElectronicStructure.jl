@@ -6,7 +6,7 @@ include("build_nabla2_y.jl")
 
 const ⊗ = kron
 
-function test_main( NN::Array{Int64} )
+#function test_main( NN::Array{Int64} )
 
   println("NN = ", NN)
 
@@ -40,8 +40,8 @@ function test_main( NN::Array{Int64} )
   #print("Forming Laplacian:")
   #@time ∇2 = Lx_v2 + Ly_v2
 
-end
+#end
 
-@code_native test_main([3,3,3])
+#@code_native test_main([3,3,3])
 
-test_main( [80, 80, 80])
+#test_main( [4, 3, 3])

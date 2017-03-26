@@ -1,0 +1,25 @@
+Nx = 3
+Ny = 2
+Nz = 4
+
+Npoints = 24
+
+colGbl = 1 , x_colLoc = 1 , x_rowGbl = 1, 2, 3, 4
+colGbl = 1 , y_colLoc = 1 , y_rowGbl = 1, 5
+colGbl = 1 , z_colLoc = 1 , z_rowGbl = 1, 9, 17
+
+colGbl = 2 , z_colLoc = 2 , z_rowGbl = 1, 2, 3, 4
+colGbl = 2 , y_colLoc = 1 , y_rowGbl = 2, 6
+colGbl = 2 , x_colLoc = 1 , x_rowGbl = 2, 10, 18
+
+colGbl = 3 , z_colLoc = 3 , z_rowGbl = 1, 2, 3, 4
+colGbl = 3 , x_colLoc = 1 , x_rowGbl = 3, 11, 19
+colGbl = 3 , y_colLoc = 1 , y_rowGbl = 3, 7
+
+colGbl = 4 , z_colLoc = 4 , z_rowGbl = 1, 2, 3, 4
+colGbl = 4 , y_colLoc = 1 , y_rowGbl = 4, 8
+colGbl = 4 , x_colLoc = 1 , x_rowGbl = 4, 12, 20
+
+colGbl = 5 , z_colLoc = 1 , z_rowGbl = 5, 6, 7, 8
+colGbl = 5 , y_colLoc = 1 , y_rowGbl = 5, 9
+colGbl = 5 , x_colLoc = 1 , x_rowGbl = 5, 13, 21

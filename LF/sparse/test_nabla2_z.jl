@@ -1,7 +1,7 @@
 push!(LOAD_PATH, "../LF_common/")
 using m_LF3d
 include("../LF_common/sparse_LF3d.jl")
-include("build_nabla2_x.jl")
+include("build_nabla2_z.jl")
 
 const ⊗ = kron
 
@@ -18,16 +18,16 @@ function test_main( NN::Array{Int64} )
   LF = init_LF3d_c( NN, AA, BB, verbose=true )
 
   @printf("Using loop")
-  @time Lx_v1 = build_nabla2_x(LF)
-  #println(Lx_v1)
+  @time Lz_v1 = build_nabla2_z(LF)
+  #println(Lz_v1)
 
-  #@printf("Using Kronecker product directly")
-  #@time Lx_v2 = LF.LFx.D2jl ⊗ speye(Ny) ⊗ speye(Nz)
+  @printf("Using Kronecker product directly")
+  @time Lz_v2 = speye(Nx) ⊗ speye(Ny) ⊗ LF.LFz.D2jl
 
   # Check whether there are any differences between the two matrices
-  #println(Lx_v1 - Lx_v2)
-  #println(Lx_v2)
+  println(Lz_v1 - Lz_v2)
 
 end
 
-test_main([101,101,101])
+
+test_main([50,50,50])
