@@ -1,3 +1,5 @@
+
+# not efficient for large Nz
 function build_nabla2_z(LF)
 
   D2jl = LF.LFz.D2jl
@@ -19,7 +21,10 @@ function build_nabla2_z(LF)
 
   #print("\n")
   for ic = 1:Nx*Ny
-    for colLoc = 1:Nz
+    colGbl_start = (ic-1)*Nz + 1
+    colGbl_stop = ic*Nz
+    for colGbl = colGbl_start:colGbl_stop
+      colLoc = colGbl - (ic-1)*Nz
       for rowLoc = 1:Nz
         idx = idx + 1
         rowGbl = rowLoc + (ic-1)*Nz
