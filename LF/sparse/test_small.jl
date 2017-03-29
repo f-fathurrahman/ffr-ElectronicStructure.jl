@@ -36,9 +36,10 @@ function test_main( NN::Array{Int64} )
 
   #println(Lx_v2)
   #println(Ly_v2)
-  println( Lx_v2 + Ly_v2 )
+  println(Lz_v2)
+  println( Lx_v2 + Ly_v2 + Lz_v2 )
 
 end
 
-test_main( [5, 3, 5])
+test_main( [3, 3, 5])
 
