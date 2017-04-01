@@ -146,6 +146,16 @@ function test_main( NN::Array{Int64} )
 
   println( sum(Lx-Lx_v2) )
 
+  #plt.clf()
+  #plt.spy(full(nabla2))
+  #plt.title("nabla")
+  #plt.savefig("nabla2.pdf")
+
+  #plt.clf()
+  #plt.spy(full(nabla2_v2))
+  #plt.title("nabla_v2")
+  #plt.savefig("nabla2_v2.pdf")
+
 end
 
 
