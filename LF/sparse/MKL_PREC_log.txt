@@ -1,0 +1,10 @@
+
+------------------------------------------------------------------------------
+Intel MKL DCSRILU0 ERROR: 
+Cannot proceed with calculations as input
+matrix column indexes are not in increasing order.
+
+------------------------------------------------------------------------------
+Intel MKL DCSRILU0 ERROR: 
+Cannot proceed with calculations as input
+matrix column indexes are not in increasing order.
