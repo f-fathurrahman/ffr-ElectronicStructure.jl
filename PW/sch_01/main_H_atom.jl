@@ -79,5 +79,5 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
 
 end
 
-@time test_main( 100,100,100 )
+@time test_main( 64,64,64 )
 

@@ -23,9 +23,9 @@ function Sch_solve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
     Kg = Kprec(pw,g)
     if iter != 1
       #β = real(sum(conj(g).*Kg))/real(sum(conj(g_old).*Kg_old))
-      #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g_old).*Kg_old))
+      β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g_old).*Kg_old))
       #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g-g_old).*d_old))
-      β = real(sum(conj(g).*Kg))/real(sum(conj(g-g_old).*d_old))
+      #β = real(sum(conj(g).*Kg))/real(sum(conj(g-g_old).*d_old))
     end
     d = -Kg + β * d_old
     psic = ortho_gram_schmidt(psi + α_t*d)
