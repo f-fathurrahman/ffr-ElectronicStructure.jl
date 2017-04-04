@@ -1,7 +1,7 @@
-function calc_rho( pw_grid::PWGrid, psi::Array{Complex128,2} )
-  Ω = pw_grid.Ω
-  Ns = pw_grid.Ns
-  Npoints = pw_grid.Npoints
+function calc_rho( pw::PWGrid, psi::Array{Complex128,2} )
+  Ω = pw.Ω
+  Ns = pw.Ns
+  Npoints = pw.Npoints
   Nstates = size(psi)[2]
   #
   ρ = zeros(Complex128,Npoints)

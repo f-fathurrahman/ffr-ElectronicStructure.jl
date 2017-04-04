@@ -1,42 +1,46 @@
-function Sch_solve_Emin_cg( pw_grid::PWGrid, Vpot, psi::Array{Complex128,2};
+function Sch_solve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
                             NiterMax=1000 )
   #
   Npoints = size(psi)[1]
   Nstates = size(psi)[2]
   d = zeros(Complex128, Npoints, Nstates)
-  g_old = zeros(Complex128, Npoints, Nstates)
-  d_old = zeros(Complex128, Npoints, Nstates)
+  g_old  = zeros(Complex128, Npoints, Nstates)
+  d_old  = zeros(Complex128, Npoints, Nstates)
+  Kg     = zeros(Complex128, Npoints, Nstates)
+  Kg_old = zeros(Complex128, Npoints, Nstates)
   #
-  alphat = 1.e-5
-  beta = 0.0
+  α_t = 1.e-5
+  β = 0.0
   Etot_old = 0.0
   Etot = 0.0
   #
   for iter = 1:NiterMax
-    g = calc_grad( pw_grid, Vpot,  psi)
+    g = calc_grad( pw, Vpot,  psi)
     nrm = 0.0
     for is = 1:Nstates
       nrm = nrm + real( dot( g[:,is], g[:,is] ) )
     end
+    Kg = Kprec(pw,g)
     if iter != 1
-      beta = real(trace(g'*Kprec(pw_grid,g)))/real(trace(g_old'*Kprec(pw_grid,g_old)))
-      #beta = real(trace((g-g_old)'*Kprec(pw_grid,g)))/real(trace(g_old'*Kprec(pw_grid,g_old)))
-      #beta = real(trace((g-g_old)'*Kprec(pw_grid,g)))/real(trace((g-g_old)'*d))
-      #@printf("\nbeta = %f\n", beta)
+      #β = real(sum(conj(g).*Kg))/real(sum(conj(g_old).*Kg_old))
+      #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g_old).*Kg_old))
+      #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g-g_old).*d_old))
+      β = real(sum(conj(g).*Kg))/real(sum(conj(g-g_old).*d_old))
     end
-    d = -Kprec(pw_grid, g) + beta * d_old
-    psic = ortho_gram_schmidt(psi + alphat*d)
-    gt = calc_grad( pw_grid, Vpot, psic )
-    if real(trace((g-gt)'*d)) != 0.0
-      alpha = abs(alphat*real(trace(g'*d))/real(trace((g-gt)'*d)))
+    d = -Kg + β * d_old
+    psic = ortho_gram_schmidt(psi + α_t*d)
+    gt = calc_grad( pw, Vpot, psic )
+    denum = real(sum(conj(g-gt).*d))
+    if denum != 0.0
+      α = abs(α_t*real(sum(conj(g).*d))/denum)
     else
-      alpha = 0.0
+      α = 0.0
     end
     # Update wavefunction
-    psi = psi[:,:] + alpha*d[:,:]
+    psi = psi[:,:] + α*d[:,:]
 
     psi = ortho_gram_schmidt(psi)
-    Etot = calc_Etot( pw_grid, Vpot, psi )
+    Etot = calc_Etot( pw, Vpot, psi )
 
     diff = abs(Etot-Etot_old)
     @printf("E step %8d = %18.10f %18.10f %18.10f\n", iter, Etot, diff, nrm/Nstates)
@@ -46,6 +50,7 @@ function Sch_solve_Emin_cg( pw_grid::PWGrid, Vpot, psi::Array{Complex128,2};
     end
     g_old = copy(g)
     d_old = copy(d)
+    Kg_old = copy(Kg)
     Etot_old = Etot
   end
   return psi, Etot

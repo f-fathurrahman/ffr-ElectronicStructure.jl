@@ -15,8 +15,5 @@ function calc_Etot( pw::PWGrid, Vpot, psi::Array{Complex128,2} )
   Epot = dot( rho, Vpot ) * Ω/Npoints
 
   Etot = Ekin + Epot
-  #println(Ekin)
-  #println(Epot)
-  #println(Etot)
   return Etot
 end

@@ -1,3 +1,3 @@
-function op_H( pw_grid, Vpot, psi )
-  return op_K( pw_grid, psi ) + op_Vpot( pw_grid, Vpot, psi )
+function op_H( pw, Vpot, psi )
+  return op_K( pw, psi ) + op_Vpot( pw, Vpot, psi )
 end
