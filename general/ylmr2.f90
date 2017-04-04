@@ -52,6 +52,7 @@ subroutine ylmr2 (lmax2, ng, g, gg, ylm)
   !  theta and phi are polar angles, cost = cos(theta)
   !
   allocate(cost(ng), sent(ng), phi(ng), Q(ng,0:lmax,0:lmax) )
+  Q(:,:,:) = 0.d0 ! ffr
   !
 
   do ig = 1, ng
@@ -72,6 +73,7 @@ subroutine ylmr2 (lmax2, ng, g, gg, ylm)
         phi (ig) = sign( pi/2.d0,g(2,ig) )
      end if
      sent(ig) = sqrt(max(0d0,1.d0-cost(ig)**2))
+     write(*,'(1x,I5,3F18.10)') ig, phi(ig), cost(ig), sent(ig)
   enddo
   !
   !  Q(:,l,m) are defined as sqrt ((l-m)!/(l+m)!) * P(:,l,m) where
@@ -95,10 +97,12 @@ subroutine ylmr2 (lmax2, ng, g, gg, ylm)
         !  recursion on l for Q(:,l,m)
         !
         do m = 0, l - 2
+           write(*,*) 'Enter this ....'
            do ig = 1, ng
               Q(ig,l,m) = cost(ig)*(2*l-1)/sqrt(DBLE(l*l-m*m))*Q(ig,l-1,m) &
                        - sqrt(DBLE((l-1)*(l-1)-m*m))/sqrt(DBLE(l*l-m*m))*Q(ig,l-2,m)
            end do
+           write(*,*) 'sum(Q) = ', sum(Q(:,l,m))
         end do
         do ig = 1, ng
            Q(ig,l,l-1) = cost(ig) * sqrt(DBLE(2*l-1)) * Q(ig,l-1,l-1)
