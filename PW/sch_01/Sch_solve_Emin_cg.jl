@@ -1,5 +1,5 @@
-function schsolve_Emin_cg( pw_grid::PWGrid, Vpot, psi::Array{Complex128,2};
-                           NiterMax=1000 )
+function Sch_solve_Emin_cg( pw_grid::PWGrid, Vpot, psi::Array{Complex128,2};
+                            NiterMax=1000 )
   #
   Npoints = size(psi)[1]
   Nstates = size(psi)[2]

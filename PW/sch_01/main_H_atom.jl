@@ -10,8 +10,8 @@ include("calc_Etot.jl")
 include("Kprec.jl")
 include("diag_lobpcg.jl")
 include("calc_grad.jl")
-include("schsolve_Emin_sd.jl")
-include("schsolve_Emin_cg.jl")
+include("Sch_solve_Emin_sd.jl")
+include("Sch_solve_Emin_cg.jl")
 include("structure_factor.jl")
 
 include("gen_rho.jl")
@@ -62,8 +62,8 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
   #
   #evals, evecs = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
 
-  psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
-  psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
+  psi, Etot = Sch_solve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
+  psi, Etot = Sch_solve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
   #
   Y = ortho_gram_schmidt(psi)
   mu = Y' * op_H( pw, Vpot, Y )
@@ -80,3 +80,4 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
 end
 
 @time test_main( 100,100,100 )
+
