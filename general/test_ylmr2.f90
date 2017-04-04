@@ -9,7 +9,7 @@ PROGRAM test_ylmr2
   INTEGER :: lmaxkb, lm
 
   Ng = 5
-  lmaxkb = 2
+  lmaxkb = 3
   lmax2 = (lmaxkb+1)**2
 
   WRITE(*,*) 'lmax2 = ', lmax2
@@ -19,7 +19,7 @@ PROGRAM test_ylmr2
   ALLOCATE( ylm(Ng,lmax2) )
 
   DO ig = 1, Ng
-    G(:,ig) = (/ 1.3d0, 1.1d0, 2.1d0 /)*(ig-1)
+    G(:,ig) = (/ 0.0d0, 0.d0, 0.0d0 /)
     GG(ig) = G(1,ig)**2 + G(2,ig)**2 + G(3,ig)**2
   ENDDO 
   
@@ -27,9 +27,9 @@ PROGRAM test_ylmr2
 
   DO lm = 1,lmax2
     WRITE(*,*)
-    WRITE(*,*) 'lm = ', lm
+    WRITE(*,'(A,I5)') 'lm = ', lm
     DO ig = 1,Ng
-      WRITE(*,'(1x,I5,F18.10)') ig, ylm(ig,lm)
+      WRITE(*,'(I5,F18.10)') ig, ylm(ig,lm)
     ENDDO 
   ENDDO 
 

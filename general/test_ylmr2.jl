@@ -4,12 +4,12 @@ include("ylmr2.jl")
 function test_main()
 
   Ng = 5
-  lmax = 2
+  lmax = 3
 
   Gvec = zeros(3,Ng)
 
   for ig = 1:Ng
-    Gvec[:,ig] = [1.3, 1.1, 2.1]*ig
+    Gvec[:,ig] = [0.0, 0.0, 0.0]
   end
 
   ylm = ylmr2( lmax, Gvec )
