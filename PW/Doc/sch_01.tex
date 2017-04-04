@@ -1,0 +1,229 @@
+\section{Solving Schrodinger equation}
+
+\subsection{Operators}
+
+Kinetic energy operators (multicolumns):
+
+\begin{juliacode}
+function op_K( pw::PWGrid, psi::Array{Complex128,2} )
+  out = zeros(Complex128,size(psi))
+  Ncol = size(psi,2)
+  Ω = pw.Ω
+  G2 = pw.G2
+  Npoints = pw.Npoints
+  for is = 1:Ncol
+    for ip = 1:Npoints
+      out[ip,is] = psi[ip,is]*G2[ip]
+    end
+  end
+  return 0.5*out
+end
+\end{juliacode}
+
+Applying potential
+
+\begin{juliacode}
+function op_Vpot( pw::PWGrid, Vpot, psi::Array{Complex128,2} )
+  Ns = pw.Ns
+  Ω = pw.Ω
+  Npoints = prod(Ns)
+  # get values of psi in real space grid via forward transform
+  ctmp = G_to_R( Ns, psi )
+  return R_to_G( Ns, Diagprod(Vpot, ctmp) )
+end
+\end{juliacode}
+
+Function {\tt Diagprod}:
+
+\begin{juliacode}
+function Diagprod( a,B )
+  Ncol    = size(B)[2]
+  Npoints = size(B)[1]
+  out = zeros( Complex128, size(B) )
+  for ic = 1:Ncol
+    for ip = 1:Npoints
+      out[ip,ic] = a[ip]*B[ip,ic]
+    end
+  end
+  return out
+end
+\end{juliacode}
+
+Hamiltonian operator:
+
+\begin{juliacode}
+function op_H( pw, Vpot, psi )
+  return op_K( pw, psi ) + op_Vpot( pw, Vpot, psi )
+end
+\end{juliacode}
+
+
+\subsection{Gradient calculation}
+
+Gradient of energy with respect to wave function
+
+Not using occupation number
+
+\begin{juliacode}
+function calc_grad( pw::PWGrid, Vpot, psi::Array{Complex128,2} )
+  Npoints = size(psi)[1]
+  Nstates = size(psi)[2]
+  Ω = pw.Ω
+  Ns = pw.Ns
+  #
+  grad = zeros( Complex128, Npoints, Nstates )
+  H_psi = op_H( pw, Vpot, psi )
+  for i = 1:Nstates
+    grad[:,i] = H_psi[:,i]
+    for j = 1:Nstates
+      grad[:,i] = grad[:,i] - dot( psi[:,j], H_psi[:,i] ) * psi[:,j]
+    end
+  end
+  return grad
+end
+\end{juliacode}
+
+
+
+\subsection{Calculation of charge density}
+
+\begin{juliacode}
+function calc_rho( pw::PWGrid, psi::Array{Complex128,2} )
+  Ω = pw.Ω
+  Ns = pw.Ns
+  Npoints = pw.Npoints
+  Nstates = size(psi)[2]
+  #
+  ρ = zeros(Complex128,Npoints)
+  # Transform to real space
+  psiR = G_to_R(Ns,psi)
+  # orthonormalization in real space
+  ortho_gram_schmidt!(Nstates,psiR); scale!(sqrt(Npoints/Ω),psiR)
+  for is = 1:Nstates
+    for ip = 1:Npoints
+      ρ[ip] = ρ[ip] + conj(psiR[ip,is])*psiR[ip,is]
+    end
+  end
+  return real(ρ)
+end
+\end{juliacode}
+
+
+\subsection{Calculation of total energy}
+
+
+\begin{juliacode}
+function calc_Etot( pw::PWGrid, Vpot, psi::Array{Complex128,2} )
+  Ω = pw.Ω
+  Npoints = pw.Npoints
+  Nstates = size(psi)[2]
+  Kpsi = op_K( pw, psi )
+  Ekin = 0.0
+  for is = 1:Nstates
+    Ekin = Ekin + real( dot( psi[:,is], Kpsi[:,is] ) )
+  end
+  # Calculate in real space
+  rho = calc_rho( pw, psi )
+  Epot = dot( rho, Vpot ) * Ω/Npoints
+  Etot = Ekin + Epot
+  return Etot
+end
+\end{juliacode}
+
+
+\subsection{Energy minimization with steepest descent}
+
+\begin{juliacode}
+function Sch_solve_Emin_sd( pw::PWGrid, Vpot, psi::Array{Complex128,2};
+                            NiterMax=1000 )
+  α = 3e-5
+  Etot_old = 0.0
+  Etot = 0.0
+  for iter = 1:NiterMax
+    psi = psi - α*calc_grad( pw, Vpot, psi )
+    psi  = ortho_gram_schmidt(psi)
+    Etot = calc_Etot( pw, Vpot, psi )
+    conv = abs(Etot-Etot_old)
+    if conv < 1e-6
+      break
+    end
+    Etot_old = Etot
+  end
+  return psi, Etot
+end
+\end{juliacode}
+
+
+\subsection{Energy minimization with conjugate gradient}
+
+\begin{juliacode}
+function Sch_solve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
+                            NiterMax=1000 )
+  #
+  Npoints = size(psi)[1]
+  Nstates = size(psi)[2]
+  d = zeros(Complex128, Npoints, Nstates)
+  g_old  = zeros(Complex128, Npoints, Nstates)
+  d_old  = zeros(Complex128, Npoints, Nstates)
+  Kg     = zeros(Complex128, Npoints, Nstates)
+  Kg_old = zeros(Complex128, Npoints, Nstates)
+  #
+  α_t = 1.e-5
+  β = 0.0
+  Etot_old = 0.0
+  Etot = 0.0
+  #
+  for iter = 1:NiterMax
+    g = calc_grad( pw, Vpot,  psi)
+    nrm = 0.0
+    for is = 1:Nstates
+      nrm = nrm + real( dot( g[:,is], g[:,is] ) )
+    end
+    Kg = Kprec(pw,g)
+    if iter != 1
+      β = real( sum( conj(g) .* Kg ) ) / real( sum( conj(g_old) .* Kg_old ) )
+    end
+    d = -Kg + β * d_old
+    psic = ortho_gram_schmidt(psi + α_t*d)
+    gt = calc_grad( pw, Vpot, psic )
+    denum = real(sum(conj(g-gt).*d))
+    if denum != 0.0
+      α = abs(α_t*real(sum(conj(g).*d))/denum)
+    else
+      α = 0.0
+    end
+    # Update wavefunction
+    psi = psi[:,:] + α*d[:,:]
+    psi = ortho_gram_schmidt(psi)
+    Etot = calc_Etot( pw, Vpot, psi )
+    diff = abs(Etot-Etot_old)
+    @printf("E step %8d = %18.10f %18.10f %18.10f\n", iter, Etot, diff, nrm/Nstates)
+    if diff < 1e-6
+      @printf("CONVERGENCE ACHIEVED\n")
+      break
+    end
+    g_old = copy(g)
+    d_old = copy(d)
+    Kg_old = copy(Kg)
+    Etot_old = Etot
+  end
+  return psi, Etot
+end
+\end{juliacode}
+
+
+{\color{red}
+Using energy minimization:
+
+Introduction to minimization
+
+simple 2D minimization, using steepest-descent and conjugate gradient
+method
+
+Using iterative diagonalization: Davidson and LOBPCG
+
+background information about iterative diagonalization
+
+Eigenvalue problems
+
+}

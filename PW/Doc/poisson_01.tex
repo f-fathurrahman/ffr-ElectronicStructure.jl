@@ -1,9 +1,19 @@
 \section{Solving Poisson equation}
 
 Poisson equation is relatively easy to solve in periodic
-boundary condition using Fourier method (FFT). This is different
+boundary condition using Fourier method (FFT). This situtation is different
 from other discretization method, such as finite difference or Lagrange
 function.
+
+Poisson equation in $\mathbf{G}$-space:
+\begin{equation}
+-G^2 \tilde{V}_{\mathrm{Ha}}(\mathbf{G}) = -4\pi \tilde{\rho}(\mathbf{G})
+\end{equation}
+
+Hartree potential can be solve directly, for $\mathbf{G} \neq \mathbf{0}$:
+\begin{equation}
+\tilde{V}_{\mathrm{Ha}}(\mathbf{G}) = \frac{4\pi\tilde{\rho}(\mathbf{G})}{G^2}
+\end{equation}
 
 An example a program to solve Poisson equation is given in directory
 {\tt poisson\_01}. In this program, a charge density is constructed
@@ -12,7 +22,8 @@ from difference between two Gaussian charge density. Total charge
 From this charge density, we calculate the electrostatic (Hartree) potential
 by solving Poisson equation.
 
-Function to generate vector \verb|dr|:
+Function to generate vector {\tt dr}:
+
 \begin{juliacode}
 function gen_dr( r, center )
   Npoints = size(r)[2]
@@ -29,6 +40,7 @@ end
 
 
 Function to generate charge density:
+
 \begin{juliacode}
 function gen_rho( dr, σ1, σ2 )
   Npoints = size(dr)[1]
@@ -47,6 +59,7 @@ end
 \end{juliacode}
 
 Function to solve Poisson equation:
+
 \begin{juliacode}
 function solve_poisson( pw_grid::PWGrid, rho )
   Ω  = pw_grid.Ω

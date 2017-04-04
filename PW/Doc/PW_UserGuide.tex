@@ -23,8 +23,8 @@
 \usepackage{amsmath}
 
 \usepackage{minted}
-%\newminted{julia}{breaklines,fontsize=\footnotesize}
-\newminted{julia}{breaklines}
+\newminted{julia}{breaklines,fontsize=\footnotesize}
+%\newminted{julia}{breaklines}
 
 \definecolor{mintedbg}{rgb}{0.95,0.95,0.95}
 \usepackage{mdframed}
@@ -46,17 +46,18 @@
 
 \chapter{Solving Poisson and Schrodinger equation}
 
-In this chapter, three basics ingredients for our density functional
-theory calculations:
+
 \begin{enumerate}
 \item plane wave basis set
 \item solving Poisson equation
 \item solving Schrodinger equation
+\item solving Kohn-Sham equations
 \end{enumerate}
 
 \input{pwgrid_01}
-\input{poisson}
-\input{sch}
+\input{poisson_01}
+\input{ewald_01}
+\input{sch_01}
 
 \input{formulae}
 
