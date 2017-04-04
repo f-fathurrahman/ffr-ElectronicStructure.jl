@@ -1,4 +1,4 @@
-function solve_poisson( pw_grid::PWGrid, rho )
+function Poisson_solve( pw_grid::PWGrid, rho )
   #
   Ω  = pw_grid.Ω
   G2 = pw_grid.G2

@@ -4,7 +4,7 @@ include("../common/wrappers_fft.jl")
 
 include("gen_dr.jl")
 include("gen_rho.jl")
-include("solve_poisson.jl")
+include("Poisson_solve.jl")
 
 function test_main()
   #
@@ -31,7 +31,7 @@ function test_main()
   #
   # Solve Poisson equation and calculate Hartree energy
   #
-  phi = solve_poisson( pw, rho )
+  phi = Poisson_solve( pw, rho )
   Ehartree = 0.5*dot( phi, rho ) * Ω/Npoints
   #
   Uanal = ( (1/σ1 + 1/σ2)/2 - sqrt(2) / sqrt( σ1^2 + σ2^2 ) ) / sqrt(pi)
