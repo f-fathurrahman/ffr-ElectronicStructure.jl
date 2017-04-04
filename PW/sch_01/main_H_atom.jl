@@ -21,7 +21,7 @@ include("calc_ewald.jl")
 function test_main( ns1::Int,ns2::Int,ns3::Int )
 
   Ns = [ns1,ns2,ns3]
-  const LatVecs = 50.0*diagm( ones(3) )
+  const LatVecs = 16.0*diagm( ones(3) )
 
   pw = PWGrid( Ns, LatVecs )
 
@@ -80,4 +80,3 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
 end
 
 @time test_main( 64,64,64 )
-
