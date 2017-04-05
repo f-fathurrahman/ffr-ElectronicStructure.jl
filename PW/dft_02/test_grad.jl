@@ -11,7 +11,7 @@ include("op_V_loc.jl")
 include("op_H.jl")
 include("calc_grad.jl")
 include("calc_rho.jl")
-include("solve_poisson.jl")
+include("Poisson_solve.jl")
 include("LDA_VWN.jl")
 
 function printMatrix( A::Array{Complex128,2} )
@@ -124,7 +124,7 @@ function test_main( Ns )
 
   Potentials = PotentialsT( V_ionic, zeros(Npoints), zeros(Npoints) )
   rho = calc_rho( pw, Focc, psi )
-  Potentials.Hartree = real( G_to_R( Ns, solve_poisson(pw, rho) ) )
+  Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
   Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
 
   grad2 = calc_grad( pw, Potentials, Focc, psi )

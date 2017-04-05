@@ -11,9 +11,9 @@ include("op_H.jl")
 include("calc_rho.jl")
 include("calc_grad.jl")
 include("calc_Energies.jl")
-include("kssolve_Emin_sd.jl")
-include("kssolve_Emin_cg.jl")
-include("solve_poisson.jl")
+include("KS_solve_Emin_sd.jl")
+include("KS_solve_Emin_cg.jl")
+include("Poisson_solve.jl")
 include("LDA_VWN.jl")
 include("Kprec.jl")
 
@@ -22,7 +22,7 @@ include("../common/calc_strfact_v2.jl")
 include("../common/calc_ewald_v2.jl")
 
 include("diag_lobpcg.jl")
-include("kssolve_scf.jl")
+include("KS_solve_scf.jl")
 
 
 function test_main( Ns, xx )
@@ -37,13 +37,6 @@ function test_main( Ns, xx )
   const G2 = pw.gvec.G2
   const Npoints = prod(Ns)
   const Ngwx = pw.gvecw.Ngwx
-
-  #@printf("Ns   = (%d,%d,%d)\n", Ns[1], Ns[2], Ns[3])
-  #@printf("Ngwx = %d\n", Ngwx)
-
-  #const actual = Npoints/Ngwx
-  #const theor = 1/(4*pi*0.25^3/3)
-  #@printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
   Xpos = zeros( 3, 2 )
   Xpos[:,1] = [0.0, 0.0, 0.0]
@@ -78,14 +71,14 @@ function test_main( Ns, xx )
   const Nstates = 1
   Focc = [2.0]
 
-  #psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
-  #Y = ortho_gram_schmidt(psi)
-  #mu = Y' * op_H( pw, Potentials, Y )
-  #evals, evecs = eig(mu)
-  #psi = Y*evecs
+  Y = ortho_gram_schmidt(psi)
+  mu = Y' * op_H( pw, Potentials, Y )
+  evals, evecs = eig(mu)
+  psi = Y*evecs
 
-  Energies, Potentials, psi, evals = kssolve_scf( pw, V_ionic, Focc, Nstates )
+  #Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates )
 
   for st = 1:Nstates
     @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
@@ -97,8 +90,8 @@ function test_main( Ns, xx )
 end
 
 
-#@time test_main( [64,64,64], 1.5 )
+@time test_main( [64,64,64], 1.5 )
 
-for xx in [0.5, 1.0, 1.25, 1.50, 1.75, 2.0, 4.0, 6.0]
-  test_main( [64,64,64], xx )
-end
+#for xx in [0.5, 1.0, 1.25, 1.50, 1.75, 2.0, 4.0, 6.0]
+#  test_main( [64,64,64], xx )
+#end

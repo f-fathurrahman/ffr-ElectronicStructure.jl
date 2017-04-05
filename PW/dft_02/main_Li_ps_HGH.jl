@@ -10,9 +10,9 @@ include("op_H.jl")
 include("calc_rho.jl")
 include("calc_grad.jl")
 include("calc_Energies.jl")
-include("kssolve_Emin_sd.jl")
-include("kssolve_Emin_cg.jl")
-include("solve_poisson.jl")
+include("KS_solve_Emin_sd.jl")
+include("KS_solve_Emin_cg.jl")
+include("Poisson_solve.jl")
 include("LDA_VWN.jl")
 include("Kprec.jl")
 
@@ -21,7 +21,7 @@ include("../common/calc_strfact_v2.jl")
 include("../common/calc_ewald_v2.jl")
 
 include("diag_lobpcg.jl")
-include("kssolve_scf.jl")
+include("KS_solve_scf.jl")
 
 
 function test_main( Ns )
@@ -47,7 +47,7 @@ function test_main( Ns )
   # Helium atom
   Zion = 3.0
   const Nstates = 2
-  Focc = [2.0, 1.0]
+  Focc = [2.0, 1.0]    # FIXME: Probably gradient calculation for this is not implemented yet
 
   Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
 
@@ -80,15 +80,15 @@ function test_main( Ns )
   # We simply need reshape because we only have one species type here.
   V_ionic = reshape( V_ionic, (Npoints) )
 
-  #psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
-  #Y = ortho_gram_schmidt(psi)
-  #mu = Y' * op_H( pw, Potentials, Y )
-  #evals, evecs = eig(mu)
-  #psi = Y*evecs
+  Y = ortho_gram_schmidt(psi)
+  mu = Y' * op_H( pw, Potentials, Y )
+  evals, evecs = eig(mu)
+  psi = Y*evecs
 
-  @printf("Solution by self-consistent field method\n")
-  Energies, Potentials, psi, evals = kssolve_scf( pw, V_ionic, Focc, Nstates )
+  #@printf("Solution by self-consistent field method\n")
+  #Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates, β=0.3 )
 
   for st = 1:Nstates
     @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
@@ -100,4 +100,4 @@ function test_main( Ns )
 end
 
 @time test_main( [64,64,64] )
-@time test_main( [100,100,100] )
+#@time test_main( [100,100,100] )

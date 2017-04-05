@@ -1,6 +1,6 @@
-function kssolve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
-                         psi0=nothing, Potentials0 = nothing,
-                         α_t = 3e-5, NiterMax=1000, verbose=false )
+function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
+                           psi0=nothing, Potentials0 = nothing,
+                           α_t = 3e-5, NiterMax=1000, verbose=false )
 
   Ns = pw.Ns
   Npoints = prod(Ns)
@@ -17,7 +17,7 @@ function kssolve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
   if Potentials0 == nothing
     Potentials = PotentialsT( V_ionic, zeros(Npoints), zeros(Npoints) )
     rho = calc_rho( pw, Focc, psi )
-    Potentials.Hartree = real( G_to_R( Ns, solve_poisson(pw, rho) ) )
+    Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
     Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
   else
     Potentials = PotentialsT( Potentials0.Ionic,
@@ -28,10 +28,10 @@ function kssolve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
   d = zeros(Complex128, Ngwx, Nstates)
   g_old = zeros(Complex128, Ngwx, Nstates)
   d_old = zeros(Complex128, Ngwx, Nstates)
+  Kg = zeros(Complex128, Ngwx, Nstates)
+  Kg_old = zeros(Complex128, Ngwx, Nstates)
 
-  try_Potentials = PotentialsT( V_ionic, zeros(Npoints), zeros(Npoints) )
-
-  beta     = 0.0
+  β        = 0.0
   Etot_old = 0.0
   Etot     = 0.0
   Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0 )
@@ -39,27 +39,26 @@ function kssolve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
   for iter = 1:NiterMax
 
     g = calc_grad( pw, Potentials, Focc, psi)
-    nrm = 0.0
-    for is = 1:Nstates
-      nrm = nrm + real( dot( g[:,is], g[:,is] ) )
-    end
+    Kg = Kprec(pw,g)
+
     if iter != 1
-      beta = real(trace(g'*Kprec(pw,g)))/real(trace(g_old'*Kprec(pw,g_old)))
-      #beta = real(trace((g-g_old)'*Kprec(pw,g)))/real(trace(g_old'*Kprec(pw,g_old)))
-      #beta = real(trace((g-g_old)'*Kprec(pw,g)))/real(trace((g-g_old)'*d))
-      #@printf("\nbeta = %f\n", beta)
+      β = real(sum(conj(g).*Kg))/real(sum(conj(g_old).*Kg_old))
+      #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g_old).*Kg_old))
+      #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g-g_old).*d))
+      #β = real(sum(conj(g).*Kg))/real(sum((g-g_old).*conj(d_old)))
     end
 
-    d = -Kprec(pw, g) + beta * d_old
+    d = -Kprec(pw, g) + β * d_old
 
     psic = ortho_gram_schmidt(psi + α_t*d)
     rho = calc_rho( pw, Focc, psic )
-    try_Potentials.Hartree = real( G_to_R( Ns, solve_poisson(pw, rho) ) )
-    try_Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
-    gt = calc_grad( pw, try_Potentials, Focc, psic )
+    Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
+    Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
+    gt = calc_grad( pw, Potentials, Focc, psic )
 
-    if real(trace((g-gt)'*d)) != 0.0
-      α = abs( α_t*real(trace(g'*d))/real(trace((g-gt)'*d)))
+    denum = real(sum(conj(g-gt).*d))
+    if denum != 0.0
+      α = abs( α_t*real(sum(conj(g).*d))/denum )
     else
       α = 0.0
     end
@@ -71,14 +70,14 @@ function kssolve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
     psi = ortho_gram_schmidt(psi)
     rho = calc_rho( pw, Focc, psi )
 
-    Potentials.Hartree = real( G_to_R( Ns, solve_poisson(pw, rho) ) )
+    Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
     Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
 
     Energies = calc_Energies( pw, Potentials, Focc, psi )
     Etot = Energies.Total
 
     diff = abs(Etot-Etot_old)
-    @printf("CG step %8d = %18.10f %18.10f %18.10f\n", iter, Etot, diff, nrm/Nstates)
+    @printf("CG step %8d = %18.10f %18.10f\n", iter, Etot, diff)
     if diff < 1e-6
       @printf("CONVERGENCE ACHIEVED\n")
       break
@@ -86,6 +85,7 @@ function kssolve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 
     g_old = copy(g)
     d_old = copy(d)
+    Kg_old = copy(Kg)
     Etot_old = Etot
   end
   return psi, Energies, Potentials

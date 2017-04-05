@@ -10,9 +10,9 @@ include("op_H.jl")
 include("calc_rho.jl")
 include("calc_grad.jl")
 include("calc_Energies.jl")
-include("kssolve_Emin_sd.jl")
-include("kssolve_Emin_cg.jl")
-include("solve_poisson.jl")
+include("KS_solve_Emin_sd.jl")
+include("KS_solve_Emin_cg.jl")
+include("Poisson_solve.jl")
 include("LDA_VWN.jl")
 include("Kprec.jl")
 
@@ -58,7 +58,7 @@ function test_main( ecutwfc_Ry::Float64 )
   #
   const Nstates = 1
   Focc = [1.0]
-  psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
   #
   Y = ortho_gram_schmidt(psi)

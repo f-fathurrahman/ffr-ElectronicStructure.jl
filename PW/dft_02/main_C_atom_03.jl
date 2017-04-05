@@ -10,9 +10,9 @@ include("op_H.jl")
 include("calc_rho.jl")
 include("calc_grad.jl")
 include("calc_Energies.jl")
-include("kssolve_Emin_sd.jl")
-include("kssolve_Emin_cg.jl")
-include("solve_poisson.jl")
+include("KS_solve_Emin_sd.jl")
+include("KS_solve_Emin_cg.jl")
+include("Poisson_solve.jl")
 include("LDA_VWN.jl")
 include("Kprec.jl")
 
@@ -21,7 +21,7 @@ include("../common/calc_strfact_v2.jl")
 include("../common/calc_ewald_v2.jl")
 
 include("diag_lobpcg.jl")
-include("kssolve_scf.jl")d
+include("KS_solve_scf.jl")d
 
 function test_main( ecutwfc_Ry::Float64 )
 
@@ -66,7 +66,7 @@ function test_main( ecutwfc_Ry::Float64 )
   # We simply need reshape because we only have one species type here.
   V_ionic = reshape( V_ionic, (Npoints) )
 
-  #psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
   #
   #Y = ortho_gram_schmidt(psi)
@@ -75,7 +75,7 @@ function test_main( ecutwfc_Ry::Float64 )
   #psi = Y*evecs
 
   @printf("Solution by self-consistent field method\n")
-  Energies, Potentials, psi, evals = kssolve_scf( pw, V_ionic, Focc, Nstates )
+  Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates )
 
   #for st = 1:Nstates
   #  @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))

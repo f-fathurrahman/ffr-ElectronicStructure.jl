@@ -19,7 +19,7 @@ function calc_Energies( PW::PWGrid, Potentials, Focc::Array{Float64},
   # Compute rho
   rho = calc_rho( PW, Focc, psi )
 
-  V_Hartree = real(G_to_R( Ns, solve_poisson( PW, rho ) )) # 4*pi factor is handled in solve_poisson
+  V_Hartree = real(G_to_R( Ns, Poisson_solve( PW, rho ) )) # 4*pi factor is handled in Poisson_solve
   E_Hartree = 0.5*dot( V_Hartree, rho ) * Ω/Npoints
 
   E_xc = dot( excVWN(rho), rho ) * Ω/Npoints

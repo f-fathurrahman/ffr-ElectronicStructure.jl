@@ -1,10 +1,10 @@
-function kssolve_scf( pw::PWGrid,
-                      V_ionic, Focc, Ncols::Int64;
-                      β = 0.5,
-                      rho0 = nothing,
-                      Potentials0 = nothing,
-                      NiterMax=100,
-                      verbose=false )
+function KS_solve_scf( pw::PWGrid,
+                       V_ionic, Focc, Ncols::Int64;
+                       β = 0.5,
+                       rho0 = nothing,
+                       Potentials0 = nothing,
+                       NiterMax=100,
+                       verbose=false )
 
   Ngwx = pw.gvecw.Ngwx
   Ns = pw.Ns
@@ -26,7 +26,7 @@ function kssolve_scf( pw::PWGrid,
   # starting Potentials
   if Potentials0 == nothing
     # initialize potential: Ionic, Hartree, XC
-    V_Hartree = real( G_to_R( Ns, solve_poisson(pw, rho) ) )
+    V_Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
     V_xc = excVWN( rho ) + rho .* excpVWN( rho )
     Potentials = PotentialsT( V_ionic, V_Hartree, V_xc )
   else
@@ -67,7 +67,7 @@ function kssolve_scf( pw::PWGrid,
     #@printf("integRho = %18.10f\n", integRho)
 
     #
-    V_Hartree = real( G_to_R( Ns, solve_poisson(pw, rho) ) )
+    V_Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
     V_xc = excVWN( rho ) + rho .* excpVWN( rho )
     Potentials = PotentialsT( V_ionic, V_Hartree, V_xc )
   end

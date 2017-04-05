@@ -30,9 +30,6 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
   Kg     = zeros(Complex128, Npoints, Nstates)
   Kg_old = zeros(Complex128, Npoints, Nstates)
 
-  # ????
-  #try_Potentials = PotentialsT( V_ionic, zeros(Npoints), zeros(Npoints) )
-
   β     = 0.0
   Etot_old = 0.0
   Etot     = 0.0

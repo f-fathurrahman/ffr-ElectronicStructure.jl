@@ -11,9 +11,9 @@ include("op_H.jl")
 include("calc_rho.jl")
 include("calc_grad.jl")
 include("calc_Energies.jl")
-include("kssolve_Emin_sd.jl")
-include("kssolve_Emin_cg.jl")
-include("solve_poisson.jl")
+include("KS_solve_Emin_sd.jl")
+include("KS_solve_Emin_cg.jl")
+include("Poisson_solve.jl")
 include("LDA_VWN.jl")
 include("Kprec.jl")
 
@@ -22,7 +22,7 @@ include("../common/calc_strfact_v2.jl")
 include("../common/calc_ewald_v2.jl")
 
 include("diag_lobpcg.jl")
-include("kssolve_scf.jl")
+include("KS_solve_scf.jl")
 
 function test_main( Ns )
 
@@ -88,8 +88,8 @@ function test_main( Ns )
   const Nstates = 4
   Focc = [2.0, 2/3, 2/3, 2/3]
 
-  #psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates,
-  #psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates,
+  #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
   #                            NiterMax=1000, Potentials0=Potentials, psi0=psi )
 
   #Y = ortho_gram_schmidt(psi)
@@ -97,7 +97,7 @@ function test_main( Ns )
   #evals, evecs = eig(mu)
   #psi = Y*evecs
 
-  Energies, Potentials, psi, evals = kssolve_scf( pw, V_ionic, Focc, Nstates, β=0.7 )
+  Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates, β=0.7 )
 
   for st = 1:Nstates
     @printf("=== State # %4d, Energy = %18.10f ===\n", st, real(evals[st]))
