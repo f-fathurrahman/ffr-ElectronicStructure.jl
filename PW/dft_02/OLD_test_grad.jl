@@ -50,15 +50,15 @@ function ∇E( pw::PWGrid, Potentials, Focc, W::Array{Complex128,2} )
   F = diagm(Focc)
   HW = op_H( pw, Potentials, W )
 
-  U = W' * W
-  U_sqrt = sqrtm( inv(U) )
+  #U = W' * W
+  #U_sqrt = sqrtm( inv(U) )
 
   # BbbH
-  ℍ = U_sqrt * W' * HW * U_sqrt
+  #ℍ = U_sqrt * W' * HW * U_sqrt
   ℍ = W' * HW
 
-  printMatrix(U)
-  println("\nU_sqrt = "); printMatrix(U_sqrt)
+  #printMatrix(U)
+  #println("\nU_sqrt = "); printMatrix(U_sqrt)
 
   HFH = ℍ*F - F*ℍ
 
@@ -66,17 +66,17 @@ function ∇E( pw::PWGrid, Potentials, Focc, W::Array{Complex128,2} )
   println("\nℍ*F - F*ℍ ="); printMatrix(HFH)
 
   # Calculation of Q
-  mu, V = eig(U)
-  denom = sqrt(mu)*ones(1,length(mu))
-  denom = denom + denom'
+  #mu, V = eig(U)
+  #denom = sqrt(mu)*ones(1,length(mu))
+  #denom = denom + denom'
   denom = ones(Nstates,Nstates)*2.0
 
-  ℚ = V * ( ( V' * HFH * V ) ./ denom ) * V'
+  #ℚ = V * ( ( V' * HFH * V ) ./ denom ) * V'
   ℚ = HFH ./ denom
 
-  println("mu = "); println(mu)
-  println("V = "); printMatrix(V)
-  println("denom = "); printMatrix(denom)
+  #println("mu = "); println(mu)
+  #println("V = "); printMatrix(V)
+  #println("denom = "); printMatrix(denom)
   println("ℚ = "); printMatrix(ℚ)
 
   grad = (HW - W * W'*HW)*F + W*ℚ
@@ -112,7 +112,7 @@ function test_main( Ns )
   #
   const Nstates = 4
   #Focc = 2.0*ones(Nstates)
-  Focc = [2.1, 1, 1, 1.1]
+  Focc = [2.0, 1, 1, 1]
 
   srand(1234)
   psi = randn(Ngwx,Nstates) + im*randn(Ngwx,Nstates)
@@ -132,4 +132,4 @@ function test_main( Ns )
 
 end
 
-test_main( [30,30,30] )
+test_main( [64, 64, 64] )

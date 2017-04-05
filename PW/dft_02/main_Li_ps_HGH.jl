@@ -8,7 +8,7 @@ include("op_K.jl")
 include("op_V_loc.jl")
 include("op_H.jl")
 include("calc_rho.jl")
-include("calc_grad.jl")
+include("calc_grad_v2.jl")
 include("calc_Energies.jl")
 include("KS_solve_Emin_sd.jl")
 include("KS_solve_Emin_cg.jl")
@@ -80,15 +80,15 @@ function test_main( Ns )
   # We simply need reshape because we only have one species type here.
   V_ionic = reshape( V_ionic, (Npoints) )
 
-  psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
-  Y = ortho_gram_schmidt(psi)
-  mu = Y' * op_H( pw, Potentials, Y )
-  evals, evecs = eig(mu)
-  psi = Y*evecs
+  #Y = ortho_gram_schmidt(psi)
+  #mu = Y' * op_H( pw, Potentials, Y )
+  #evals, evecs = eig(mu)
+  #psi = Y*evecs
 
-  #@printf("Solution by self-consistent field method\n")
-  #Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates, β=0.3 )
+  @printf("Solution by self-consistent field method\n")
+  Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates, β=0.3 )
 
   for st = 1:Nstates
     @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))

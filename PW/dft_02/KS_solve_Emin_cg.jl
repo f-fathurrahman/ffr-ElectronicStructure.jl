@@ -42,8 +42,8 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
     Kg = Kprec(pw,g)
 
     if iter != 1
-      β = real(sum(conj(g).*Kg))/real(sum(conj(g_old).*Kg_old))
-      #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g_old).*Kg_old))
+      #β = real(sum(conj(g).*Kg))/real(sum(conj(g_old).*Kg_old))
+      β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g_old).*Kg_old))
       #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g-g_old).*d))
       #β = real(sum(conj(g).*Kg))/real(sum((g-g_old).*conj(d_old)))
     end
