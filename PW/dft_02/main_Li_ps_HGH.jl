@@ -80,18 +80,18 @@ function test_main( Ns )
   # We simply need reshape because we only have one species type here.
   V_ionic = reshape( V_ionic, (Npoints) )
 
-  #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
-  #Y = ortho_gram_schmidt(psi)
-  #mu = Y' * op_H( pw, Potentials, Y )
-  #evals, evecs = eig(mu)
-  #psi = Y*evecs
+  Y = ortho_gram_schmidt(psi)
+  mu = Y' * op_H( pw, Potentials, Y )
+  evals, evecs = eig(mu)
+  psi = Y*evecs
 
-  @printf("Solution by self-consistent field method\n")
-  Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates, β=0.3 )
+  #@printf("Solution by self-consistent field method\n")
+  #Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates, β=0.3 )
 
   for st = 1:Nstates
-    @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
+    @printf("State # %d, Energy = %f\n", st, real(evals[st]))
   end
 
   @printf("E_nn    = %18.10f\n", E_nn)

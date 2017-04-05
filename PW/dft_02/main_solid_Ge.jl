@@ -18,8 +18,8 @@ include("LDA_VWN.jl")
 include("Kprec.jl")
 
 include("../common/gen_dr_center.jl")
-include("../common/calc_strfact_v1.jl")
-include("../common/calc_ewald_v1.jl")
+include("../common/calc_strfact_v2.jl")
+include("../common/calc_ewald_v2.jl")
 
 include("diag_lobpcg.jl")
 include("KS_solve_scf.jl")
@@ -115,7 +115,7 @@ function test_main( Ns )
   #Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates )
 
   for st = 1:Nstates
-    @printf("=== State # %4d, Energy = %18.10f ===\n", st, real(evals[st]))
+    @printf("State # %4d, Energy = %18.10f\n", st, real(evals[st]))
   end
 
   @printf("E_nn    = %18.10f\n", E_nn)
@@ -127,4 +127,3 @@ end
 
 #@time test_main( [48,48,48] )
 test_main( [46, 46, 46] )
-
