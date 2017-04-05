@@ -2,7 +2,7 @@
 # Given electron density in real space, return Hartree potential in reciprocal
 # space
 #
-function solve_poisson( PW::PWGrid, rhoR )
+function Poisson_solve( PW::PWGrid, rhoR )
   #
   G2 = PW.G2
   Ns = PW.Ns

@@ -11,9 +11,9 @@ include("op_H.jl")
 include("calc_rho.jl")
 include("calc_grad.jl")
 include("calc_Energies.jl")
-include("kssolve_Emin_sd.jl")
-include("kssolve_Emin_cg.jl")
-include("solve_poisson.jl")
+include("KS_solve_Emin_sd.jl")
+include("KS_solve_Emin_cg.jl")
+include("Poisson_solve.jl")
 include("LDA_VWN.jl")
 include("Kprec.jl")
 
@@ -48,20 +48,10 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
   end
   V_ionic = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
 
-  println("sum(Sf) = $(sum(Sf))")
-  println("sum(Vg) = $(sum(Vg))")
-  println("sum(V_ionic) = $(sum(V_ionic))")
-  for ip = 1:10
-    @printf("%8d %18.10f\n", ip, V_ionic[ip])
-  end
-  @printf("Ω = %f\n", Ω)
-  @printf("maximum(Vpot) = %18.10f\n", maximum(V_ionic))
-  @printf("minimum(Vpot) = %18.10f\n", minimum(V_ionic))
-
   #
   const Nstates = 1
   Focc = [1.0]
-  psi, Energies, Potentials = kssolve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
   #
   Y = ortho_gram_schmidt(psi)
@@ -70,7 +60,7 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
   psi = Y*evecs
 
   for st = 1:Nstates
-    @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
+    @printf("State # %d, Energy = %f\n", st, real(evals[st]))
   end
 
   @printf("E_nn    = %18.10f\n", E_nn)
@@ -78,5 +68,5 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
 
 end
 
-@code_native test_main( 2, 2, 2 )
+@code_native test_main(2,2,2)
 @time test_main( 64, 64, 64 )

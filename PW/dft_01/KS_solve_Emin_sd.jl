@@ -1,6 +1,6 @@
-function kssolve_Emin_sd( pw::PWGrid, V_ionic, Focc, Nstates::Int;
-                         psi0=nothing, Potentials0 = nothing,
-                         α_t = 3e-5, NiterMax=1000, verbose=false )
+function KS_solve_Emin_sd( pw::PWGrid, V_ionic, Focc, Nstates::Int;
+                           psi0=nothing, Potentials0 = nothing,
+                           α_t = 3e-5, NiterMax=1000, verbose=false )
   Ns = pw.Ns
   Npoints = prod(Ns)
 
@@ -15,7 +15,7 @@ function kssolve_Emin_sd( pw::PWGrid, V_ionic, Focc, Nstates::Int;
   if Potentials0 == nothing
     Potentials = PotentialsT( V_ionic, zeros(Npoints), zeros(Npoints) )
     rho = calc_rho( pw, Focc, psi )
-    Potentials.Hartree = real( G_to_R( Ns, solve_poisson(pw, rho) ) )
+    Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
     Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
   else
     Potentials = PotentialsT( Potentials0.Ionic,
@@ -34,7 +34,7 @@ function kssolve_Emin_sd( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 
     # Update potentials
     rho = calc_rho( pw, Focc, psi)
-    Potentials.Hartree = real( G_to_R( Ns, solve_poisson( pw, rho ) ) )
+    Potentials.Hartree = real( G_to_R( Ns, Poisson_solve( pw, rho ) ) )
     Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
 
     Energies = calc_Energies( pw, Potentials, Focc, psi )

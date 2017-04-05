@@ -4,10 +4,18 @@ In this directory, simple DFT calculation is performed for a electronic system
 with harmonic potential and hydrogen atom. The main script can be found in file
 `main_harm.jl` and `main_H_atom.jl` for harmonic potential and hydrogen atom,
 respectively. The programs in this directory are using `PWGrid_v01.jl`.
+It follows directly from codes in `sch_01`.
+
+There are several changes with respect to the codes we used in `sch_01`.
+
+- We encapsulated various energy terms in type `EnergiesT` and various
+  potentials in type `PotentialsT`.
+
+- We changed the name of `op_Vpot` to `op_V_ps_loc`.
 
 ## Main program flow
 
-We will illutrate the steps taken in the program for the case of
+We will illustrate the steps taken in the program for the case of
 harmonic potential.
 
 1. Define the simulation box and generate plane wave basis for this box.
