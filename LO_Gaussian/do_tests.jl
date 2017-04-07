@@ -21,3 +21,12 @@ test_two_terms()
 test_coul1()
 test_vrr()
 test_hrr()
+
+test_geo_basis()
+
+include("rhf.jl")
+include("test_molecules.jl")
+
+test_h2()
+test_lih()
+test_h2o()

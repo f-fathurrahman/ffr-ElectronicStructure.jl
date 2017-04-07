@@ -216,3 +216,55 @@ function test_na2()
   s1,s2,x,y,z,h1s = bfs.bfs
   @assert isapprox(nuclear_attraction(s1,s1,lih),-8.307532656)
 end
+
+
+nuclear_repulsion(a::Atom,b::Atom)= a.atno*b.atno/sqrt(dist2(a.x-b.x,a.y-b.y,a.z-b.z))
+function nuclear_repulsion(mol::Molecule)
+  nr = 0
+  for (i,j) in pairs(nat(mol),"subdiag")
+    nr += nuclear_repulsion(mol.atomlist[i],mol.atomlist[j])
+  end
+  return nr
+end
+
+function test_geo_basis()
+
+  @printf("\nCalling test_geo_basis\n")
+
+  E1     = nuclear_repulsion(h2)
+  E1_ref = 0.7223600367
+  @printf("H2: nuclear_repulsion %18.10f, err = %18.10f\n", E1, abs(E1_ref-E1))
+
+  @assert nel(h2) == 2
+  @assert nel(h2o) == 10
+  @assert length(sto3g)==10
+
+  bfs = build_basis(h2)
+  @assert length(bfs.bfs)==2
+
+  l,r = bfs.bfs
+  @assert isapprox(overlap(l,l),1)
+  @assert isapprox(overlap(r,r),1)
+
+  #@assert isapprox(overlap(l,r),0.66473625)
+  ovl1 = overlap(l,r)
+  ovl1_ref = abs(ovl1 - 0.66473625)
+  @printf("overlap(l,r), err %18.10f, %18.10f\n", ovl1, ovl1_ref)
+
+  @assert isapprox(kinetic(l,l),0.76003188)
+  @assert isapprox(kinetic(r,r),0.76003188)
+  @assert isapprox(kinetic(l,r),0.24141861181119084)
+  @assert isapprox(coulomb(l,l,l,l), 0.7746059439196398)
+  @assert isapprox(coulomb(r,r,r,r), 0.7746059439196398)
+  @assert isapprox(coulomb(l,l,r,r), 0.5727937653511646)
+  @assert isapprox(coulomb(l,l,l,r), 0.4488373301593464)
+  @assert isapprox(coulomb(l,r,l,r), 0.3025451156654606)
+  bfs = build_basis(h2o)
+
+  s1,s2,px,py,pz,hl,hr = bfs.bfs
+  @assert isapprox(coulomb(s1,s2,hl,hr),0.03855344493645537)
+  @assert isapprox(coulomb(s1,pz,hl,hr),-0.0027720110485359053)
+  @assert isapprox(coulomb(s1,hl,pz,hr),-0.010049491284827426)
+  @assert coulomb(s1,py,hl,hr)==0
+  @assert coulomb(s1,hl,py,hr)==0
+end
