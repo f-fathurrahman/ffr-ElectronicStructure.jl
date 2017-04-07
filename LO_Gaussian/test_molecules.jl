@@ -18,3 +18,13 @@ function test_h2o()
   Eref = -74.9597609118851
   @printf("Error = %18.10f\n", abs(Energy - Eref))
 end
+
+function test_ch4()
+  @time Energy,E,U = rhf(ch4)
+  @printf("Energy = %18.10f\n", Energy)
+end
+
+function test_c6h6()
+  @time Energy,E,U = rhf(c6h6)
+  @printf("Energy = %18.10f\n", Energy)
+end

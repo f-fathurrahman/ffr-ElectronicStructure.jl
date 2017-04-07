@@ -42,9 +42,20 @@ dmat(U::Array{Float64,2},nocc::Int64) = U[:,1:nocc]*U[:,1:nocc]'
 
 
 function rhf(mol::Molecule,MaxIter::Int64=8,verbose::Bool=false)
+  @printf("Starting RHF calculation:")
+
+  @printf("Building basis ...")
   bfs = build_basis(mol)
+  @printf("... done\n\n")
+
+  @printf("1e integrals ...")
   S,T,V = all_1e_ints(bfs,mol)
+  @printf("... done\n\n")
+
+  @printf("2e integrals ...")
   Ints = all_twoe_ints(bfs)
+  @printf("... done\n\n")
+
   h = T+V
   E,U = eig(h,S)
   Enuke = nuclear_repulsion(mol)
