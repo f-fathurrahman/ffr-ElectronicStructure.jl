@@ -13,7 +13,7 @@ end
 
 
 # Constructor
-function PsPot_HGH( itype, atsymb, filename )
+function PsPot_HGH( itype::Int, atsymb::ASCIIString, filename::ASCIIString )
 
   # Initialze with default values
   psp = PsPot_HGH( itype, atsymb, 0.0, 0, 0, 0.0, zeros(Float64,4), zeros(Float64,4),
@@ -23,14 +23,10 @@ function PsPot_HGH( itype, atsymb, filename )
   file = open( filename )
 
   comment = readline(file)
-  #@printf("%s", comment)
 
   lines = split( readline(file) )
   psp.zval = parse( Float64, lines[1] )
   zion = parse( Float64, lines[2] )
-  #@printf("zion = %f\n", zion )
-  #@printf("zval = %f\n", psp.zval )
-  #@printf("pspdat = %s\n", lines[3] )
 
   lines  = split( readline(file) )
   pspcod = parse( Int, lines[1] )
@@ -39,12 +35,6 @@ function PsPot_HGH( itype, atsymb, filename )
   psp.lloc = parse( Int, lines[4] )
   mmax   = parse( Int, lines[5] )
   r2well = parse( Int, lines[6] )
-  #@printf("pspcod = %d\n", pspcod)
-  #@printf("pspxc  = %d\n", pspxc)
-  #@printf("lmax   = %d\n", psp.lmax)
-  #@printf("lloc   = %d\n", psp.lloc)
-  #@printf("mmax   = %d\n", mmax)
-  #@printf("r2well = %d\n", r2well)
 
   lines = split( readline(file) )
   psp.rloc = parse( Float64, lines[1] )
@@ -59,32 +49,25 @@ function PsPot_HGH( itype, atsymb, filename )
   lines = split( readline(file) )
   #
   psp.rc[1] = parse( lines[1] )
-  #@printf("Angular momentum: %s\n", ANGMOM[l+1])
-  #@printf("r: %f\n", psp.rc[l+1])
   #
   psp.h[1,1,1] = parse( lines[2] )
   psp.h[1,2,2] = parse( lines[3] )
   psp.h[1,3,3] = parse( lines[4] )
-  #@printf("h: %f %f %f\n", psp.h[1,1,1], psp.h[1,2,2], psp.h[1,3,3])
 
   for l = 1:3
     lines = split( readline(file) )
     #
     psp.rc[l+1] = parse( lines[1] )
-    #@printf("Angular momentum: %s\n", ANGMOM[l+1])
-    #@printf("rc: %f\n", psp.rc[l+1])
     #
     psp.h[l+1,1,1] = parse( lines[2] )
     psp.h[l+1,2,2] = parse( lines[3] )
     psp.h[l+1,3,3] = parse( lines[4] )
-    #@printf("h: %f %f %f\n", psp.h[l+1,1,1], psp.h[l+1,2,2], psp.h[l+1,3,3])
     #
     lines = split( readline(file) )
     psp.k[l+1,1,1] = parse( lines[1] )
     psp.k[l+1,2,2] = parse( lines[2] )
     psp.k[l+1,3,3] = parse( lines[3] )
     #
-    #@printf("k: %f %f %f\n", psp.k[l+1,1,1], psp.k[l+1,2,2], psp.k[l+1,3,3])
   end
 
   close(file)
@@ -94,7 +77,8 @@ function PsPot_HGH( itype, atsymb, filename )
   const M_FIVE = 5.0
   const M_ONE = 1.0
 
-  # from Octopus code
+  # from Octopus code, see also the appendix of HGH paper
+
   psp.h[0+1, 1, 2] = -M_HALF    * sqrt(M_THREE/M_FIVE) * psp.h[0+1, 2, 2]
   psp.h[0+1, 1, 3] =  M_HALF    * sqrt(M_FIVE/21.0)    * psp.h[0+1, 3, 3]
   psp.h[0+1, 2, 3] = -M_HALF    * sqrt(100.0/63.0)     * psp.h[0+1, 3, 3]
