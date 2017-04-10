@@ -22,7 +22,6 @@ function ylmr2( lmax::Int, Gvec::Array{Float64,2} )
     if Gvec[1,ig] > SMALL
       phi[ig] = atan( Gvec[2,ig]/Gvec[1,ig] )
     elseif Gvec[1,ig] < -SMALL
-      println(Gvec[:,ig])
       phi[ig] = atan( Gvec[2,ig]/Gvec[1,ig] ) + pi
     else
       phi[ig] = if Gvec[2,ig] >= 0 pi/2 else -pi/2 end

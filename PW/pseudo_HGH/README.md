@@ -21,10 +21,10 @@ Evaluating beta functions (`init_us_2`)
 ```julia
 for isp = 1:Nspecies
 
-  for ibeta = 1:PsPot[isp].nbeta
+  for i = 1:PsPot[isp].snprj
 
-     l = PsPot[isp].lll[ibeta]
-     iproj = PsPot[isp].ipr[ibeta]
+     l = PsPot[isp].lll[i]
+     iproj = PsPot[isp].ipr[i]
      Vprj = eval_HGH_proj_G( psp[isp], l, iproj, G, Ω )
 
   end

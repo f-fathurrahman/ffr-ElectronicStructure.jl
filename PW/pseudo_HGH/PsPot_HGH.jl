@@ -10,7 +10,7 @@ type PsPot_HGH
   h::Array{Float64,3}  # originally indexed [0:3,1:3,1:3]
   k::Array{Float64,3}  # indexed [0:3,1:3,1:3]
   nprj::Array{Int}
-  nbeta::Int
+  snprj::Int           # snprj = sum(nprj)
   lll::Array{Int}
   ipr::Array{Int}
 end
@@ -83,9 +83,9 @@ function PsPot_HGH( itype::Int, atsymb::ASCIIString, filename::ASCIIString )
   nprj[3] = parse( Int, lines[3] )
   nprj[4] = parse( Int, lines[4] )
 
-  nbeta  = sum(nprj)
-  lll = zeros(Int,nbeta)
-  ipr = zeros(Int,nbeta)
+  snprj  = sum(nprj)
+  lll = zeros(Int,snprj)
+  ipr = zeros(Int,snprj)
 
   iv = 0
   for il = 0:lmax
@@ -137,7 +137,7 @@ function PsPot_HGH( itype::Int, atsymb::ASCIIString, filename::ASCIIString )
   end
 
   psp = PsPot_HGH( itype, atsymb, zval, lloc, lmax, rloc,
-                   rc, c, h, k, nprj, nbeta, lll, ipr )
+                   rc, c, h, k, nprj, snprj, lll, ipr )
 
   return psp
 end
@@ -151,10 +151,10 @@ function info_PsPot_HGH( psp::PsPot_HGH )
   @printf("rloc: %f, c: %f, %f, %f, %f\n", psp.rloc, psp.c[1], psp.c[2], psp.c[3], psp.c[4])
 
   @printf("\nNonlocal pseudopotential info:\n")
-  for k=1:4
-    @printf("Angular momentum: %s, rc = %f\n", ANGMOM[k], psp.rc[k])
+  for i=1:4
+    @printf("Angular momentum: %s, rc = %f\n", ANGMOM[i], psp.rc[i])
     @printf("h = \n")
-    PrintMatrix( reshape(psp.h[k,:,:],(3,3) ) )
+    PrintMatrix( reshape(psp.h[i,:,:],(3,3) ) )
   end
 
 end
@@ -189,10 +189,10 @@ end
 
 
 # Evaluate HGH projector function in G-space
-function eval_HGH_proj_G( psp, l, iproj, G, Ω )
+function eval_HGH_proj_G( psp, l, iproj, Gm, Ω )
 
-  # G is magnitude of G-vectors
-  Ng = size(G)[1]
+  # NOTICE that G is the magnitudes of G-vectors
+  Ng = size(Gm)[1]
 
   Vprj = zeros(Ng)
 
@@ -204,21 +204,21 @@ function eval_HGH_proj_G( psp, l, iproj, G, Ω )
     if iproj==1
 
       for ig = 1:Ng
-        Gr2 = ( G[ig]*rrl )^2
+        Gr2 = ( Gm[ig]*rrl )^2
         Vprj[ig] = exp( -0.5*Gr2 )
       end
 
     elseif iproj==2
 
       for ig = 1:Ng
-        Gr2 = ( G[ig]*rrl )^2
+        Gr2 = ( Gm[ig]*rrl )^2
         Vprj[ig] = 2.0/sqrt(15.0) * exp( -0.5*Gr2 ) * ( 3.0 - Gr2 )
       end
 
     elseif iproj==3
 
       for ig = 1:Ng
-        Gr2 = ( G[ig]*rrl )^2
+        Gr2 = ( Gm[ig]*rrl )^2
         Vprj[ig] = (4.0/3.0)/sqrt(105.0) * exp( -0.5*Gr2 ) * (15.0 - 10.*Gr2 + Gr2^2)
        end
 
@@ -230,22 +230,22 @@ function eval_HGH_proj_G( psp, l, iproj, G, Ω )
     if iproj == 1
 
       for ig = 1:Ng
-        Gr2 = ( G[ig]*rrl )^2
-        Vprj[ig] = (1.0/sqrt(3.0)) * exp(-0.5*Gr2) * G[ig]
+        Gr2 = ( Gm[ig]*rrl )^2
+        Vprj[ig] = (1.0/sqrt(3.0)) * exp(-0.5*Gr2) * Gm[ig]
       end
 
     elseif iproj == 2
 
       for ig = 1:Ng
-        Gr2 = (G[ig]*rrl)^2
-        Vprj[ig] = (2./sqrt(105.)) * exp(-0.5*Gr2) * G[ig]*(5. - Gr2)
+        Gr2 = (Gm[ig]*rrl)^2
+        Vprj[ig] = (2./sqrt(105.)) * exp(-0.5*Gr2) * Gm[ig]*(5. - Gr2)
       end
 
     elseif iproj == 3
 
       for ig = 1:Ng
-        Gr2 = ( G[ig]*rrl)^2
-        Vprj[ig] = (4./3.)/sqrt(1155.) * exp(-0.5*Gr2) * G[ig] * (35. - 14.*Gr2 + Gr2^2)
+        Gr2 = ( Gm[ig]*rrl)^2
+        Vprj[ig] = (4./3.)/sqrt(1155.) * exp(-0.5*Gr2) * Gm[ig] * (35. - 14.*Gr2 + Gr2^2)
       end
 
     end # if iproj
@@ -256,15 +256,15 @@ function eval_HGH_proj_G( psp, l, iproj, G, Ω )
     if iproj == 1
 
       for ig = 1:Ng
-        Gr2 = ( G[ig]*rrl )^2
-        Vprj[ig] = (1.0/sqrt(15.0)) * exp(-0.5*Gr2) * G[ig]^2
+        Gr2 = ( Gm[ig]*rrl )^2
+        Vprj[ig] = (1.0/sqrt(15.0)) * exp(-0.5*Gr2) * Gm[ig]^2
       end
 
     elseif iproj == 2
 
       for ig = 1:Ng
-        Gr2 = (G[ig]*rrl)^2
-        Vprj[ig] = (2./3.)/sqrt(105.) * exp(-0.5*Gr2) * G[ig]^2 * (7.-Gr2)
+        Gr2 = (Gm[ig]*rrl)^2
+        Vprj[ig] = (2./3.)/sqrt(105.) * exp(-0.5*Gr2) * Gm[ig]^2 * (7.-Gr2)
       end
 
     end # if iproj
@@ -273,8 +273,8 @@ function eval_HGH_proj_G( psp, l, iproj, G, Ω )
   elseif l == 3
 
     for ig = 1:Ng
-      Gr2 = ( G[ig]*rrl )^2
-      Vprj[ig] = G[ig]^3 * exp(-0.5*Gr2)
+      Gr2 = ( Gm[ig]*rrl )^2
+      Vprj[ig] = Gm[ig]^3 * exp(-0.5*Gr2)
     end
 
   end  # if l
