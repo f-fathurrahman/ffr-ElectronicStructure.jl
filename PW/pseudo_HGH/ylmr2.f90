@@ -67,7 +67,8 @@ subroutine ylmr2 (lmax2, ng, g, gg, ylm)
      !
      if (g(1,ig) > eps) then
         phi (ig) = atan( g(2,ig)/g(1,ig) )
-     else if (g(1,ig) < -eps) then
+     else if (g(1,ig) < -eps) THEN
+        WRITE(*,*) 'Pass here -eps ...'
         phi (ig) = atan( g(2,ig)/g(1,ig) ) + pi
      else
         phi (ig) = sign( pi/2.d0,g(2,ig) )

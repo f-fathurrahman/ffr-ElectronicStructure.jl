@@ -1,6 +1,6 @@
 PROGRAM test_ylmr2
 
-  IMPLICIT NONE 
+  IMPLICIT NONE
   INTEGER :: lmax2
   INTEGER :: Ng
   REAL(8), ALLOCATABLE :: G(:,:), GG(:)
@@ -19,10 +19,10 @@ PROGRAM test_ylmr2
   ALLOCATE( ylm(Ng,lmax2) )
 
   DO ig = 1, Ng
-    G(:,ig) = (/ 0.0d0, 0.d0, 0.0d0 /)
+    G(:,ig) = (/ -2.1d0, 2.d0, 1.d0 /)
     GG(ig) = G(1,ig)**2 + G(2,ig)**2 + G(3,ig)**2
-  ENDDO 
-  
+  ENDDO
+
   CALL ylmr2( lmax2, Ng, G, GG, ylm )
 
   DO lm = 1,lmax2
@@ -30,12 +30,11 @@ PROGRAM test_ylmr2
     WRITE(*,'(A,I5)') 'lm = ', lm
     DO ig = 1,Ng
       WRITE(*,'(I5,F18.10)') ig, ylm(ig,lm)
-    ENDDO 
-  ENDDO 
+    ENDDO
+  ENDDO
 
   DEALLOCATE( G )
   DEALLOCATE( GG )
   DEALLOCATE( ylm )
 
-END PROGRAM 
-
+END PROGRAM

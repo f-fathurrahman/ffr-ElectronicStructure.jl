@@ -9,7 +9,7 @@ function test_main()
   Gvec = zeros(3,Ng)
 
   for ig = 1:Ng
-    Gvec[:,ig] = [0.0, 0.0, 0.0]
+    Gvec[:,ig] = [-2.1, 2.0, 1.0]
   end
 
   ylm = ylmr2( lmax, Gvec )
