@@ -44,8 +44,7 @@
 \input{intro}
 
 
-\chapter{Solving Poisson and Schrodinger equation}
-
+\chapter{Solving Kohn-Sham equations: Version 1}
 
 \begin{enumerate}
 \item plane wave basis set
@@ -54,10 +53,36 @@
 \item solving Kohn-Sham equations
 \end{enumerate}
 
+Hamiltonian:
+\begin{equation}
+H = -\frac{1}{2}\nabla^2 + V_{\mathrm{ps,loc}}(\mathbf{r}) +
+V_{\mathrm{Ha}}(\mathbf{r}) + V_{\mathrm{xc}}(\mathbf{r})
+\end{equation}
+
+
+
 \input{pwgrid_01}
 \input{poisson_01}
 \input{ewald_01}
 \input{sch_01}
+
+
+
+
+\chapter{Solving Kohn-Sham equations: Version 2}
+
+Improvements
+
+Hamiltonian is still the same as the Version 1.
+\begin{equation}
+H = -\frac{1}{2}\nabla^2 + V_{\mathrm{ps,loc}}(\mathbf{r}) +
+V_{\mathrm{Ha}}(\mathbf{r}) + V_{\mathrm{xc}}(\mathbf{r})
+\end{equation}
+
+\input{pwgrid_02}
+\input{poisson_02}
+\input{ewald_02}
+
 
 \input{formulae}
 
