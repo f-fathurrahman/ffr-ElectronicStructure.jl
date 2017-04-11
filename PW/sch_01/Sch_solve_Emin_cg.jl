@@ -1,3 +1,6 @@
+include("quad_lin_min.jl")
+include("linmin2.jl")
+
 function Sch_solve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
                             NiterMax=1000 )
   #
@@ -9,10 +12,12 @@ function Sch_solve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
   Kg     = zeros(Complex128, Npoints, Nstates)
   Kg_old = zeros(Complex128, Npoints, Nstates)
   #
-  α_t = 1.e-5
+  α_t = 3e-5
   β = 0.0
-  Etot_old = 0.0
-  Etot = 0.0
+
+  Etot = calc_Etot( pw, Vpot, psi )
+  Etot_old = Etot
+
   #
   for iter = 1:NiterMax
     g = calc_grad( pw, Vpot,  psi)
@@ -20,22 +25,23 @@ function Sch_solve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
     for is = 1:Nstates
       nrm = nrm + real( dot( g[:,is], g[:,is] ) )
     end
+
     Kg = Kprec(pw,g)
+    #Kg = copy(g)  # test for no preconditioner
+
     if iter != 1
       #β = real(sum(conj(g).*Kg))/real(sum(conj(g_old).*Kg_old))
-      β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g_old).*Kg_old))
+      #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g_old).*Kg_old))
       #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g-g_old).*d_old))
-      #β = real(sum(conj(g).*Kg))/real(sum((g-g_old).*conj(d_old)))
+      β = real(sum(conj(g).*Kg))/real(sum((g-g_old).*conj(d_old)))
     end
+
     d = -Kg + β * d_old
-    psic = ortho_gram_schmidt(psi + α_t*d)
-    gt = calc_grad( pw, Vpot, psic )
-    denum = real(sum(conj(g-gt).*d))
-    if denum != 0.0
-      α = abs(α_t*real(sum(conj(g).*d))/denum)
-    else
-      α = 0.0
-    end
+
+    #α = linmin2( pw, Vpot, α_t, psi, d, g )
+
+    α = quad_lin_min( pw, Vpot, α_t, psi, d, Etot_old, g )
+
     # Update wavefunction
     psi = psi[:,:] + α*d[:,:]
 
