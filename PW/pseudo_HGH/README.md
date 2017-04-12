@@ -31,3 +31,39 @@ for isp = 1:Nspecies
 
 end
 ```
+
+## Prototype of `op_V_ps_NL`
+
+without k-dependence
+
+Using notation in Kohanoff's instead of beta ?
+
+f_NL includes structure factor.
+
+```julia
+for ig = 1:Ngwx
+  F_NL[ig,slm,ist] = f_NL[ig,slm,] * psi[ig,ist]
+end
+```
+
+
+slm: combined indices of species, lm, ...
+
+probably also needs index of iproj
+
+
+```julia
+function op_V_ps_NL( pw, f_NL, F_NL, psi )
+
+  Ngwx = size(psi)[1]
+  Nstates = size(psi)[2]
+
+  out = zeros( Complex128, Ngwx, Nstates )
+
+  for ig = 1:Ngwx
+    out[ig] =     
+  end
+
+end
+```
+
