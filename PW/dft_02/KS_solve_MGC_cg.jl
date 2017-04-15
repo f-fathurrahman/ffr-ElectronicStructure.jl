@@ -34,7 +34,8 @@ function KS_solve_MGC_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
   β        = 0.0
   Etot_old = 0.0
   Etot     = 0.0
-  Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0 )
+  E_MGC = calc_E_MGC( pw, Potentials, psi )
+  exit()
 
   for iter = 1:NiterMax
 
@@ -68,8 +69,8 @@ function KS_solve_MGC_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
     psi = psi[:,:] + α*d[:,:]
 
     # Update potentials
-    psi = ortho_gram_schmidt(psi)
-    rho = calc_rho( pw, Focc, psi )
+    psic = ortho_gram_schmidt(psi)
+    rho = calc_rho( pw, Focc, psic )
 
     Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
     Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
@@ -91,6 +92,57 @@ function KS_solve_MGC_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
   end
   return psi, Energies, Potentials
   #
+end
+
+
+function calc_E_MGC( pw::PWGrid, Potentials, ϕ::Array{Complex128,2} )
+
+  Ngwx    = size(ϕ)[1]
+  Nstates = size(ϕ)[2]
+  Npoints = pw.Npoints
+  Ω = pw.Ω
+
+  S = zeros(Complex128,Nstates,Nstates)
+  Q = zeros(Complex128,Nstates,Nstates)
+
+  for j = 1:Nstates
+    for i = 1:Nstates
+      S[i,j] = sum( conj(ϕ[:,i]).*ϕ[:,j] )
+      if i == j
+        Q[i,j] = 2 - S[i,j]
+      end
+    end
+  end
+
+  E_kin = 0.0
+  for j = 1:Nstates
+    for k = 1:Nstates
+      E_kin = Q[i,j]*sum(conj(ϕ[:,j] .* op_K(pw, ϕ[:,i]))
+    end
+  end
+
+  ϕ_r = G_to_R( pw.Ns, ϕ )
+  ρ = zeros(Float64,Npoints)
+
+  for j = 1:Nstates
+    for i = 1:Nstates
+      for ip = 1:Npoints
+        # XXX need to use conj???
+        ρ[ip] = 2*real( Q[i,j] * ϕ_r[ig,i] * ϕ_r[ig,j] )
+      end
+    end
+  end
+
+  V_Hartree = real( G_to_R( Ns, Poisson_solve(pw, ρ) ) )
+  V_XC = excVWN( ρ ) + ρ .* excpVWN( ρ )
+
+  E_Hartree = 0.5*dot( V_Hartree, ρ ) * Ω/Npoints
+  E_xc = dot( excVWN(rho), ρ ) * Ω/Npoints
+  E_ionic = dot( Potentials.Ionic, ρ ) * Ω/Npoints
+
+  return E_
+
+
 end
 
 

@@ -62,8 +62,8 @@ function test_main( Ns )
   const Nstates = 1
   Focc = [1.0]
 
-  psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
-  #psi, Energies, Potentials = KS_solve_MGC_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  psi, Energies, Potentials = KS_solve_MGC_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
   Y = ortho_gram_schmidt(psi)
   mu = Y' * op_H( pw, Potentials, Y )
