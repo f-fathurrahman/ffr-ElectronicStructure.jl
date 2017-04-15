@@ -18,8 +18,9 @@ include("calc_evals.jl")
 include("calc_rho.jl")
 include("calc_grad.jl")
 
-include("kssolve_Emin_cg.jl")
-include("kssolve_Emin_pcg.jl")
+include("KS_solve_Emin_cg.jl")
+include("KS_solve_Emin_pcg.jl")
+include("KS_solve_scf.jl")
 
 include("../LF_common/sparse_LF3d.jl")
 include("../LF_common/prec_mkl_ilu0.jl")
@@ -47,10 +48,6 @@ function test_main( ; method = "Emin_cg" )
   L = BB - AA
   Gv = GvectorsT( NN, diagm(L) )
 
-  # Parameter for potential
-  #center = AA + 0.5*(BB-AA) + 1e-8
-  # Potential
-  #V_ionic = init_pot_Hcoul( LF, center )
 
   Vg = zeros(Complex128,Npoints)
   for ig=2:Npoints
@@ -68,13 +65,19 @@ function test_main( ; method = "Emin_cg" )
     ∇2 = get_Laplacian3d_kron(LF)
     precH = prec_mkl_ilu0( -0.5*∇2 + spdiagm(V_ionic) )
     #precH = speye(Npoints)
-    Energies, evecs, Potentials = kssolve_Emin_pcg( LF, Gv, ∇2, precH,
+    Energies, evecs, Potentials = KS_solve_Emin_pcg( LF, Gv, ∇2, precH,
                                     V_ionic, Focc, Ncols, verbose=true )
     evals = calc_evals( LF, ∇2, Potentials, evecs )
     #
+  elseif method == "SCF"
+    ∇2 = get_Laplacian3d_kron(LF)
+    precH = prec_mkl_ilu0( -0.5*∇2 + spdiagm(V_ionic) )
+    #precH = speye(Npoints)
+    Output = KS_solve_scf( LF, Gv, ∇2, precH, V_ionic, Focc, Ncols, verbose=true )
+    exit()
   else
     #
-    Energies, evecs, Potentials = kssolve_Emin_cg( LF, Gv, V_ionic, Focc, Ncols, verbose=true )
+    Energies, evecs, Potentials = KS_solve_Emin_cg( LF, Gv, V_ionic, Focc, Ncols, verbose=true )
     evals = calc_evals( LF, Potentials, evecs )
   end
 
@@ -90,5 +93,6 @@ function test_main( ; method = "Emin_cg" )
 end
 
 #@code_native test_main()
-@time test_main(method="Emin_cg_sparse")
+#@time test_main(method="Emin_cg_sparse")
+@time test_main(method="SCF")
 #@time test_main(method="Emin_cg")

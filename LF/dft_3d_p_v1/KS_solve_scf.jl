@@ -1,4 +1,4 @@
-function kssolve_scf( LF::LF3dGrid, Gv::GvectorsT,
+function KS_solve_scf( LF::LF3dGrid, Gv::GvectorsT,
                       ∇2, precH,
                       V_ionic, Focc, Ncols::Int64;
                       rho0 = nothing,

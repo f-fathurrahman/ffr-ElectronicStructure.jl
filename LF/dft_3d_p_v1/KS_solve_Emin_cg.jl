@@ -1,11 +1,9 @@
-function kssolve_Emin_pcg( LF::LF3dGrid,
-                           Gv::GvectorsT,
-                           ∇2, precH,
-                           V_ionic, Focc, Ncol::Int64;
-                           v0 = nothing,
-                           Potentials0 = nothing,
-                           α_t=3e-5, Niter=1000,
-                           verbose=false )
+function KS_solve_Emin_cg( LF::LF3dGrid, Gv::GvectorsT,
+                          V_ionic, Focc, Ncol::Int64;
+                          v0 = nothing,
+                          Potentials0 = nothing,
+                          α_t=3e-5, Niter=1000,
+                          verbose=false )
   #
   Npoints = LF.Nx * LF.Ny * LF.Nz
   ΔV = LF.LFx.h * LF.LFy.h * LF.LFz.h
@@ -33,41 +31,31 @@ function kssolve_Emin_pcg( LF::LF3dGrid,
 
   # Initialize energy components: Total, Kinetic, Ionic, Hartree, XC
   Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0 )
-
   #
   # Calculate energies and update potetials
   #
-  calc_Energies!( LF, Gv, ∇2, Energies, Potentials, Focc, v )
+  calc_Energies!( LF, Gv, Energies, Potentials, Focc, v )
   #
   Etot_old = Energies.Total
   print_Energies( Energies )
-  #exit()
   #
-  g      = zeros(Float64,Npoints,Ncol)
-  g_old  = zeros(Float64,Npoints,Ncol)
-  Kg     = zeros(Float64,Npoints,Ncol)
-  Kg_old = zeros(Float64,Npoints,Ncol)
-  d      = zeros(Float64,Npoints,Ncol)
-  d_old  = zeros(Float64,Npoints,Ncol)
+  g     = zeros( Float64, Npoints, Ncol )
+  g_old = zeros( Float64, Npoints, Ncol )
+  d     = zeros( Float64, Npoints, Ncol )
+  d_old = zeros( Float64, Npoints, Ncol )
   #
   β = 0
   α = 0
   for iter = 1:Niter
     #
-    g = calc_grad( LF, ∇2, Potentials, Focc, v )
-    for ic = 1:Ncol
-      Kg[:,ic] = apply_prec_ilu0( precH, g[:,ic] )
-    end
-    #Kg = copy(g)
-    #println("sum Kg = $(sum(Kg))")
-    #exit()
+    g = calc_grad( LF, Potentials, Focc, v )
     #
     if iter != 1
-      #β = trace( g' * Kg)/trace( g_old'*Kg_old )
-      β = trace( (g-g_old)'*Kg ) / trace( g_old'*Kg_old )
-      #β = trace( (g-g_old)'*Kg )/ trace( (g-g_old)'*d_old )
+      β = trace( g' * g)/trace( g_old'*g_old )
+      #β = trace( (g-g_old)'*g ) / trace( g_old'*g_old )
+      #β = trace( (g-g_old)'*g )/ trace( (g-g_old)'*d )
     end
-    d = -Kg + β*d_old
+    d = -g + β*d_old
     #
     # compute gradient at trial step
     #
@@ -76,7 +64,7 @@ function kssolve_Emin_pcg( LF::LF3dGrid,
     V_Hartree = solve_poisson_FFT( Gv, rho )
     V_xc = excVWN( rho ) + rho .* excpVWN( rho )
     wPot = PotentialsT( Potentials.Ionic, V_Hartree, V_xc )
-    g_t = calc_grad( LF, ∇2, wPot, Focc, v2 )
+    g_t = calc_grad( LF, wPot, Focc, v2 )
     #
     # compute estimate of best step and update current trial vectors
     #
@@ -92,7 +80,7 @@ function kssolve_Emin_pcg( LF::LF3dGrid,
     # Calculate energies and update potetials
     #
     v = orthonormalize( LF, v )
-    calc_Energies!( LF, Gv, ∇2, Energies, Potentials, Focc, v )
+    calc_Energies!( LF, Gv, Energies, Potentials, Focc, v )
     Etot = Energies.Total
     #
     if verbose
@@ -100,15 +88,14 @@ function kssolve_Emin_pcg( LF::LF3dGrid,
     end
     if abs(Etot-Etot_old) < 1.e-7
       if verbose
-        @printf("Emin PCG converges in %8d iterations\n", iter)
+        @printf("Emin CG converges in %8d iterations\n", iter)
       end
       break
     end
     Etot_old = Etot
     #
-    g_old  = g[:,:]
-    d_old  = d[:,:]
-    Kg_old = Kg[:,:]
+    g_old = g[:,:]
+    d_old = d[:,:]
   end
   return Energies, v, Potentials
 end
