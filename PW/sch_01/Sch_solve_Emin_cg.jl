@@ -1,4 +1,4 @@
-include("quad_lin_min.jl")
+include("linmin1.jl")
 include("linmin2.jl")
 
 function Sch_solve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
@@ -40,7 +40,7 @@ function Sch_solve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
 
     #α = linmin2( pw, Vpot, α_t, psi, d, g )
 
-    α = quad_lin_min( pw, Vpot, α_t, psi, d, Etot_old, g )
+    α = linmin1( pw, Vpot, α_t, psi, d, Etot_old, g )
 
     # Update wavefunction
     psi = psi[:,:] + α*d[:,:]
