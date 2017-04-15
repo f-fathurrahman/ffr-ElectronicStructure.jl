@@ -5,6 +5,7 @@ function KS_solve_MGC_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
   Ns = pw.Ns
   Npoints = prod(Ns)
   Ngwx = pw.gvecw.Ngwx
+  Ω = pw.Ω
 
   if psi0 == nothing
     srand(2222)
@@ -32,10 +33,14 @@ function KS_solve_MGC_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
   Kg_old = zeros(Complex128, Ngwx, Nstates)
 
   β        = 0.0
-  Etot_old = 0.0
-  Etot     = 0.0
-  E_MGC = calc_E_MGC( pw, Potentials, psi )
-  exit()
+  Etot     = calc_E_MGC( pw, Potentials, psi )
+  Etot_old = Etot
+
+  ctmp = zeros(Complex128, Npoints, Nstates)
+  idx = pw.gvecw.idx_gw2r
+
+  S = zeros(Complex128,Nstates,Nstates)
+  Q = zeros(Complex128,Nstates,Nstates)
 
   for iter = 1:NiterMax
 
@@ -51,32 +56,16 @@ function KS_solve_MGC_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 
     d = -Kprec(pw, g) + β * d_old
 
-    psic = ortho_gram_schmidt(psi + α_t*d)
-    #psic = psi + α_t*d
-    rho = calc_rho( pw, Focc, psic )
-    Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
-    Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
-    gt = calc_grad_MGC( pw, Potentials, Focc, psic )
-
-    denum = real(sum(conj(g-gt).*d))
-    if denum != 0.0
-      α = abs( α_t*real(sum(conj(g).*d))/denum )
-    else
-      α = 0.0
-    end
+    Δ = 2.0*real( sum( conj(d).*g ) )
+    psi_t = ortho_gram_schmidt( psi + α_t*d )
+    E_trial = calc_E_MGC( pw, Potentials, psi_t )
+    curvature = ( E_trial - ( Etot + α_t*Δ ) ) /α_t^2
+    α = -Δ/(2*curvature)
 
     # Update wavefunction
     psi = psi[:,:] + α*d[:,:]
 
-    # Update potentials
-    psic = ortho_gram_schmidt(psi)
-    rho = calc_rho( pw, Focc, psic )
-
-    Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
-    Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
-
-    Energies = calc_Energies( pw, Potentials, Focc, psi )
-    Etot = Energies.Total
+    Etot = calc_E_MGC( pw, Potentials, psi )
 
     diff = abs(Etot-Etot_old)
     @printf("CG step %8d = %18.10f %18.10f\n", iter, Etot, diff)
@@ -84,6 +73,34 @@ function KS_solve_MGC_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
       @printf("CONVERGENCE ACHIEVED\n")
       break
     end
+
+    for j = 1:Nstates
+      for i = 1:Nstates
+        S[i,j] = sum( conj(psi[:,i]).*psi[:,j] )
+        if i == j
+          Q[i,j] = 2 - S[i,j]
+        end
+      end
+    end
+
+    for ic = 1:Nstates
+      ctmp[idx,ic] = psi[:,ic]
+    end
+    psi_r = G_to_R( pw.Ns, ctmp )
+    # orthonormalization in real space
+    ortho_gram_schmidt!( Nstates, psi_r )
+    scale!( sqrt(Npoints/Ω), psi_r )
+
+    for j = 1:Nstates
+      for i = 1:Nstates
+        for ip = 1:Npoints
+          rho[ip] = 2*real( Q[i,j] * conj(psi_r[ip,i]) * psi_r[ip,j] )
+        end
+      end
+    end
+
+    Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
+    Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
 
     g_old = copy(g)
     d_old = copy(d)
@@ -95,11 +112,11 @@ function KS_solve_MGC_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 end
 
 
-function calc_E_MGC( pw::PWGrid, Potentials, ϕ::Array{Complex128,2} )
+function calc_E_MGC( pw::PWGrid, Potentials, ϕ::Array{Complex128,2}; Nel=1.0, η=1.0 )
 
   Ngwx    = size(ϕ)[1]
   Nstates = size(ϕ)[2]
-  Npoints = pw.Npoints
+  Npoints = prod(pw.Ns)
   Ω = pw.Ω
 
   S = zeros(Complex128,Nstates,Nstates)
@@ -116,32 +133,53 @@ function calc_E_MGC( pw::PWGrid, Potentials, ϕ::Array{Complex128,2} )
 
   E_kin = 0.0
   for j = 1:Nstates
-    for k = 1:Nstates
-      E_kin = Q[i,j]*sum(conj(ϕ[:,j] .* op_K(pw, ϕ[:,i]))
+    for i = 1:Nstates
+      E_kin = E_kin + real(Q[i,j]*sum(conj(ϕ[:,j] .* op_K(pw, ϕ[:,i]))))
     end
   end
 
-  ϕ_r = G_to_R( pw.Ns, ϕ )
+  ctmp = zeros(Complex128, Npoints, Nstates)
+  idx = pw.gvecw.idx_gw2r
+  for ic = 1:Nstates
+    ctmp[idx,ic] = ϕ[:,ic]
+  end
+  ϕ_r = G_to_R( pw.Ns, ctmp )
+  # orthonormalization in real space
+  ortho_gram_schmidt!( Nstates, ϕ_r )
+  scale!( sqrt(Npoints/Ω), ϕ_r )
+
   ρ = zeros(Float64,Npoints)
 
   for j = 1:Nstates
     for i = 1:Nstates
       for ip = 1:Npoints
-        # XXX need to use conj???
-        ρ[ip] = 2*real( Q[i,j] * ϕ_r[ig,i] * ϕ_r[ig,j] )
+        # XXX need to use conj??? Use factor 2 ??
+        ρ[ip] = 2*real( Q[i,j] * conj(ϕ_r[ip,i]) * ϕ_r[ip,j] )
       end
     end
   end
 
-  V_Hartree = real( G_to_R( Ns, Poisson_solve(pw, ρ) ) )
+  V_Hartree = real( G_to_R( pw.Ns, Poisson_solve(pw, ρ) ) )
+  E_Hartree = 0.5*dot( V_Hartree, ρ ) * Ω/Npoints
+
   V_XC = excVWN( ρ ) + ρ .* excpVWN( ρ )
 
-  E_Hartree = 0.5*dot( V_Hartree, ρ ) * Ω/Npoints
-  E_xc = dot( excVWN(rho), ρ ) * Ω/Npoints
-  E_ionic = dot( Potentials.Ionic, ρ ) * Ω/Npoints
+  E_xc = dot( excVWN(ρ), ρ ) * Ω/Npoints
 
-  return E_
+  E_Ionic = dot( Potentials.Ionic, ρ ) * Ω/Npoints
 
+  intRho = sum(ρ)*Ω/Npoints
+  #println("intRho = ", intRho)
+
+  E_MGC = E_kin + E_Hartree + E_Ionic + E_xc + η*(Nel - intRho)
+
+  #println("E_MGC Kin     = ", E_kin)
+  #println("E_MGC Ionic   = ", E_Ionic)
+  #println("E_MGC Hartree = ", E_Hartree)
+  #println("E_MGC XC      = ", E_xc)
+  #println("E_MGC Total   = ", E_MGC)
+
+  return E_MGC
 
 end
 
