@@ -1,8 +1,8 @@
-include("../common/PWGrid_v01.jl")
+include("../common/PWGrid_v02.jl")
 include("../common/wrappers_fft.jl")
 include("../common/gen_dr_center.jl")
-include("../common/calc_strfact_v1.jl")
-include("../common/calc_ewald_v1.jl")
+include("../common/calc_strfact_v2.jl")
+include("../common/calc_ewald_v2.jl")
 
 function test_main()
 
@@ -22,7 +22,7 @@ function test_main()
   Zv = [1.0]  # only valence ?
 
   # Calculate structure factor
-  Sf = calc_strfact( Xpos, Nspecies, atm2species, pw.G )
+  Sf = calc_strfact( Xpos, Nspecies, atm2species, pw.gvec.G )
 
   print("sum(Sf)="); println(sum(Sf))
 
