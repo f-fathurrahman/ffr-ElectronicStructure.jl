@@ -8,7 +8,7 @@ include("op_K.jl")
 include("op_V_loc.jl")
 include("op_H.jl")
 include("calc_rho.jl")
-include("calc_grad.jl")
+include("calc_grad_v2.jl")
 include("calc_Energies.jl")
 include("KS_solve_Emin_sd.jl")
 include("KS_solve_Emin_cg.jl")
@@ -16,9 +16,9 @@ include("Poisson_solve.jl")
 include("LDA_VWN.jl")
 include("Kprec.jl")
 
-include("calc_strfact_v1.jl")
-include("gen_dr.jl")
-include("calc_ewald_v1.jl")
+include("../common/gen_dr_center.jl")
+include("../common/calc_strfact_v2.jl")
+include("../common/calc_ewald_v2.jl")
 
 include("diag_lobpcg.jl")
 include("KS_solve_scf.jl")
@@ -44,18 +44,24 @@ function test_main( Ns )
   const theor = 1/(4*pi*0.25^3/3)
   @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
+  # Helium atom
+  Zion = 4.0
+  const Nstates = 2
+  Focc = [2.0, 2.0]
+
   Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
 
-  Sf = calc_strfact( Xpos, G )
-
-  E_nn = calc_ewald( pw, Xpos, Sf )
+  Sf = calc_strfact( Xpos, 1, [1], pw.gvec.G )
+  E_nn = calc_ewald( pw, Sf, Xpos, 1, [1], [Zion] )
 
   # Set up potential, using HGH pseudopotential for H
   # contains only local pseudopotential
-  const Zion = 1.0
-  const rloc = 0.2
-  const c1 = -4.180237
-  const c2 = 0.725075
+  const rloc = 0.325000
+  const c1 = -24.015041
+  const c2 = 17.204014
+  const c3 = -3.326390
+  const c4 = 0.165419
+  #
   Vg = zeros(Complex128,Npoints)
   pre1 = -4*pi*Zion/Ω
   pre2 = sqrt(8*pi^3)*rloc^3/Ω
@@ -63,24 +69,29 @@ function test_main( Ns )
   for ig=2:Npoints
     Gr = sqrt(G2[ig])*rloc
     expGr2 = exp(-0.5*Gr^2)
-    Vg[ig] = pre1/G2[ig]*expGr2 + pre2*expGr2 * (c1 + c2*(3-Gr^2) )
+    Vg[ig] = pre1/G2[ig]*expGr2 + pre2*expGr2 * (c1 + c2*(3-Gr^2) +
+             c3*(15 - 10*Gr^2 + Gr^4) + c4*(105 - 105*Gr^2 + 21*Gr^4 - Gr^6) )
   end
-  Vg[1] = 2*pi*rloc^2 + (2*pi)^1.5 * rloc^3 * (c1 + 3.0*c2) # limiting value
+  # limiting value
+  Vg[1] = 2*pi*Zion*rloc^2 + (2*pi)^1.5 * rloc^3 * (c1 + 3.0*c2 + 15*c3 + 105*c4)
+  println("Vg[1] = ", Vg[1])
   V_ionic = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
 
-  #
-  const Nstates = 1
-  Focc = [1.0]
+  # Need to sum up over Nspecies for more than one species type
+  # We simply need reshape because we only have one species type here.
+  V_ionic = reshape( V_ionic, (Npoints) )
 
-  psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000,
-                              E_NN = E_nn )
+  println("sum(V_ionic) = ", sum(V_ionic))
+
+  psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000, E_NN = E_nn )
 
   Y = ortho_gram_schmidt(psi)
   mu = Y' * op_H( pw, Potentials, Y )
   evals, evecs = eig(mu)
   psi = Y*evecs
 
-  #Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates )
+  #@printf("Solution by self-consistent field method\n")
+  #Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates, β=0.3 )
 
   for st = 1:Nstates
     @printf("State # %d, Energy = %f\n", st, real(evals[st]))
@@ -90,5 +101,6 @@ function test_main( Ns )
 
 end
 
-@code_native test_main( [64,64,64] )
-@time test_main( [64,64,64] )
+@time test_main( [54,54,54] )
+#@time test_main( [64,64,64] )
+#@time test_main( [100,100,100] )

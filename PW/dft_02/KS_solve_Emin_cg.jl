@@ -1,5 +1,5 @@
 function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
-                           psi0=nothing, Potentials0 = nothing,
+                           psi0=nothing, Potentials0 = nothing, E_NN = 0.0,
                            α_t = 3e-5, NiterMax=1000, verbose=false )
 
   Ns = pw.Ns
@@ -34,7 +34,11 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
   β        = 0.0
   Etot_old = 0.0
   Etot     = 0.0
-  Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0 )
+  if( E_NN != nothing )
+    Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0, E_NN )
+  else
+    Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 )
+  end
 
   for iter = 1:NiterMax
 
@@ -73,11 +77,11 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
     Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
     Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
 
-    Energies = calc_Energies( pw, Potentials, Focc, psi )
+    Energies = calc_Energies( pw, Potentials, Focc, psi, Energies.NN )
     Etot = Energies.Total
 
     diff = abs(Etot-Etot_old)
-    @printf("CG step %8d = %18.10f %18.10f\n", iter, Etot, diff)
+    @printf("CG step %8d = %18.10f %10.7e\n", iter, Etot, diff)
     if diff < 1e-6
       @printf("CONVERGENCE ACHIEVED\n")
       break

@@ -1,7 +1,7 @@
 # psi is assumed to be already orthonormalized elsewhere
 # Potentials are not updated
 function calc_Energies( PW::PWGrid, Potentials, Focc::Array{Float64},
-                        psi::Array{Complex128,2} )
+                        psi::Array{Complex128,2}, E_NN )
 
   Ω = PW.Ω
   Ns = PW.Ns
@@ -26,12 +26,12 @@ function calc_Energies( PW::PWGrid, Potentials, Focc::Array{Float64},
 
   E_ionic = dot( Potentials.Ionic, rho ) * Ω/Npoints
 
-  Energies = EnergiesT(0.0, 0.0, 0.0, 0.0, 0.0)
+  Energies = EnergiesT(0.0, 0.0, 0.0, 0.0, 0.0, E_NN)
   Energies.Kinetic = E_kin
   Energies.Ionic   = E_ionic
   Energies.Hartree = E_Hartree
   Energies.XC      = E_xc
-  Energies.Total   = E_kin + E_ionic + E_Hartree + E_xc
+  Energies.Total   = E_kin + E_ionic + E_Hartree + E_xc + E_NN
 
   return Energies
 end

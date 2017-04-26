@@ -44,10 +44,10 @@ function test_main( Ns )
   const theor = 1/(4*pi*0.25^3/3)
   @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
-  # Helium atom
+  # Lithium atom
   Zion = 3.0
   const Nstates = 2
-  Focc = [2.0, 1.0]    # FIXME: Probably gradient calculation for this is not implemented yet
+  Focc = [2.0, 1.0]
 
   Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
 
@@ -80,7 +80,7 @@ function test_main( Ns )
   # We simply need reshape because we only have one species type here.
   V_ionic = reshape( V_ionic, (Npoints) )
 
-  psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+  psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000, E_NN = E_nn )
 
   Y = ortho_gram_schmidt(psi)
   mu = Y' * op_H( pw, Potentials, Y )

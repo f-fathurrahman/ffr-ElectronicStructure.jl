@@ -1,6 +1,6 @@
 function KS_solve_scf( pw::PWGrid,
                        V_ionic, Focc, Ncols::Int64;
-                       β = 0.5,
+                       β = 0.5, E_NN = nothing,
                        rho0 = nothing,
                        Potentials0 = nothing,
                        NiterMax=100,
@@ -37,7 +37,13 @@ function KS_solve_scf( pw::PWGrid,
 
   Etot_old = 0.0
   rho_old = copy(rho)
-  Energies = EnergiesT(0.0, 0.0, 0.0, 0.0, 0.0)
+
+  if( E_NN != nothing )
+    Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0, E_NN )
+  else
+    Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 )
+  end
+
   λ = zeros(Ncols)
 
   for iter = 1:NiterMax
