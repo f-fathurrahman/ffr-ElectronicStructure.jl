@@ -49,7 +49,7 @@ function test_main( Ns )
   const Nstates = 2
   Focc = [2.0, 2.0]
 
-  Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
+  Xpos = reshape( [1.0, 1.0, 1.0], (3,1) )
 
   Sf = calc_strfact( Xpos, 1, [1], pw.gvec.G )
   E_nn = calc_ewald( pw, Sf, Xpos, 1, [1], [Zion] )
