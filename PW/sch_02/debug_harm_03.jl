@@ -1,4 +1,4 @@
-include("../common/PWGrid_v02.jl")
+include("../common/PWGrid_v03.jl")
 
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
@@ -17,16 +17,17 @@ include("Kprec.jl")
 include("diag_lobpcg.jl")
 include("diag_davidson.jl")
 
-function test_main( Ns; solution_method="diag_lobpcg" )
+function test_main( ecutwfc_Ry; solution_method="diag_lobpcg" )
 
   const LatVecs = 6.0*diagm( ones(3) )
 
-  pw = PWGrid( Ns, LatVecs )
+  pw = PWGrid( 0.5*ecutwfc_Ry, LatVecs )
 
   const Ω  = pw.Ω
   const r  = pw.r
   const G  = pw.gvec.G
   const G2 = pw.gvec.G2
+  const Ns = pw.Ns
   const Npoints = prod(Ns)
   const Ngwx = pw.gvecw.Ngwx
 
@@ -36,8 +37,6 @@ function test_main( Ns; solution_method="diag_lobpcg" )
   const actual = Npoints/Ngwx
   const theor = 1/(4*pi*0.25^3/3)
   @printf("Compression: actual, theor: %f , %f\n", actual, theor)
-
-  #exit()
 
   # Generate array of distances
   center = 6.0*ones(3)/2
@@ -52,31 +51,30 @@ function test_main( Ns; solution_method="diag_lobpcg" )
   srand(2222)
   psi  = randn(Ngwx,Nstates) + im*randn(Ngwx,Nstates)
   psi = ortho_gram_schmidt(psi)
+  #psi = zeros(Complex128,Ngwx,Nstates)
+  #for ist = 1:Nstates
+  #  psi[ist,ist] = 1.0
+  #end
 
+  #Kpsi = op_K( pw, psi )
+  #println("sum(Kpsi) = ", sum(Kpsi))
 
-  if solution_method == "Emin"
+  #Vpsi = op_Vpot( pw, Vpot, psi )
+  #println("sum(Vpsi) = ", sum(Vpsi))
 
-    psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
-    psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
+  #Hpsi = op_H( pw, Vpot, psi )
+  #println("sum(Hpsi) = ", sum(Hpsi))
 
-    Y = ortho_gram_schmidt(psi)
-    mu = Y' * op_H( pw, Vpot, Y )
-    evals, evecs = eig(mu)
-    Psi = Y*evecs
+  #grad = calc_grad( pw, Vpot, psi )
+  #println("sum(grad) = ", sum(grad))
 
-  else
+  #Etot = calc_Etot( pw, Vpot, psi )
+  #println("Etot = ", Etot)
 
-    #evals, psi = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
-    evals, psi = diag_davidson( pw, Vpot, psi, verbose=true, tol_avg=1e-10, NiterMax=20 )
-    evals, psi = diag_davidson( pw, Vpot, psi, verbose=true, tol_avg=1e-10, NiterMax=20 )
-
-  end
-
-  for st = 1:Nstates
-    @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
-  end
+  psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
+  psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=100 )
 
 end
 
 
-test_main( [30, 30, 30], solution_method="Emin" )
+test_main( 50.0 )

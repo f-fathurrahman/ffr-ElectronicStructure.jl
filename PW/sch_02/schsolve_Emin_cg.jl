@@ -14,24 +14,34 @@ function schsolve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
   #
   for iter = 1:NiterMax
     g = calc_grad( pw, Vpot,  psi)
+    #println("sum(g) = ", sum(g))
+    #println("sum(Kg) = ", sum(Kprec(pw,g)))
     nrm = 0.0
     for is = 1:Nstates
       nrm = nrm + real( dot( g[:,is], g[:,is] ) )
     end
     if iter != 1
-      beta = real(trace(g'*Kprec(pw,g)))/real(trace(g_old'*Kprec(pw,g_old)))
-      #beta = real(trace((g-g_old)'*Kprec(pw,g)))/real(trace(g_old'*Kprec(pw,g_old)))
+      #beta = real(trace(g'*Kprec(pw,g)))/real(trace(g_old'*Kprec(pw,g_old)))
+      beta = real(trace((g-g_old)'*Kprec(pw,g)))/real(trace(g_old'*Kprec(pw,g_old)))
       #beta = real(trace((g-g_old)'*Kprec(pw,g)))/real(trace((g-g_old)'*d))
-      #@printf("\nbeta = %f\n", beta)
     end
     d = -Kprec(pw, g) + beta * d_old
+    #println("sum(d) = ", sum(d))
+
     psic = ortho_gram_schmidt(psi + alphat*d)
+    #println("sum(tv) = ", sum(psi+alphat*d))
+    #println("sum(psic) = ", sum(psic))
+
     gt = calc_grad( pw, Vpot, psic )
-    if real(trace((g-gt)'*d)) != 0.0
-      alpha = abs(alphat*real(trace(g'*d))/real(trace((g-gt)'*d)))
+
+    denum = real(trace((g-gt)'*d))
+    #println("denum = ", denum)
+    if denum != 0.0
+      alpha = abs(alphat*real(trace(g'*d))/denum )
     else
       alpha = 0.0
     end
+    #@printf("\nalpha, beta = %f %f\n", alpha, beta)
     # Update wavefunction
     psi = psi[:,:] + alpha*d[:,:]
 
