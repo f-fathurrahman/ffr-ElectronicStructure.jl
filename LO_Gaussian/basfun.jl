@@ -16,7 +16,13 @@ type PGBF
   norm::Float64
 end
 
-function pgbf(expn,x=0,y=0,z=0,I=0,J=0,K=0,norm=1)
+function pgbf(expn; x=0,y=0,z=0,I=0,J=0,K=0,norm=1)
+  p = PGBF(expn,x,y,z,I,J,K,norm)
+  normalize!(p)
+  return p
+end
+
+function pgbf(expn, x=0,y=0,z=0,I=0,J=0,K=0,norm=1)
   p = PGBF(expn,x,y,z,I,J,K,norm)
   normalize!(p)
   return p
