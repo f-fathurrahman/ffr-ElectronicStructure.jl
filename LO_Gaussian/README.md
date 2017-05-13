@@ -26,7 +26,7 @@ construct an instance of `Molecule`.
 
 # Basis set
 
-Primitive Gaussian basis function:
+## Primitive Gaussian basis function:
 
 ```Julia
 type PGBF
@@ -41,7 +41,13 @@ type PGBF
 end
 ```
 
-Contracted Gaussian basis function:
+Initializing `PGBF` by calling constructor:
+
+```julia
+function pgbf(expn,x=0,y=0,z=0,I=0,J=0,K=0,norm=1)
+```
+
+## Contracted Gaussian basis function:
 
 ```julia
 type CGBF
