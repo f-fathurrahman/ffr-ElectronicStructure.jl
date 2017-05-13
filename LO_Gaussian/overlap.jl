@@ -51,15 +51,3 @@ function binomial_prefactor(s::Int64,ia::Int64,ib::Int64,xpa::Float64,xpb::Float
   end
   return total
 end
-
-
-function test_overlap()
-  s = pgbf(1.0)
-  px = pgbf(1.0,0,0,0,1,0,0)
-  @assert overlap1d(0,0,0.,0.,1.) == 1
-  @assert gaussian_product_center(s,s) == [0,0,0]
-  @assert isapprox(overlap(s,s),1)
-  @assert isapprox(overlap(px,px),1)
-  @assert isapprox(overlap(s,px),0)
-  @assert binomial_prefactor(0,0,0,0.,0.) == 1
-end
