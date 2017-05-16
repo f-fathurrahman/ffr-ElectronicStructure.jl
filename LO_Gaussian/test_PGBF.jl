@@ -1,5 +1,5 @@
 include("utils.jl")
-include("basfun.jl")
+include("PGBF.jl")
 include("overlap.jl")
 
 using PyPlot
@@ -8,8 +8,8 @@ const plt = PyPlot
 
 function test_main()
 
-  #fun1 = pgbf(1.0)
-  fun1 = pgbf(2.0, I=2)
+  #fun1 = init_PGBF(1.0)
+  fun1 = init_PGBF(0.3, I=6)
 
   basis_info(fun1)
 
@@ -17,12 +17,13 @@ function test_main()
   x = linspace(-5.0,5.0,N)
   y = zeros(N)
   for i = 1:N
-    y[i] = amplitude(fun1, x[i], 0.0, 0.0)
+    y[i] = amplitude( fun1, x[i], 0.0, 0.0 )
   end
 
   plt.clf()
   plt.plot( x, y, marker="o" )
-  plt.savefig("s_func_x.png", dpi=300)
+  plt.grid()
+  plt.savefig("func1_x.png", dpi=300)
 
 end
 

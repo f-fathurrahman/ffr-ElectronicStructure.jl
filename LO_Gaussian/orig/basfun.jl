@@ -16,6 +16,7 @@ type PGBF
   norm::Float64
 end
 
+# Enable keyword-based
 function pgbf(expn; x=0,y=0,z=0,I=0,J=0,K=0,norm=1)
   p = PGBF(expn,x,y,z,I,J,K,norm)
   normalize!(p)

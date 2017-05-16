@@ -8,8 +8,7 @@ function overlap( a::PGBF, b::PGBF )
   b.expn,b.x,b.y,b.z,b.I,b.J,b.K)
 end
 
-# where should we put this ??
-#overlap(a::CGBF,b::CGBF) = contract(overlap,a,b)
+overlap(a::CGBF,b::CGBF) = contract(overlap,a,b)
 
 function overlap(aexpn::Float64,ax::Float64,ay::Float64,az::Float64,
          aI::Int64,aJ::Int64,aK::Int64,
