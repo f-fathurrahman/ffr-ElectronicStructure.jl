@@ -1,5 +1,6 @@
 include("utils.jl")
 include("PGBF.jl")
+include("CGBF.jl")
 include("overlap.jl")
 
 using PyPlot

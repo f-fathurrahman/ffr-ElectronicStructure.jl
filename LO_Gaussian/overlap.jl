@@ -8,9 +8,6 @@ function overlap( a::PGBF, b::PGBF )
   b.expn,b.x,b.y,b.z,b.I,b.J,b.K)
 end
 
-# where should we put this ??
-#overlap(a::CGBF,b::CGBF) = contract(overlap,a,b)
-
 function overlap(aexpn::Float64,ax::Float64,ay::Float64,az::Float64,
          aI::Int64,aJ::Int64,aK::Int64,
          bexpn::Float64,bx::Float64,by::Float64,bz::Float64,
@@ -52,3 +49,6 @@ function binomial_prefactor(s::Int64,ia::Int64,ib::Int64,xpa::Float64,xpb::Float
   end
   return total
 end
+
+# where should we put this ??
+overlap(a::CGBF,b::CGBF) = contract(overlap,a,b)
