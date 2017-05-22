@@ -10,7 +10,7 @@ const plt = PyPlot
 function test_main()
 
   #fun1 = init_PGBF(1.0)
-  fun1 = init_PGBF(0.3, I=6)
+  fun1 = init_PGBF(0.3, [0.0,0.0,0.0], [6,0,0])
 
   basis_info(fun1)
 

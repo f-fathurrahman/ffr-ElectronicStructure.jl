@@ -9,14 +9,13 @@ type PGBF
   norm::Float64
 end
 
-# Enable keyword-based
-function init_PGBF(expn; x=0,y=0,z=0,I=0,J=0,K=0,norm=1)
-  p = PGBF(expn,x,y,z,I,J,K,norm)
+function init_PGBF( expn, center::Array{Float64,1}, power::Array{Int,1} )
+  p = PGBF( expn, center[1], center[2], center[3], power[1], power[2], power[3], 1.0 )
   normalize!(p)
   return p
 end
 
-function init_PGBF(expn, x=0,y=0,z=0, I=0, J=0, K=0, norm=1 )
+function init_PGBF(expn, x=0,y=0,z=0,I=0,J=0,K=0,norm=1)
   p = PGBF(expn,x,y,z,I,J,K,norm)
   normalize!(p)
   return p
