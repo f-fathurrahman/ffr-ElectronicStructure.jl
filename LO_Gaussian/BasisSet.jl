@@ -15,7 +15,7 @@ function build_basis(mol::Molecule,name="sto3g")
     for btuple in data[atom.atno]
       sym,primlist = btuple
       for (I,J,K) in sym2power[sym]
-        cbf = init_CGBF(atom.x,atom.y,atom.z,I,J,K)
+        cbf = cgbf(atom.x,atom.y,atom.z,I,J,K)
         push!(basis_set,cbf)
         for (expn,coef) in primlist
           push!(cbf,expn,coef)

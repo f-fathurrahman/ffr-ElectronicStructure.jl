@@ -1,5 +1,13 @@
 These came from Rick Mueller (PyQuante's author)
 
+Implementation flow:
+
+- basis set: PGBF and CGBF
+- atoms
+- build basis, given input atoms return basis set (an array of CGBF)
+
+
+
 I modified it slightly to remove errors and warnings.
 
 # Defining molecular structures

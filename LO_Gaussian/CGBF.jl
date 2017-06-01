@@ -10,6 +10,10 @@ type CGBF
   coefs::Array{Float64,1}
 end
 
+function init_CGBF( expn, center::Array{Float64,1}, power::Array{Int,1} )
+  return CGBF(x,y,z,I,J,K,1.0, PGBF[],Float64[])
+end
+
 init_CGBF(x=0,y=0,z=0,I=0,J=0,K=0) = CGBF(x,y,z,I,J,K,1.0, PGBF[],Float64[])
 
 function amplitude(bf::CGBF,x,y,z)
