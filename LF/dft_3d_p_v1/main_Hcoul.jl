@@ -48,7 +48,6 @@ function test_main( ; method = "Emin_cg" )
   L = BB - AA
   Gv = GvectorsT( NN, diagm(L) )
 
-
   Vg = zeros(Complex128,Npoints)
   for ig=2:Npoints
     Vg[ig] = -4*pi/Gv.G2[ig]/Gv.Ω
@@ -93,6 +92,6 @@ function test_main( ; method = "Emin_cg" )
 end
 
 #@code_native test_main()
-#@time test_main(method="Emin_cg_sparse")
-@time test_main(method="SCF")
+@time test_main(method="Emin_cg_sparse")
+#@time test_main(method="SCF")
 #@time test_main(method="Emin_cg")

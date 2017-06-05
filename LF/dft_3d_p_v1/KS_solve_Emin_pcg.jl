@@ -67,6 +67,10 @@ function KS_solve_Emin_pcg( LF::LF3dGrid,
       β = trace( (g-g_old)'*Kg ) / trace( g_old'*Kg_old )
       #β = trace( (g-g_old)'*Kg )/ trace( (g-g_old)'*d_old )
     end
+    if β < 0
+      @printf("β is smaller than zero: %f, setting it to zero\n", β)
+      β = 0
+    end
     d = -Kg + β*d_old
     #
     # compute gradient at trial step
@@ -96,7 +100,7 @@ function KS_solve_Emin_pcg( LF::LF3dGrid,
     Etot = Energies.Total
     #
     if verbose
-      @printf("%8d %16.9e %16.9e\n", iter, Etot, abs(Etot-Etot_old))
+      @printf("%8d %16.9f %16.9e\n", iter, Etot, abs(Etot-Etot_old))
     end
     if abs(Etot-Etot_old) < 1.e-7
       if verbose
