@@ -1,9 +1,9 @@
-function schsolve_Emin_pcg( LF::LF3dGrid,
-                            ∇2::SparseMatrixCSC{Float64,Int64}, prec,
-                            Vpot, Ncol::Int64;
-                            v0 = nothing,
-                            α_t=3e-5, Niter=1000,
-                            verbose=false )
+function Sch_solve_Emin_pcg( LF::LF3dGrid,
+                             ∇2::SparseMatrixCSC{Float64,Int64}, prec,
+                             Vpot, Ncol::Int64;
+                             v0 = nothing,
+                             α_t=3e-5, Niter=1000,
+                             verbose=false )
   #
   Npoints = LF.Nx * LF.Ny * LF.Nz
   ΔV = LF.LFx.h * LF.LFy.h * LF.LFz.h
@@ -40,8 +40,8 @@ function schsolve_Emin_pcg( LF::LF3dGrid,
     end
     #
     if iter != 1
-      β = trace( g' * Kg)/trace( g_old'*Kg_old )
-      #β = trace( (g-g_old)'*Kg ) / trace( g_old'*Kg_old )
+      #β = trace( g' * Kg)/trace( g_old'*Kg_old )
+      β = trace( (g-g_old)'*Kg ) / trace( g_old'*Kg_old )
       #β = trace( (g-g_old)'*Kg )/ trace( (g-g_old)'*d_old )
     end
     d = -Kg + β*d_old

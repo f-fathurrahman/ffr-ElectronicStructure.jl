@@ -10,8 +10,8 @@ include("op_nabla2.jl")
 include("op_H.jl")
 include("calc_Energies.jl")
 include("calc_grad.jl")
-include("schsolve_Emin_cg.jl")
-include("schsolve_Emin_pcg.jl")
+include("Sch_solve_Emin_cg.jl")
+include("Sch_solve_Emin_pcg.jl")
 include("calc_evals.jl")
 include("calc_rho.jl")
 include("../LF_common/sparse_LF3d.jl")
@@ -43,7 +43,7 @@ function test_main( ; method = "Emin_cg" )
     #
     ∇2 = get_Laplacian3d_kron(LF)
     prec = prec_mkl_ilu0( -0.5*∇2 + spdiagm(Vpot) )
-    Energies, evecs = schsolve_Emin_pcg( LF, ∇2, prec, Vpot, Ncols, verbose=true )
+    Energies, evecs = Sch_solve_Emin_pcg( LF, ∇2, prec, Vpot, Ncols, verbose=true )
     evals = calc_evals( LF, Vpot, evecs )
     #
   elseif method == "diag_lobpcg"
@@ -58,7 +58,7 @@ function test_main( ; method = "Emin_cg" )
     #
   else
     #
-    Energies, evecs = schsolve_Emin_cg( LF, Vpot, Ncols, verbose=true )
+    Energies, evecs = Sch_solve_Emin_cg( LF, Vpot, Ncols, verbose=true )
     evals = calc_evals( LF, Vpot, evecs )
   end
 
@@ -74,6 +74,6 @@ function test_main( ; method = "Emin_cg" )
 end
 
 @code_native test_main()
-#@time test_main(method="Emin_cg_sparse")
-@time test_main(method="diag_lobpcg")
+@time test_main(method="Emin_cg_sparse")
+#@time test_main(method="diag_lobpcg")
 #@time test_main(method="Emin_cg")

@@ -1,7 +1,7 @@
-function schsolve_Emin_cg( LF::LF3dGrid, Vpot, Ncol::Int64;
-                           v0 = nothing,
-                           α_t=3e-5, Niter=1000,
-                           verbose=false )
+function Sch_solve_Emin_cg( LF::LF3dGrid, Vpot, Ncol::Int64;
+                            v0 = nothing,
+                            α_t=3e-5, Niter=1000,
+                            verbose=false )
   #
   Npoints = LF.Nx * LF.Ny * LF.Nz
   ΔV = LF.LFx.h * LF.LFy.h * LF.LFz.h
