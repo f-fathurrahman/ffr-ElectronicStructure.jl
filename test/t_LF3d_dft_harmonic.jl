@@ -1,5 +1,7 @@
 using ElectronicStructure
 
+include("init_pot_harm_3d.jl")
+
 function test_main( ; method = "Emin_cg" )
   # LF parameters
   NN = [25, 25, 25]
@@ -47,7 +49,6 @@ function test_main( ; method = "Emin_cg" )
     evals = calc_evals( LF, Potentials, evecs )
   end
 
-  print_Energies(Energies)
   @printf("\nEigenvalues:\n")
   for i = 1:Ncols
     @printf("%8d %f\n", i, evals[i])
@@ -60,5 +61,5 @@ end
 
 @code_native test_main()
 #@time test_main(method="Emin_cg_sparse")
-#@time test_main(method="Emin_cg")
-@time test_main(method="SCF")
+@time test_main(method="Emin_cg")
+#@time test_main(method="SCF")
