@@ -1,5 +1,3 @@
-module m_Gvectors
-
 struct GvectorsT
   Ns::Array{Int64,1}
   LatVecs::Array{Float64,2}
@@ -46,8 +44,4 @@ function init_grids( Ns, LatVecs, RecVecs )
   end
   end
   return G,G2
-end
-
-export GvectorsT
-
 end

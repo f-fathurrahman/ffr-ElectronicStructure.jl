@@ -1,8 +1,3 @@
-module m_LF3d
-
-push!(LOAD_PATH, "./")
-using m_LF1d
-
 struct LF3dGrid
   LFx::LF1dGrid
   LFy::LF1dGrid
@@ -142,11 +137,3 @@ function init_LF3d_sinc( NN::Array{Int64,1}, hh::Array{Float64,1}; verbose=false
   LF = LF3dGrid( LFx,LFy,LFz, Nx,Ny,Nz, Lx,Ly,Lz, lingrid, xyz2lin, lin2xyz )
   return LF
 end
-
-
-export LF3dGrid
-export init_LF3d_p
-export init_LF3d_c
-export init_LF3d_sinc
-
-end  # module

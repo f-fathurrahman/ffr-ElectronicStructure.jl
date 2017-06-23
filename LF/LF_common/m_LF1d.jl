@@ -1,7 +1,5 @@
 # ffr, 19 April 2016
 
-module m_LF1d
-
 # for the moment, I decided to not include L, because it can
 # be calculated from A and B
 struct LF1dGrid
@@ -145,11 +143,3 @@ function init_LF1d_sinc( N::Int64, h::Float64, verbose=false )
   end
   return LF
 end
-
-
-export LF1dGrid
-export init_LF1d_p
-export init_LF1d_c
-export init_LF1d_sinc
-
-end # module m_LF1d

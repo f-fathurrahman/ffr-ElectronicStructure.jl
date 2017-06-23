@@ -1,4 +1,4 @@
-type EnergiesT
+mutable struct EnergiesT
   Total::Float64
   Kinetic::Float64
   Ionic::Float64
