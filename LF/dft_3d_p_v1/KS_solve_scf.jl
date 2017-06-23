@@ -62,5 +62,5 @@ function KS_solve_scf( LF::LF3dGrid, Gv::GvectorsT,
     Potentials = PotentialsT( V_ionic, V_Hartree, V_xc )
   end
 
-  return Energies, v, Potentials
+  return Energies, λ, v, Potentials
 end

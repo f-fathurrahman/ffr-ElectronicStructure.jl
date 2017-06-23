@@ -1,6 +1,5 @@
 using ElectronicStructure
 
-
 function test_main( ; method = "Emin_cg" )
   # LF parameters
   NN = [25, 25, 25]
@@ -39,8 +38,8 @@ function test_main( ; method = "Emin_cg" )
     ∇2 = get_Laplacian3d_kron(LF)
     precH = prec_mkl_ilu0( -0.5*∇2 + spdiagm(V_ionic) )
     #precH = speye(Npoints)
-    Output = KS_solve_scf( LF, Gv, ∇2, precH, V_ionic, Focc, Ncols, verbose=true )
-    exit()
+    Energies, evals, evecs, Potentials =
+          KS_solve_scf( LF, Gv, ∇2, precH, V_ionic, Focc, Ncols, verbose=true )
     #
   else
     #
@@ -60,6 +59,6 @@ function test_main( ; method = "Emin_cg" )
 end
 
 @code_native test_main()
-@time test_main(method="Emin_cg_sparse")
+#@time test_main(method="Emin_cg_sparse")
 #@time test_main(method="Emin_cg")
-#@time test_main(method="SCF")
+@time test_main(method="SCF")
