@@ -4,7 +4,7 @@ module m_LF1d
 
 # for the moment, I decided to not include L, because it can
 # be calculated from A and B
-struct LF1dGrid
+type LF1dGrid
   N::Int64
   A::Float64
   B::Float64
@@ -153,3 +153,4 @@ export init_LF1d_c
 export init_LF1d_sinc
 
 end # module m_LF1d
+

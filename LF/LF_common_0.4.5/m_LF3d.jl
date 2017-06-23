@@ -3,7 +3,7 @@ module m_LF3d
 push!(LOAD_PATH, "./")
 using m_LF1d
 
-struct LF3dGrid
+type LF3dGrid
   LFx::LF1dGrid
   LFy::LF1dGrid
   LFz::LF1dGrid

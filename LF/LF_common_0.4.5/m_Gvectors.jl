@@ -1,6 +1,6 @@
 module m_Gvectors
 
-struct GvectorsT
+type GvectorsT
   Ns::Array{Int64,1}
   LatVecs::Array{Float64,2}
   RecVecs::Array{Float64,2}
@@ -28,8 +28,8 @@ function init_grids( Ns, LatVecs, RecVecs )
   #
   Npoints = prod(Ns)
   #
-  G  = Array{Float64}(3,Npoints)
-  G2 = Array{Float64}(Npoints)
+  G  = Array(Float64,3,Npoints)
+  G2 = Array(Float64,Npoints)
   ip    = 0
   for k in 0:Ns[3]-1
   for j in 0:Ns[2]-1

@@ -5,7 +5,7 @@ using m_Gvectors
 include("../utils/ortho_gram_schmidt.jl")
 include("../utils/orthonormalize.jl")
 
-include("init_pot_harm_3d.jl")
+include("init_pot_Hcoul.jl")
 
 include("EnergiesT.jl")
 include("PotentialsT.jl")
@@ -34,9 +34,9 @@ include("diag_lobpcg.jl")
 
 function test_main( ; method = "Emin_cg" )
   # LF parameters
-  NN = [25, 25, 25]
-  AA = [0.0, 0.0, 0.0]
-  BB = [6.0, 6.0, 6.0]
+  NN = [37, 37, 37]
+  AA = [-8.0, -8.0, -8.0]
+  BB = [ 8.0,  8.0,  8.0]
 
   Npoints = prod(NN)
 
@@ -48,20 +48,22 @@ function test_main( ; method = "Emin_cg" )
   L = BB - AA
   Gv = GvectorsT( NN, diagm(L) )
 
-  # Parameter for potential
-  center = AA + 0.5*(BB-AA)
-  # Potential
-  ω = 2.0
-  V_ionic = init_pot_harm_3d( LF, ω, center )
+  Vg = zeros(Complex128,Npoints)
+  for ig=2:Npoints
+    Vg[ig] = -4*pi/Gv.G2[ig]/Gv.Ω
+  end
+  V_ionic = real( G_to_R(NN,Vg) ) * Npoints
 
-  Ncols = 4
-  Focc = 2.0*ones(Ncols)
+  println("sum(V_ionic): ", sum(V_ionic))
+
+  Ncols = 1
+  Focc = 1.0*ones(Ncols)
 
   if method == "Emin_cg_sparse"
     #
     ∇2 = get_Laplacian3d_kron(LF)
     precH = prec_mkl_ilu0( -0.5*∇2 + spdiagm(V_ionic) )
-    #precH = speye(Npoints)  # for testing unpreconditioned code
+    #precH = speye(Npoints)
     Energies, evecs, Potentials = KS_solve_Emin_pcg( LF, Gv, ∇2, precH,
                                     V_ionic, Focc, Ncols, verbose=true )
     evals = calc_evals( LF, ∇2, Potentials, evecs )
@@ -72,7 +74,6 @@ function test_main( ; method = "Emin_cg" )
     #precH = speye(Npoints)
     Output = KS_solve_scf( LF, Gv, ∇2, precH, V_ionic, Focc, Ncols, verbose=true )
     exit()
-    #
   else
     #
     Energies, evecs, Potentials = KS_solve_Emin_cg( LF, Gv, V_ionic, Focc, Ncols, verbose=true )
@@ -91,6 +92,6 @@ function test_main( ; method = "Emin_cg" )
 end
 
 #@code_native test_main()
-#@time test_main(method="Emin_cg_sparse")
+@time test_main(method="Emin_cg_sparse")
+#@time test_main(method="SCF")
 #@time test_main(method="Emin_cg")
-@time test_main(method="SCF")

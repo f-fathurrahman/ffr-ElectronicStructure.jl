@@ -90,7 +90,7 @@ function test_main( ; method = "Emin_cg" )
 
 end
 
-#@code_native test_main()
-#@time test_main(method="Emin_cg_sparse")
+@code_native test_main()
+@time test_main(method="Emin_cg_sparse")
 #@time test_main(method="Emin_cg")
-@time test_main(method="SCF")
+#@time test_main(method="SCF")
