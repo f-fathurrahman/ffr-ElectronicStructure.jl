@@ -53,4 +53,7 @@ include("solve_poisson_FFT.jl")
 include("LDA_VWN.jl")
 include("diag_lobpcg.jl")
 
+export build_nabla2
+include("build_nabla2.jl")
+
 end
