@@ -1,6 +1,6 @@
-push!(LOAD_PATH, "../LF_common/")
-using m_LF3d
-using m_Gvectors
+include("../LF_common/m_LF1d.jl")
+include("../LF_common/m_LF3d.jl")
+include("../LF_common/m_Gvectors.jl")
 
 include("../utils/ortho_gram_schmidt.jl")
 include("../utils/orthonormalize.jl")

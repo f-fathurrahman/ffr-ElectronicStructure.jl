@@ -1,3 +1,37 @@
+# Probably this should not be used in the periodic system
+function init_pot_Hps_HGH_G( Gvec::GvectorsT, center )
+
+  Ns = Gvec.Ns
+  Ngvec = prod(Ns)
+  Npoints = Ngvec
+  Ω = Gvec.Ω
+  G2 = Gvec.G2
+
+  Vpot = zeros( Float64,Npoints )
+
+  const zval = 1
+  const rloc = 0.2
+  const c1 = -4.0663326
+  const c2 = 0.6678322
+
+  Vg = zeros(Complex128,Npoints)
+  pre1 = -4*pi*zval/Ω
+  pre2 = sqrt(8*pi^3)*rloc^3/Ω
+  #
+  for ig=2:Ngvec
+    Gr = sqrt(G2[ig])*rloc
+    expGr2 = exp(-0.5*Gr^2)
+    Vg[ig] = pre1/G2[ig]*expGr2 + pre2*expGr2 * (c1 + c2*(3-Gr^2))
+  end
+  # limiting value, with minus sign ?
+  Vg[1] = 2*pi*zval*rloc^2 + (2*pi)^1.5 * rloc^3 * (c1 + 3.0*c2)
+
+  V_ionic = real( G_to_R(Ns,Vg) ) * Npoints
+
+  return V_ionic
+end
+
+
 function init_pot_Hps( LF, center )
   Npoints = LF.Nx * LF.Ny * LF.Nz
   Vpot = zeros( Float64,Npoints )

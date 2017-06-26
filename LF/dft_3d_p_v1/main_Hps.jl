@@ -1,6 +1,8 @@
-push!(LOAD_PATH, "../LF_common/")
-using m_LF3d
-using m_Gvectors
+import SpecialFunctions: erf
+
+include("../LF_common/m_LF1d.jl")
+include("../LF_common/m_LF3d.jl")
+include("../LF_common/m_Gvectors.jl")
 
 include("../utils/ortho_gram_schmidt.jl")
 include("../utils/orthonormalize.jl")
@@ -50,7 +52,7 @@ function test_main( ; method = "Emin_cg" )
   # Parameter for potential
   center = 0.5*(BB-AA)
   # Potential
-  V_ionic = init_pot_Hps_HGH( LF, center )
+  V_ionic = init_pot_Hps_HGH_G( Gv, center )
   println("sum(V_ionic): ", sum(V_ionic))
 
   Ncols = 1
