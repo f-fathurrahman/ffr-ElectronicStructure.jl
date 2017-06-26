@@ -34,7 +34,7 @@ function linsolve_cr!( LF::LF3dGrid, x::Array{Float64,1}, b::Array{Float64,1};
     #
     norm_res = sqrt( dot( r, r ) )
     norm_p   = sqrt( dot( p, p ) )
-    Δx = abs(x-x_old)
+    Δx = abs.(x-x_old)
     norm_Δx = sqrt( dot( Δx, Δx ) )
     if verbose
       @printf("%8d %18.10f %18.10f %18.10f\n", iter, norm_res, norm_p, norm_Δx)

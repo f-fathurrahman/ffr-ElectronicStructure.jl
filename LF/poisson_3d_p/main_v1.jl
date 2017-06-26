@@ -1,5 +1,5 @@
-push!(LOAD_PATH, "../LF_common/")
-using m_LF3d
+include("../LF_common/m_LF1d.jl")
+include("../LF_common/m_LF3d.jl")
 
 include("../LF_common/apply_Laplacian.jl")
 include("../LF_common/solve_poisson_cg.jl")
@@ -13,7 +13,7 @@ function test_main( NN::Array{Int64} )
   BB = [16.0, 16.0, 16.0]
 
   # Initialize LF
-  LF = init_LF3d_p( NN, AA, BB, true )
+  LF = init_LF3d_p( NN, AA, BB, verbose=true )
 
   # Box dimensions
   Lx = BB[1] - AA[1]
@@ -59,4 +59,4 @@ function test_main( NN::Array{Int64} )
 end
 
 #@code_native test_main([3,3,3])
-@time test_main([19,19,19])
+@time test_main([39,39,39])

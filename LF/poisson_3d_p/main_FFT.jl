@@ -1,8 +1,6 @@
-push!(LOAD_PATH, "../LF_common/")
-using m_LF3d
-
-push!(LOAD_PATH, "./")
-using m_Gvectors
+include("../LF_common/m_LF1d.jl")
+include("../LF_common/m_LF3d.jl")
+include("../LF_common/m_Gvectors.jl")
 
 include("../LF_common/apply_Laplacian.jl")
 include("../LF_common/solve_poisson_cg.jl")
