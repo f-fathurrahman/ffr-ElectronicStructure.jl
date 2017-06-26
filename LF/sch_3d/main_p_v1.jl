@@ -1,5 +1,5 @@
-push!(LOAD_PATH, "../LF_common/")
-using m_LF3d
+include("../LF_common/m_LF1d.jl")
+include("../LF_common/m_LF3d.jl")
 
 include("init_pot_Hcoul.jl")
 include("init_pot_harm_3d.jl")

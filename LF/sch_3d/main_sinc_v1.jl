@@ -1,5 +1,5 @@
-push!(LOAD_PATH, "../LF_common/")
-using m_LF3d
+include("../LF_common/m_LF1d.jl")
+include("../LF_common/m_LF3d.jl")
 
 include("init_pot_Hcoul.jl")
 include("init_pot_harm_3d.jl")
@@ -10,8 +10,8 @@ include("op_nabla2.jl")
 include("op_H.jl")
 include("calc_Energies.jl")
 include("calc_grad.jl")
-include("schsolve_Emin_cg.jl")
-include("schsolve_Emin_pcg.jl")
+include("Sch_solve_Emin_cg.jl")
+include("Sch_solve_Emin_pcg.jl")
 include("calc_evals.jl")
 include("calc_rho.jl")
 include("../LF_common/sparse_LF3d.jl")
@@ -21,7 +21,7 @@ include("diag_lobpcg.jl")
 
 function test_main( ; method = "Emin_cg" )
   # LF parameters
-  NN = [20, 20, 20]
+  NN = [25, 25, 25]
   hh = [0.3, 0.3, 0.3]
 
   Npoints = prod(NN)
@@ -44,7 +44,7 @@ function test_main( ; method = "Emin_cg" )
     #
     ∇2 = get_Laplacian3d_kron(LF)
     prec = prec_mkl_ilu0( -0.5*∇2 + spdiagm(Vpot) )
-    Energies, evecs = schsolve_Emin_pcg( LF, ∇2, prec, Vpot, Ncols, verbose=true )
+    Energies, evecs = Sch_solve_Emin_pcg( LF, ∇2, prec, Vpot, Ncols, verbose=true )
     evals = calc_evals( LF, Vpot, evecs )
     #
   elseif method == "diag_lobpcg"
