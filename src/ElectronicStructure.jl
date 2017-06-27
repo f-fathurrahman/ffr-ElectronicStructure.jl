@@ -2,8 +2,8 @@ __precompile__()
 
 module ElectronicStructure
 
-export PWGrid
-
+include("Utility.jl")
 include("LagrangeFunction.jl")
+include("Pseudopotentials.jl")
 
 end

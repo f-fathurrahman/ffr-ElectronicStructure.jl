@@ -1,11 +1,14 @@
+using ElectronicStructure
+using ElectronicStructure.Utility
+
 using SpecialFunctions: erf
 
 type PsPot_HGH
   itype::Int
-  atsymb::ASCIIString
+  atsymb::String
   zval::Float64
   lloc::Int
-  lmax::Intm
+  lmax::Int
   rloc::Float64
   rc::Array{Float64}   # indexed (l+1), l=0,1,2,3
   c::Array{Float64}    # indexed 1,2,3,4
@@ -19,7 +22,7 @@ end
 
 
 # Constructor
-function PsPot_HGH( itype::Int, atsymb::ASCIIString, filename::ASCIIString )
+function PsPot_HGH( itype::Int, atsymb::String, filename::String )
 
   @printf("\nFile = %s\n", filename)
   file = open( filename )
