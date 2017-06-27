@@ -11,7 +11,6 @@ function init_pot_harm_3d( LF::LF3dGrid, ω, center )
 end
 
 
-
 """
 Initialize ion-electron potential according to pure Coulombic
 potential.

@@ -1,5 +1,5 @@
 using ElectronicStructure
-using ElectronicStructure.Pseudopotentials
+using ElectronicStructure.PsPot
 
 function test_main()
   #psp1 = PsPot_HGH(1, "H" , "LDA_HGH/1h.1.hgh")

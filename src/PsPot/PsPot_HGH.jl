@@ -152,14 +152,15 @@ function info_PsPot_HGH( psp::PsPot_HGH )
 
   const ANGMOM = ["s", "p", "d", "f"]
 
-  @printf("Local pseudopotential info:\n")
+  @printf("\nLocal pseudopotential info:\n\n")
   @printf("rloc: %f, c: %f, %f, %f, %f\n", psp.rloc, psp.c[1], psp.c[2], psp.c[3], psp.c[4])
-
-  @printf("\nNonlocal pseudopotential info:\n")
+  @printf("\n")
+  @printf("Nonlocal pseudopotential info:\n\n")
   for i=1:4
     @printf("Angular momentum: %s, rc = %f\n", ANGMOM[i], psp.rc[i])
     @printf("h = \n")
     PrintMatrix( reshape(psp.h[i,:,:],(3,3) ) )
+    @printf("\n")
   end
 
 end

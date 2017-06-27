@@ -1,8 +1,9 @@
 using ElectronicStructure
+using ElectronicStructure.LagrangeFunction
 
 function test_main( NN::Array{Int64} )
 
-  println("NN = ", NN)
+  println("\nNN = ", NN)
 
   Nx = NN[1]
   Ny = NN[2]
@@ -13,10 +14,12 @@ function test_main( NN::Array{Int64} )
   BB = [16.0, 16.0, 16.0]
 
   # Initialize LF
-  LF = init_LF3d_c( NN, AA, BB, verbose=true )
+  LF = init_LF3d_c( NN, AA, BB )
 
+  @printf("build_nabla2: ")
   @time nabla2 = build_nabla2( LF )
 
+  @printf("get_Laplacian3d_kron: ")
   @time nabla2_v2 = get_Laplacian3d_kron( LF )
 
   srand(123)
@@ -26,6 +29,7 @@ function test_main( NN::Array{Int64} )
   Lx = nabla2 * x
   Lx_v2 = nabla2_v2 * x
 
+  @printf("Diff = ")
   println( sum(Lx-Lx_v2) )
 
 end

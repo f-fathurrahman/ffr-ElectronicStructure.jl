@@ -1,4 +1,4 @@
-module Pseudopotentials
+module PsPot
 
 #
 # HGH pseudopotentials

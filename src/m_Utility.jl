@@ -1,6 +1,6 @@
 module Utility
 
 export PrintMatrix
-include("utility/PrintMatrix.jl")
+include("Utility/PrintMatrix.jl")
 
 end
