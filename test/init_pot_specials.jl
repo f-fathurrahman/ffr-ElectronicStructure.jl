@@ -1,4 +1,7 @@
-function init_pot_harm_3d( LF, ω, center )
+"""
+Initialize harmonic external potential for electronic system.
+"""
+function init_pot_harm_3d( LF::LF3dGrid, ω, center )
   Npoints = LF.Nx * LF.Ny * LF.Nz
   Vpot = zeros( Float64,Npoints )
   for ip = 1:Npoints
@@ -8,7 +11,13 @@ function init_pot_harm_3d( LF, ω, center )
 end
 
 
-function init_pot_Hcoul( LF, center )
+
+"""
+Initialize ion-electron potential according to pure Coulombic
+potential.
+This potential is singular at r = 0.
+"""
+function init_pot_Hcoul( LF::LF3dGrid, center )
   Npoints = LF.Nx * LF.Ny * LF.Nz
   Vpot = zeros( Float64,Npoints )
   for ip = 1:Npoints
@@ -19,7 +28,12 @@ function init_pot_Hcoul( LF, center )
 end
 
 
-function init_pot_Hps( LF, center )
+"""
+Initialize ion-electron potential for hydrogen atom using
+analytic form and parameters used in Gygi's paper.
+(need reference)
+"""
+function init_pot_Hps( LF::LF3dGrid, center )
   Npoints = LF.Nx * LF.Ny * LF.Nz
   Vpot = zeros( Float64,Npoints )
 
@@ -28,7 +42,6 @@ function init_pot_Hps( LF, center )
   const aa  = -1.9287
   const bb  = 0.3374
 
-  # TODO Add journal reference for this pseudopotential
   for ip=1:Npoints
     r = norm( LF.lingrid[:,ip] - center[:] )
     Vpot[ip] = -1.0/r * erf( r/rc1 ) + (aa + bb*r^2)*exp(-(r/rc2)^2)
@@ -38,10 +51,16 @@ end
 
 
 
+"""
+Initialize local ion-electron potential for hydrogen atom according
+to HGH pseudopotential parameters.
 
+This function is used only for testing purpose.
 
-# Probably this should not be used in the periodic system
-function init_pot_Hps_HGH( LF, center )
+This function should not be used to initialize ion-electron potential for
+periodic system.
+"""
+function init_pot_Hps_HGH( LF::LF3dGrid, center )
   Npoints = LF.Nx * LF.Ny * LF.Nz
   Vpot = zeros( Float64,Npoints )
 
