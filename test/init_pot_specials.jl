@@ -1,3 +1,24 @@
+function init_pot_harm_3d( LF, ω, center )
+  Npoints = LF.Nx * LF.Ny * LF.Nz
+  Vpot = zeros( Float64,Npoints )
+  for ip = 1:Npoints
+    Vpot[ip] = 0.5 * ω^2 * norm(LF.lingrid[:,ip] - center[:])^2
+  end
+  return Vpot
+end
+
+
+function init_pot_Hcoul( LF, center )
+  Npoints = LF.Nx * LF.Ny * LF.Nz
+  Vpot = zeros( Float64,Npoints )
+  for ip = 1:Npoints
+    r = norm( LF.lingrid[:,ip] - center[:] )
+    Vpot[ip] = -1.0/r
+  end
+  return Vpot
+end
+
+
 function init_pot_Hps( LF, center )
   Npoints = LF.Nx * LF.Ny * LF.Nz
   Vpot = zeros( Float64,Npoints )
@@ -14,6 +35,9 @@ function init_pot_Hps( LF, center )
   end
   return Vpot
 end
+
+
+
 
 
 # Probably this should not be used in the periodic system

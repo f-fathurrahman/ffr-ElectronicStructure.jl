@@ -1,7 +1,7 @@
 using ElectronicStructure
 using ElectronicStructure.LagrangeFunction
 
-include("init_pot_harm_3d.jl")
+include("init_pot_specials.jl")
 
 function test_main( ; method = "Emin_cg" )
   # LF parameters
