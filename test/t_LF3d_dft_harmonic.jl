@@ -1,4 +1,5 @@
 using ElectronicStructure
+using ElectronicStructure.LagrangeFunction
 
 include("init_pot_harm_3d.jl")
 
