@@ -30,7 +30,8 @@ function test_main( ; method = "Emin_cg" )
 
   if method == "Emin_cg_sparse"
     #
-    ∇2 = get_Laplacian3d_kron(LF)
+    #∇2 = get_Laplacian3d_kron(LF)
+    ∇2 = build_nabla2(LF)
     precH = prec_mkl_ilu0( -0.5*∇2 + spdiagm(V_ionic) )
     #precH = speye(Npoints)  # for testing unpreconditioned code
     Energies, evecs, Potentials = KS_solve_Emin_pcg( LF, Gv, ∇2, precH,
