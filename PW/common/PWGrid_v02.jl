@@ -23,7 +23,7 @@ end
 
 function PWGrid( Ns, LatVecs::Array{Float64,2} )
 
-  if any( Ns%2 .== 1 )
+  if any( Ns .% 2 .== 1 )
     @printf("Error: Ns must be even numbers\n")
     exit()
   end
@@ -31,7 +31,7 @@ function PWGrid( Ns, LatVecs::Array{Float64,2} )
   RecVecs = 2*pi*inv(LatVecs')
   Ω = det(LatVecs)
   #
-  LatVecsLen = zeros(3)
+  LatVecsLen = Array{Float64}(3)
   LatVecsLen[1] = norm(LatVecs[1,:])
   LatVecsLen[2] = norm(LatVecs[2,:])
   LatVecsLen[3] = norm(LatVecs[3,:])
@@ -58,8 +58,8 @@ function init_grid_G( Ns, RecVecs )
 
   Ng = prod(Ns)
 
-  G  = zeros(3,Ng)
-  G2 = zeros(Ng)
+  G  = Array{Float64}(3,Ng)
+  G2 = Array{Float64}(Ng)
 
   ig = 0
   for k in 0:Ns[3]-1
@@ -116,7 +116,7 @@ function init_grid_R( Ns, LatVecs )
   #
   Npoints = prod(Ns)
   #
-  R = zeros(3,Npoints)
+  R = Array{Float64}(3,Npoints)
   ip = 0
   for k in 0:Ns[3]-1
   for j in 0:Ns[2]-1

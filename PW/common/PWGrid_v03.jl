@@ -29,12 +29,12 @@ function PWGrid( ecutwfc::Float64, LatVecs::Array{Float64,2} )
   RecVecs = 2*pi*inv(LatVecs')
   Ω = det(LatVecs)
   #
-  LatVecsLen = zeros(3)
+  LatVecsLen = Array{Float64}(3)
   LatVecsLen[1] = norm(LatVecs[1,:])
   LatVecsLen[2] = norm(LatVecs[2,:])
   LatVecsLen[3] = norm(LatVecs[3,:])
 
-  Ns = zeros(Int64,3)
+  Ns = Array{Float64}(Int64,3)
   Ns[1] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[1]/pi ) + 1
   Ns[2] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[2]/pi ) + 1
   Ns[3] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[3]/pi ) + 1
@@ -66,8 +66,8 @@ function init_grid_G( Ns, RecVecs )
 
   Ng = prod(Ns)
 
-  G  = Array(Float64,3,Ng)
-  G2 = Array(Float64,Ng)
+  G  = Array{Float64}(3,Ng)
+  G2 = Array{Float64}(Ng)
 
   ig = 0
   for k in 0:Ns[3]-1
@@ -120,7 +120,7 @@ function init_grid_R( Ns, LatVecs )
   #
   Npoints = prod(Ns)
   #
-  R = Array(Float64,3,Npoints)
+  R = Array{Float64}(3,Npoints)
   ip = 0
   for k in 0:Ns[3]-1
   for j in 0:Ns[2]-1
