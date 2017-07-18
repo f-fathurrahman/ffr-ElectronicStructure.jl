@@ -1,6 +1,6 @@
 function gen_rho( Ns, dr, sigma, Sf )
   Npoints = size(dr)[1]
-  g1 = Array( Float64, Npoints )
+  g1 = Array{Float64}(Npoints)
   c1 = 2*sigma^2
   cc1 = sqrt(2*pi*sigma^2)^3
   for ip=1:Npoints

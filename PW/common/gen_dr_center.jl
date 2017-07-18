@@ -7,7 +7,7 @@ function gen_dr_center( r, LatVecs )
   center = [cx,cy,cz]
 
   Npoints = size(r)[2]
-  dr = Array(Float64,Npoints)
+  dr = Array{Float64}(Npoints)
   for ip=1:Npoints
     dr[ip] = norm( r[:,ip] - center )
   end

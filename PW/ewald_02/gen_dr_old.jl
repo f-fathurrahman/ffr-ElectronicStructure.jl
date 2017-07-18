@@ -7,7 +7,7 @@ function gen_dr( r, LatVecs )
   v3 = LatVecs[3,:]
   #
   Npoints = size(r)[2]
-  dr = Array(Float64,Npoints)
+  dr = Array{Float64}(Npoints)
   #
   Lx = maximum( abs(LatVecs[:,1]) )
   Ly = maximum( abs(LatVecs[:,2]) )
