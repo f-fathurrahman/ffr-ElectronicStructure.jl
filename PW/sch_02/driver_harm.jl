@@ -59,8 +59,6 @@ function test_main( ; Ns_in=nothing, ecutwfc_Ry=nothing,
   const theor = 1/(4*pi*0.25^3/3)
   @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
-  exit()
-
   # Generate array of distances
   center = 6.0*ones(3)/2
   dr = gen_dr( r, center )

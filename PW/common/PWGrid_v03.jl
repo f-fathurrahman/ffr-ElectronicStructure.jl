@@ -34,7 +34,7 @@ function PWGrid( ecutwfc::Float64, LatVecs::Array{Float64,2} )
   LatVecsLen[2] = norm(LatVecs[2,:])
   LatVecsLen[3] = norm(LatVecs[3,:])
 
-  Ns = Array{Float64}(Int64,3)
+  Ns = Array{Int64}(3)
   Ns[1] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[1]/pi ) + 1
   Ns[2] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[2]/pi ) + 1
   Ns[3] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[3]/pi ) + 1

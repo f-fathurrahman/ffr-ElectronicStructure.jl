@@ -1,6 +1,6 @@
 function gen_dr( r, center )
   Npoints = size(r)[2]
-  dr = Array(Float64,Npoints)
+  dr = Array{Float64}(Npoints)
   #
   for ip=1:Npoints
     dx2 = ( r[1,ip] - center[1] )^2
