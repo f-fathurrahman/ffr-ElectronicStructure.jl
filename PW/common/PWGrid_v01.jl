@@ -29,7 +29,7 @@ function init_grids( Ns, LatVecs, RecVecs )
   #
   Npoints = prod(Ns)
   #
-  r = Array(Float64,3,Npoints)
+  r = zeros(3,Npoints)
   ip = 0
   for k in 0:Ns[3]-1
   for j in 0:Ns[2]-1
@@ -42,8 +42,8 @@ function init_grids( Ns, LatVecs, RecVecs )
   end
   end
   #
-  G  = Array(Float64,3,Npoints)
-  G2 = Array(Float64,Npoints)
+  G  = zeros(3,Npoints)
+  G2 = zeros(Npoints)
   ip    = 0
   for k in 0:Ns[3]-1
   for j in 0:Ns[2]-1
