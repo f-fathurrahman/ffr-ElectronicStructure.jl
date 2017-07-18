@@ -21,7 +21,7 @@ function write_xsf( filnam, LL, atpos; atsymb=nothing, molecule=false )
     end
   else
     for ia = 1:Natoms
-      @printf(f, "%s  %18.10f %18.10f %18.10f\n", atsymb[ia], atpos[2,ia], atpos[3,ia])      
+      @printf(f, "%s  %18.10f %18.10f %18.10f\n", atsymb[ia], atpos[1,ia], atpos[2,ia], atpos[3,ia])      
     end
   end
 
