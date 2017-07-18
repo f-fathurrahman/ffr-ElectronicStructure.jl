@@ -13,11 +13,9 @@ function plot_band_structure( evals, kpath; filename="BANDS.pdf" )
     Xcoords[ik] = Xcoords[ik-1] + norm( dk )
   end
 
-  println(size(evals[1,:]'))
-  println(size(Xcoords[:]))
   plt.clf()
   for is = 1:Nstates
-    y = evals[is,:]'  # need transpose, UGH !
+    y = evals[is,:]
     plt.plot( Xcoords[:], y, marker="o")
   end
   plt.grid()
