@@ -6,13 +6,13 @@ A data type is defined here: `LF1dGrid`.
 
 ```julia
 type LF1dGrid
-  N::Int64
-  A::Float64
-  B::Float64
-  h::Float64
-  grid::Array{Float64,1}
-  D1jl::Array{Float64,2}
-  D2jl::Array{Float64,2}
+    N::Int64
+    A::Float64
+    B::Float64
+    h::Float64
+    grid::Array{Float64,1}
+    D1jl::Array{Float64,2}
+    D2jl::Array{Float64,2}
 end
 ```
 
@@ -51,21 +51,21 @@ Data type
 
 ```julia
 type LF3dGrid
-  LFx::LF1dGrid
-  LFy::LF1dGrid
-  LFz::LF1dGrid
-  #
-  Nx::Int64
-  Ny::Int64
-  Nz::Int64
-  #
-  Lx::Float64
-  Ly::Float64
-  Lz::Float64
-  #
-  lingrid::Array{Float64,2}
-  xyz2lin::Array{Int64,3}
-  lin2xyz::Array{Int64,2}
+    LFx::LF1dGrid
+    LFy::LF1dGrid
+    LFz::LF1dGrid
+    #
+    Nx::Int64
+    Ny::Int64
+    Nz::Int64
+    #
+    Lx::Float64
+    Ly::Float64
+    Lz::Float64
+    #
+    lingrid::Array{Float64,2}
+    xyz2lin::Array{Int64,3}
+    lin2xyz::Array{Int64,2}
 end
 ```
 
