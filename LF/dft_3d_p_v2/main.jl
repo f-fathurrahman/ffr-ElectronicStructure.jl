@@ -111,6 +111,7 @@ function test_main( ; pot_type = "harmonic", method = "Emin_cg" )
         evals = calc_evals( LF, Potentials, evecs )
     end
 
+    println("")
     print_Energies(Energies)
     @printf("\nEigenvalues:\n")
     for i = 1:Nstates
@@ -125,4 +126,6 @@ end
 #@code_native test_main()
 #@time test_main(pot_type="harmonic", method="Emin_cg")
 #@time test_main(pot_type="harmonic", method="Emin_cg_sparse")
-@time test_main(pot_type="harmonic", method="SCF")
+#@time test_main(pot_type="harmonic", method="SCF")
+#@time test_main(pot_type="Hps", method="SCF")
+@time test_main(pot_type="Hcoul", method="SCF")
