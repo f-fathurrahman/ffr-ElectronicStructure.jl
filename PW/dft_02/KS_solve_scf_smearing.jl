@@ -1,5 +1,5 @@
 function KS_solve_scf_smearing( pw::PWGrid,
-                       V_ionic, Focc, Ncols::Int64, Nocc::Int64;
+                       V_ionic, Focc_in, Nstates::Int64, Nocc::Int64;
                        β = 0.5, E_NN = nothing,
                        rho0 = nothing,
                        Potentials0 = nothing,
@@ -14,12 +14,12 @@ function KS_solve_scf_smearing( pw::PWGrid,
     # starting rho
     if rho0 == nothing
         srand(1234)
-        v = rand( Complex128, Ngwx, Ncols )
+        v = rand( Complex128, Ngwx, Nstates )
         v = ortho_gram_schmidt( v )
-        rho = calc_rho( pw, Focc, v )
+        rho = calc_rho( pw, Focc_in, v )
     else
         srand(1234)
-        v = rand( Complex128, Ngwx, Ncols ) # What if v0 is provided ?
+        v = rand( Complex128, Ngwx, Nstates ) # What if v0 is provided ?
         rho = copy( rho )
     end
 
@@ -44,23 +44,33 @@ function KS_solve_scf_smearing( pw::PWGrid,
         Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 )
     end
 
-    λ = zeros(Ncols)
+    λ = zeros(Nstates)
 
-    for iter = 1:1
+    const Tbeta = 100.0
 
-        λ, v = diag_lobpcg( pw, Potentials, v, verbose_last=true )
+    for iter = 1:150
+
+        λ, v = diag_lobpcg( pw, Potentials, v, verbose_last=false )
 
         #Tbeta = 50.0
         #Focc_lb = fermidirac( λ, λ[1], 50.0 )
         #println("Focc_lb = ", Focc_lb)
         #println("sum(Focc_lb) = ", sum(Focc_lb))
 
-        occ, efermi = getocc(λ, Nocc, 1000.0)
-        println("occ = ", occ)
-        println("sum(occ) = ", sum(occ))
-        println("efermi = ", efermi)
+        Focc, Efermi = getocc(λ, Nocc, Tbeta)
 
-        exit()
+        for ist = 1:Nstates
+            @printf("%5d %18.10f %18.10f\n", ist, λ[ist], Focc[ist] )
+        end
+        
+        #println("occ = ", Focc)
+        println("sum(Focc) = ", sum(Focc))
+        println("efermi = ", Efermi)
+
+        Entropy = getEntropy(Focc, Tbeta)
+        #println("Entropy = ", Entropy)
+
+        #exit()
 
         #
         rho_new = calc_rho( pw, Focc, v )
@@ -78,7 +88,7 @@ function KS_solve_scf_smearing( pw::PWGrid,
         # Calculate energies and update potetials
         Energies = calc_Energies( pw, Potentials, Focc, v, Energies.NN )
 
-        Etot = Energies.Total
+        Etot = Energies.Total + Entropy
         diffE = abs( Etot - Etot_old )
 
         #
@@ -86,11 +96,16 @@ function KS_solve_scf_smearing( pw::PWGrid,
 
         if diffE < 1e-7
             @printf("SCF is is converged: iter: %d , diffE = %10.7e\n", iter, diffE)
+            @printf("Etot           = %18.10f\n", Etot)
+            @printf("Entropy        = %18.10f\n", Entropy)
+            @printf("Energies.Total = %18.10f\n", Etot)        
             break
         end
         #
         Etot_old = Etot
     end
+
+    exit()
 
     return Energies, Potentials, v, λ
 

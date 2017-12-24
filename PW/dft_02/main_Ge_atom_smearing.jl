@@ -26,6 +26,7 @@ include("KS_solve_scf_smearing.jl")
 
 include("getocc.jl")
 include("fermidirac.jl")
+include("getEntropy.jl")
 
 function test_main( Ns )
 

@@ -1,15 +1,13 @@
-function getEntropy(occ,Tbeta)
+function getEntropy( Focc, Tbeta )
     const SMALL = 1.e-10
-    # nonzero occupations
-    inz = find(occ > SMALL)
-    occnz = occ(inz)
-    e = sum( occnz .* log(occnz) )
-    #
-    # zero occupations
-    #
-    iz = find(abs(occ) <= SMALL)
-    occz = occ(iz)
-    e = e + sum( (1.0 - occz) .* log( 1.0 - occz ) )
-    e = e / Tbeta
-    return e
+    Nstates = length(Focc)
+    e = 0.0
+    for ist = 1:Nstates
+        if Focc[ist] > SMALL
+            e = e + Focc[ist]*log(Focc[ist])
+        else
+            e = e + (2.0 - Focc[ist])*log(2.0 - Focc[ist]) # spin-degenerate case
+        end
+    end
+    return e/Tbeta
 end
