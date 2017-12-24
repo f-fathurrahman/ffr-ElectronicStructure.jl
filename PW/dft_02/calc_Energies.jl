@@ -13,7 +13,7 @@ function calc_Energies( PW::PWGrid, Potentials, Focc::Array{Float64},
     Kpsi = op_K( PW, psi )
     E_kin = 0.0
     for is = 1:Nstates
-      E_kin = E_kin + Focc[is] * real( dot( psi[:,is], Kpsi[:,is] ) )
+        E_kin = E_kin + Focc[is] * real( dot( psi[:,is], Kpsi[:,is] ) )
     end
 
     # Compute rho
