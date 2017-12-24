@@ -75,7 +75,7 @@ function test_main( ecutwfc_Ry::Float64 )
     #psi = Y*evecs
 
     @printf("Solution by self-consistent field method\n")
-    Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates )
+    Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates, β=0.1 )
 
     #for st = 1:Nstates
     #    @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))

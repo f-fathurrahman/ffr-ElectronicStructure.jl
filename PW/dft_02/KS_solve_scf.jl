@@ -50,23 +50,9 @@ function KS_solve_scf( pw::PWGrid,
 
         λ, v = diag_lobpcg( pw, Potentials, v, verbose_last=false )
 
-        # Calculate energies and update potetials
-        Energies = calc_Energies( pw, Potentials, Focc, v, Energies.NN )
-
-        Etot = Energies.Total
-
-        diffE = abs( Etot - Etot_old )
-        Etot_old = Etot
-
-        if diffE < 1e-6
-            @printf("SCF is is converged: iter: %d , diffE = %10.7e\n", iter, diffE)
-            break
-        end
         #
         rho_new = calc_rho( pw, Focc, v )
         diffRho = norm(rho_new - rho)
-        #
-        @printf("SCF: %8d %18.10f %18.10e %18.10e\n", iter, Etot, diffE, diffRho )
         #
         rho = β*rho_new[:] + (1-β)*rho[:]
         #
@@ -76,6 +62,22 @@ function KS_solve_scf( pw::PWGrid,
         V_Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
         V_xc = excVWN( rho ) + rho .* excpVWN( rho )
         Potentials = PotentialsT( V_ionic, V_Hartree, V_xc )
+
+        # Calculate energies and update potetials
+        Energies = calc_Energies( pw, Potentials, Focc, v, Energies.NN )
+
+        Etot = Energies.Total
+        diffE = abs( Etot - Etot_old )
+
+        #
+        @printf("SCF: %8d %18.10f %18.10e %18.10e\n", iter, Etot, diffE, diffRho )        
+
+        if diffE < 1e-7
+            @printf("SCF is is converged: iter: %d , diffE = %10.7e\n", iter, diffE)
+            break
+        end
+        #
+        Etot_old = Etot
     end
 
     return Energies, Potentials, v, λ

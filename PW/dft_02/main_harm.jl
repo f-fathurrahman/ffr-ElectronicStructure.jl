@@ -59,14 +59,14 @@ function test_main( Ns )
     #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates,
     #                            NiterMax=1000, Potentials0=Potentials, psi0=psi )
 
-    psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+    #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+#
+    #Y = ortho_gram_schmidt(psi)
+    #mu = Y' * op_H( pw, Potentials, Y )
+    #evals, evecs = eig(mu)
+    #Psi = Y*evecs
 
-    Y = ortho_gram_schmidt(psi)
-    mu = Y' * op_H( pw, Potentials, Y )
-    evals, evecs = eig(mu)
-    Psi = Y*evecs
-
-    #Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates )
+    Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates )
 
     print_Energies(Energies)
     for st = 1:Nstates
