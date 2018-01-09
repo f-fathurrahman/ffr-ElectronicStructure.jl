@@ -21,6 +21,11 @@ include("Kprec.jl")
 include("diag_lobpcg.jl")
 include("KS_solve_SCF.jl")
 
+include("lanczos.jl")
+include("KS_solve_ChebySCF.jl")
+include("chebyfilt.jl")
+include("norm_matrix_induced.jl")
+
 function test_main( Ns )
 
     const LatVecs = 6.0*diagm( ones(3) )
@@ -66,7 +71,7 @@ function test_main( Ns )
     #evals, evecs = eig(mu)
     #Psi = Y*evecs
 
-    Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates )
+    Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.5 )
 
     print_Energies(Energies)
     for st = 1:Nstates

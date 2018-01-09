@@ -18,8 +18,25 @@ function op_V_loc( pw::PWGrid, V_loc, psi::Array{Complex128,2} )
     return cVpsi[idx,:]
 end
 
+function op_V_loc( pw::PWGrid, V_loc, psi::Array{Complex128,1} )
+    #
+    Ns = pw.Ns
+    Ω  = pw.Ω
+    Npoints = prod(Ns)
+
+    ctmp = zeros(Complex128, Npoints)
+    idx = pw.gvecw.idx_gw2r
+    ctmp[idx] = psi[:]
+
+    # get values of psi in real space grid via forward transform
+    ctmp = G_to_R( Ns, ctmp )
+
+    cVpsi = R_to_G( Ns, V_loc .* ctmp )
+    return cVpsi[idx]
+end
+
 # B is usually consists of more than one-column
-function Diagprod( a,B )
+function Diagprod( a, B::Array{Complex128,2} )
     Nstates = size(B)[2]
     Npoints = size(B)[1]
     out = zeros( Complex128, size(B) )

@@ -1,60 +1,56 @@
-function lanczos(pw, Potentials, k)
-#
-# Usage: [T,V,f] = lanczos(H,v0,k)
-#
-# Purpose:
-#    Perform k-step Lanczos iterations
-#
-# Input:
-#    H  (Ham object)       Hamiltonian
-#    v0 (Wavefun object)   Wavefunction
-#    k  (integer)          The number of Lanczos iterations
-#
-# Output:
-#  T  (k by k matrix)    The projection of H in 
-#                        the Krylov subspace spanned by columns of V;
-#  V  (Wavefun object)   Stores the Lanczos vectors;
-#  f  (Wavefun object)   Stores the residual vector;
-#
-#  This version of Lanzos performs full (re)orthogonalization
-#  instead of using a 3-term recurrence. It doesn't check
-#  for early convergence (i.e., an invariant subspace is found
-#  before the kth step of Lanczos is completed.)
-#
-    Ngwx = pw.gvec.Ngwx
-    v = rand(Ngwx,1)
+function lanczos(pw::PWGrid, Potentials::PotentialsT, nlancz::Int64)
     #
-    T = zeros(k,k)
+    Ngwx = pw.gvecw.Ngwx
+    V = zeros(Complex128,Ngwx,nlancz)
+    HV = zeros(Complex128,Ngwx,nlancz)    
+    T = zeros(Float64,nlancz,nlancz)
+    f = zeros(Complex128,Ngwx)
+    s = zeros(Complex128,nlancz)
+    h = zeros(Complex128,nlancz)
     #
-    beta = norm(v)
-    v = v ./ beta
+    V[:,1] = randn(Ngwx) + im*randn(Ngwx)
+    beta = norm(V[:,1])
+    V[:,1] = V[:,1] ./ beta
     #
-    V = zeros(Ngwx,k)
-    V[:,1] = v
-    Hv = op_H( pw, Potentials, v )
-    h = V[:,1]' * Hv
+    HV[:,1] = op_H( pw, Potentials, V[:,1] )
+    h[1] = real( V[:,1]' * HV[:,1] )
     #
-    T[1,1] = h
-    f = Hv - V[:,1]*h
-    # One-step of reorthogonalization
-    s = V[:,1]' * f
-    h = h + s
-    f = f - V[:,1]*s
+    T[1,1] = h[1]
+    # One-step of reorthogonalization    
+    f[:] = HV[:,1] - V[:,1]*h[1]
+    s[1] = V[:,1]' * f[:]
+    h[1] = h[1] + s[1]
+    f[:] = f[:] - V[:,1]*s[1]
     # MAIN LOOP
-    for j = 2:k
+    for j = 2:nlancz
+        #@printf("iter lanczos = %d\n", j)
         beta = norm(f)
-        T(j,j-1) = beta
-        v = f/beta
-        V = [V v]
-        Hv = op_H(pw, Potentials, v)
-        h = V' * Hv
-        f = Hv - V*h
-        # One-step of reorthogonalization
-        s = V' * f
-        h = h + s
-        f = f - V*s
+        T[j,j-1] = beta
+        V[:,j] = f[:]/beta
+        HV[:,j] = op_H( pw, Potentials, V[:,j] )
         #
-        T(1:j,j) = h
-    end
+        for jj = 1:j
+            h[jj] = V[:,jj]' * HV[:,j]
+        end
+        f[:] = HV[:,j] - V[:,1:j]*h[1:j]
 
+        # One-step of reorthogonalization
+        #s = V' * f
+        #h = h + s
+        for jj=1:j
+            s[jj] = V[:,jj]' * f[:]
+            h[jj] = h[jj] + s[jj]
+        end
+        f[:] = f[:] - V[:,1:j]*s[1:j]
+        #
+        T[1:j,j] = real(h[1:j])
+    end
+    #
+    evalsT = eigvals(T)
+    #lb = evalsT[Nstates+2]
+    #ub = evalsT[2*Nstates]
+    lb = evalsT[Int(nlancz/2)]
+    ub = norm_matrix_induced(T) + norm(f)
+    #
+    return lb, ub
 end
