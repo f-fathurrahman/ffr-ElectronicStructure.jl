@@ -21,8 +21,9 @@ function calc_grad( pw::PWGrid, Potentials, Focc, W::Array{Complex128,2} )
     HW = op_H( pw, Potentials, W )
     ℍ = W' * HW
     HFH = ℍ*F - F*ℍ
-    denom = ones(Nstates,Nstates)*2.0
-    ℚ = HFH ./ denom
+    #denom = ones(Nstates,Nstates)*2.0
+    #ℚ = HFH ./ denom
+    ℚ = 0.5*HFH
     grad[:,:] = grad[:,:] + W*ℚ
 
     return grad

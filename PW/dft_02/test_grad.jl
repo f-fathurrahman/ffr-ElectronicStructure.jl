@@ -49,36 +49,47 @@ function ∇E( pw::PWGrid, Potentials, Focc, W::Array{Complex128,2} )
     F = diagm(Focc)
     HW = op_H( pw, Potentials, W )
 
+    println("F = ") ; printMatrix(F)
+
     U = W' * W
     U_sqrt = sqrtm( inv(U) )
-
-    # BbbH
-    ℍ = U_sqrt * W' * HW * U_sqrt
-    ℍ = W' * HW
-
-    printMatrix(U)
+    
+    println("U = "); printMatrix(U)
     println("\nU_sqrt = "); printMatrix(U_sqrt)
+
+    # BbbH, the usual case
+    ℍ = U_sqrt * W' * HW * U_sqrt
+    println("ℍ v1 = "); printMatrix(ℍ)
+
+    # for orthogonal W, simple use the following:
+    ℍ = W' * HW
 
     HFH = ℍ*F - F*ℍ
 
-    println("\nℍ ="); printMatrix(ℍ)
+    println("\nℍ v2 ="); printMatrix(ℍ)
     println("\nℍ*F - F*ℍ ="); printMatrix(HFH)
 
     # Calculation of Q
     mu, V = eig(U)
-    denom = sqrt(mu)*ones(1,length(mu))
-    denom = denom + denom'
-    denom = ones(Nstates,Nstates)*2.0
-
-    ℚ = V * ( ( V' * HFH * V ) ./ denom ) * V'
-    ℚ = HFH ./ denom
-
+    println("Eigenvalues and eigenvectors of U")
     println("mu = "); println(mu)
     println("V = "); printMatrix(V)
-    println("denom = "); printMatrix(denom)
-    println("ℚ = "); printMatrix(ℚ)
+    denom = sqrt.(mu)*ones(1,length(mu))
+    denom = denom + denom'
+    println("denom v1 = "); printMatrix(denom)
 
-    grad = (HW - W * W'*HW)*F + W*ℚ
+    # for usual
+    denom = ones(Nstates,Nstates)*2.0
+    println("denom v2 = "); printMatrix(denom)
+
+    ℚ = V * ( ( V' * HFH * V ) ./ denom ) * V'
+    println("ℚ v1 = "); printMatrix(ℚ)
+    
+    ℚ = HFH ./ denom
+    println("ℚ v2 = "); printMatrix(ℚ)
+
+    #grad = (HW - W * W'*HW)*F + W*ℚ
+    grad = (HW - W * ℍ)*F + W*ℚ
 
     return grad
 
@@ -109,9 +120,9 @@ function test_main( Ns )
     #
     V_ionic = init_pot_harm_3d( pw, dr )
     #
-    const Nstates = 4
-    #Focc = 2.0*ones(Nstates)
-    Focc = [2.1, 1, 1, 1.1]
+    const Nstates = 5
+    Focc = 1.0*ones(Nstates)
+    #Focc = [2.0, 2.0, 2/3, 2/3, 0.0]
 
     srand(1234)
     psi = randn(Ngwx,Nstates) + im*randn(Ngwx,Nstates)
@@ -122,7 +133,7 @@ function test_main( Ns )
     Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
     Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
 
-    grad2 = calc_grad( pw, Potentials, Focc, psi )
+    grad2 = calc_grad( pw, Potentials, Focc, psi )  # use new expression for calc_grad
 
     grad1 = ∇E( pw, Potentials, Focc, psi )
 
