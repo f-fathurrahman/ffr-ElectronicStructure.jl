@@ -52,23 +52,14 @@ function KS_solve_ChebySCF( pw::PWGrid,
 
         #[ub, lb] = get_ub_lb_lanczos(pw, Potentials, Nstates*2)
         lb, ub = lanczos(pw, Potentials, Nstates*2)
-        @printf("lb = %f, ub = %f\n", lb, ub)
+        #@printf("lb = %f, ub = %f\n", lb, ub)
 
         #λ, v = diag_lobpcg( pw, Potentials, v, verbose_last=false )
         v = chebyfilt(pw, Potentials, v, 10, lb, ub)
         v = ortho_gram_schmidt(v)
 
-        println("Check = ", v[:,1]'*v[:,1])
-        println("Check = ", v[:,1]'*v[:,2]) 
-        
-        Hv = op_H(pw,Potentials,v)
-        G = v' * Hv
-        R = Hv - v*G
-        λ = real(eigvals(G))
-        for j = 1:Nstates
-           resnrm[j] = norm(R[:,j]);
-           @printf("λ[%2d] = %11.3e, resnrm = %11.3e\n", j, λ[j], resnrm[j]);
-        end
+        #println("Check = ", v[:,1]'*v[:,1])
+        #println("Check = ", v[:,1]'*v[:,2]) 
 
         #
         rho_new = calc_rho( pw, Focc, v )
@@ -99,6 +90,16 @@ function KS_solve_ChebySCF( pw::PWGrid,
         #
         Etot_old = Etot
     end
+
+    # Calculate eigenvalues
+    Hv = op_H(pw,Potentials,v)
+    G = v' * Hv
+    R = Hv - v*G
+    λ = real(eigvals(G))
+    #for j = 1:Nstates
+    #   resnrm[j] = norm(R[:,j]);
+    #   @printf("λ[%2d] = %11.3e, resnrm = %11.3e\n", j, λ[j], resnrm[j]);
+    #end
 
     return Energies, Potentials, v, λ
 
