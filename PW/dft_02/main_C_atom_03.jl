@@ -21,7 +21,7 @@ include("../common/calc_strfact_v2.jl")
 include("../common/calc_ewald_v2.jl")
 
 include("diag_lobpcg.jl")
-include("KS_solve_scf.jl")
+include("KS_solve_SCF.jl")
 
 function test_main( ecutwfc_Ry::Float64 )
 
@@ -75,7 +75,7 @@ function test_main( ecutwfc_Ry::Float64 )
     #psi = Y*evecs
 
     @printf("Solution by self-consistent field method\n")
-    Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates, β=0.1 )
+    Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, β=0.1 )
 
     #for st = 1:Nstates
     #    @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))

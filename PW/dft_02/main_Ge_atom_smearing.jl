@@ -22,7 +22,7 @@ include("../common/calc_strfact_v2.jl")
 include("../common/calc_ewald_v2.jl")
 
 include("diag_lobpcg.jl")
-include("KS_solve_scf_smearing.jl")
+include("KS_solve_SCF_smearing.jl")
 
 include("getocc.jl")
 include("fermidirac.jl")
@@ -95,7 +95,7 @@ function test_main( Ns )
     Focc[1] = 2.0
     Focc[2] = 2.0
 
-    Energies, Potentials, psi, evals = KS_solve_scf_smearing( pw, V_ionic, Focc, Nstates, 4, β=0.7 )
+    Energies, Potentials, psi, evals = KS_solve_SCF_smearing( pw, V_ionic, Focc, Nstates, 4, β=0.7 )
 
     for st = 1:Nstates
         @printf("=== State # %4d, Energy = %18.10f ===\n", st, real(evals[st]))

@@ -1,4 +1,4 @@
-function KS_solve_scf_smearing( pw::PWGrid,
+function KS_solve_SCF_smearing( pw::PWGrid,
                        V_ionic, Focc_in, Nstates::Int64, Nocc::Int64;
                        β = 0.5, E_NN = nothing,
                        rho0 = nothing,

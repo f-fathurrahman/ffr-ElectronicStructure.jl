@@ -22,7 +22,7 @@ include("calc_strfact_v1.jl")
 include("calc_ewald_v1.jl")
 
 include("diag_lobpcg.jl")
-include("KS_solve_scf.jl")
+include("KS_solve_SCF.jl")
 
 
 function test_main( Ns )
@@ -71,7 +71,7 @@ function test_main( Ns )
     evals, evecs = eig(mu)
     psi = Y*evecs
 
-    #Energies, Potentials, psi, evals = KS_solve_scf( pw, V_ionic, Focc, Nstates )
+    #Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates )
 
     for st = 1:Nstates
         @printf("State # %d, Energy = %f\n", st, real(evals[st]))

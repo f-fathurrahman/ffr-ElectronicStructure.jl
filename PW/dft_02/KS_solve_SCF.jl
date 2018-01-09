@@ -1,4 +1,4 @@
-function KS_solve_scf( pw::PWGrid,
+function KS_solve_SCF( pw::PWGrid,
                        V_ionic, Focc, Ncols::Int64;
                        β = 0.5, E_NN = nothing,
                        rho0 = nothing,
