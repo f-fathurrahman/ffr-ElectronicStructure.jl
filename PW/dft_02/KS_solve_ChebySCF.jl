@@ -1,5 +1,6 @@
 function KS_solve_ChebySCF( pw::PWGrid,
                             V_ionic, Focc, Nstates::Int64;
+                            cheby_degree=5,
                             β = 0.5, E_NN = nothing,
                             rho0 = nothing,
                             Potentials0 = nothing,
@@ -53,7 +54,7 @@ function KS_solve_ChebySCF( pw::PWGrid,
         ub, lb = get_ub_lb_lanczos(pw, Potentials, Nstates*2)
         #@printf("lb = %f, ub = %f\n", lb, ub)
 
-        v = chebyfilt(pw, Potentials, v, 8, lb, ub)
+        v = chebyfilt(pw, Potentials, v, cheby_degree, lb, ub)
         v = ortho_gram_schmidt(v)
 
         #
@@ -62,8 +63,8 @@ function KS_solve_ChebySCF( pw::PWGrid,
         #
         rho = β*rho_new[:] + (1-β)*rho[:]
         #
-        integRho = sum(rho)*ΔV
-        @printf("integRho = %18.10f\n", integRho)
+        #integRho = sum(rho)*ΔV
+        #@printf("integRho = %18.10f\n", integRho)
         #
         V_Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
         V_xc = excVWN( rho ) + rho .* excpVWN( rho )
@@ -76,10 +77,10 @@ function KS_solve_ChebySCF( pw::PWGrid,
         diffE = abs( Etot - Etot_old )
 
         #
-        @printf("SCF: %8d %18.10f %18.10e %18.10e\n", iter, Etot, diffE, diffRho )        
+        @printf("ChebySCF: %8d %18.10f %18.10e %18.10e\n", iter, Etot, diffE, diffRho )        
 
         if diffE < 1e-7
-            @printf("SCF is is converged: iter: %d , diffE = %10.7e\n", iter, diffE)
+            @printf("ChebySCF is is converged: iter: %d , diffE = %10.7e\n", iter, diffE)
             break
         end
         #
