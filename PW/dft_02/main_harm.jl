@@ -69,14 +69,14 @@ function test_main( Ns; method="SCF" )
     elseif method == "CG"
         psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
     elseif method == "SCF"
-        #Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, β=0.5 )
+        Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, β=0.5 )
+    elseif method == "SCF_andersonmix"
         Energies, Potentials, psi, evals = KS_solve_SCF_andersonmix( pw, V_ionic, Focc, Nstates, β=0.5 )        
     elseif method == "ChebySCF"
         Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.1 )
     else
-        println("WARNING: unknown method")
-        println("Revert to SCF")
-        Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, β=0.5 )
+        println("ERROR: unknown method: ", method)
+        exit()
     end
 
     #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
@@ -97,4 +97,5 @@ end
 #@time test_main( [30, 30, 30], method="SD" )
 #@time test_main( [30, 30, 30], method="CG" )
 @time test_main( [30, 30, 30], method="SCF" )
+@time test_main( [30, 30, 30], method="SCF_andersonmix" )
 #@time test_main( [30, 30, 30], method="ChebySCF" )

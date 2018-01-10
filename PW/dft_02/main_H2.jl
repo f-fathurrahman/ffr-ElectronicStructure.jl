@@ -24,6 +24,9 @@ include("../common/calc_ewald_v2.jl")
 include("diag_lobpcg.jl")
 include("KS_solve_SCF.jl")
 
+include("andersonmix.jl")
+include("KS_solve_SCF_andersonmix.jl")
+
 include("get_ub_lb_lanczos.jl")
 include("KS_solve_ChebySCF.jl")
 include("chebyfilt.jl")
@@ -75,13 +78,6 @@ function test_main( Ns, xx; method="SCF" )
     const Nstates = 1
     Focc = [2.0]
 
-#    psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
-#
-#    Y = ortho_gram_schmidt(psi)
-#    mu = Y' * op_H( pw, Potentials, Y )
-#    evals, evecs = eig(mu)
-#    psi = Y*evecs
-
     if method == "CG"
         psi, Energies, Potentials = KS_solve_Emin_cg( 
             pw, V_ionic, Focc, Nstates, NiterMax=1000, E_NN=E_nn )
@@ -92,6 +88,8 @@ function test_main( Ns, xx; method="SCF" )
         psi = Y*evecs
     elseif method == "SCF"
         Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, E_NN=E_nn )
+    elseif method == "SCF_andersonmix"
+        Energies, Potentials, psi, evals = KS_solve_SCF_andersonmix( pw, V_ionic, Focc, Nstates, E_NN=E_nn )   
     elseif method == "ChebySCF"
         Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.8, E_NN=E_nn )
     end
@@ -106,8 +104,11 @@ function test_main( Ns, xx; method="SCF" )
 end
 
 
-@time test_main( [64,64,64], 1.5, method="ChebySCF" )
-@time test_main( [64,64,64], 1.5, method="CG" )
+@time test_main( [64,64,64], 1.5, method="SCF" )
+@time test_main( [64,64,64], 1.5, method="SCF_andersonmix" )
+
+#@time test_main( [64,64,64], 1.5, method="ChebySCF" )
+#@time test_main( [64,64,64], 1.5, method="CG" )
 
 #for xx in [0.5, 1.0, 1.25, 1.50, 1.75, 2.0, 4.0, 6.0]
 #    test_main( [64,64,64], xx )

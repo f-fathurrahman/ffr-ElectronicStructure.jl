@@ -10,7 +10,7 @@ function andersonmix!( vin::Array{Float64,1}, vout::Array{Float64,1},
     iterused = min(iter-1,mixdim)
     ipos = iter - 1 - floor(Int64, (iter-2)/mixdim)*mixdim
 
-    @printf("ipos = %d\n", ipos)
+    #@printf("ipos = %d\n", ipos)
 
     if iter > 1
         # compute the changes in function evaluations and the step (changes in potentials)
@@ -32,7 +32,7 @@ function andersonmix!( vin::Array{Float64,1}, vout::Array{Float64,1},
         # implementation.
         #
         gammas = pinv(df[:,1:iterused])*dvout  
-        println("gammas = ", gammas[:])        
+        #println("gammas = ", gammas[:])        
         #
         # the following loop can be replaced by two simple gemvs
         # and some reshape operations.
@@ -44,7 +44,7 @@ function andersonmix!( vin::Array{Float64,1}, vout::Array{Float64,1},
     end
 
     inext = iter - floor( Int64, (iter - 1) / mixdim) * mixdim
-    @printf("inext = %d\n", inext)
+    #@printf("inext = %d\n", inext)
 
     df[:,inext] = dvoutsave
     dv[:,inext] = vinsave

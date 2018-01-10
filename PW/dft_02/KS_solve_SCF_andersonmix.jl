@@ -69,9 +69,9 @@ function KS_solve_SCF_andersonmix( pw::PWGrid,
         end
         #
         integRho = sum(rho)*ΔV
-        @printf("integRho = %18.10f\n", integRho)
+        #@printf("integRho = %18.10f\n", integRho)
         if abs(integRho - Nelectrons) < 1e-12
-            println("Rescaling electron density")
+            println("WARNING: Rescaling electron density")
             rho[:] = rho[:]*Nelectrons/integRho
         end
         #
@@ -86,10 +86,10 @@ function KS_solve_SCF_andersonmix( pw::PWGrid,
         diffE = abs( Etot - Etot_old )
 
         #
-        @printf("SCF: %8d %18.10f %18.10e %18.10e\n", iter, Etot, diffE, diffRho )        
+        @printf("SCF_andersonmix: %8d %18.10f %18.10e %18.10e\n", iter, Etot, diffE, diffRho )        
 
         if diffE < 1e-7
-            @printf("SCF is is converged: iter: %d , diffE = %10.7e\n", iter, diffE)
+            @printf("SCF_andersonmix is is converged: iter: %d , diffE = %10.7e\n", iter, diffE)
             break
         end
         #
