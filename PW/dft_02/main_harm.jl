@@ -26,7 +26,7 @@ include("KS_solve_ChebySCF.jl")
 include("chebyfilt.jl")
 include("norm_matrix_induced.jl")
 
-function test_main( Ns )
+function test_main( Ns; method="SCF" )
 
     const LatVecs = 6.0*diagm( ones(3) )
 
@@ -59,21 +59,30 @@ function test_main( Ns )
     #
     const Nstates = 4
     Focc = 2.0*ones(Nstates)
-    #
-    #psi, Energies, Potentials = KS_solve_Emin_sd( pw, V_ionic, Focc, Nstates, NiterMax=10 )
-    #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates,
-    #                            NiterMax=1000, Potentials0=Potentials, psi0=psi )
+    
+    if method == "SD"
+        # This will need a lot of optimization steps
+        psi, Energies, Potentials = KS_solve_Emin_sd( pw, V_ionic, Focc, Nstates, NiterMax=10 )
+    elseif method == "CG"
+        psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+    elseif method == "SCF"
+        Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, β=0.5 )
+    elseif method == "ChebySCF"
+        Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.1 )
+    else
+        println("WARNING: unknown method")
+        println("Revert to SCF")
+        Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, β=0.5 )
+    end
 
     #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
-#
-    #Y = ortho_gram_schmidt(psi)
-    #mu = Y' * op_H( pw, Potentials, Y )
-    #evals, evecs = eig(mu)
-    #Psi = Y*evecs
 
-    #Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, β=0.5 )
-
-    Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.1 )
+    if method == "SD" || method == "CG"
+        Y = ortho_gram_schmidt(psi)
+        mu = Y' * op_H( pw, Potentials, Y )
+        evals, evecs = eig(mu)
+        Psi = Y*evecs
+    end
 
     print_Energies(Energies)
     for st = 1:Nstates
@@ -81,4 +90,7 @@ function test_main( Ns )
     end
 end
 
-@time test_main( [30, 30, 30] )
+@time test_main( [30, 30, 30], method="SD" )
+@time test_main( [30, 30, 30], method="CG" )
+@time test_main( [30, 30, 30], method="SCF" )
+@time test_main( [30, 30, 30], method="ChebySCF" )
