@@ -29,7 +29,7 @@ include("KS_solve_ChebySCF.jl")
 include("chebyfilt.jl")
 include("norm_matrix_induced.jl")
 
-function test_main( Ns )
+function test_main( Ns; method="SCF" )
 
     const LatVecs = 16.0*diagm( ones(3) )
 
@@ -66,17 +66,20 @@ function test_main( Ns )
     const Nstates = 1
     Focc = [1.0]
 
-    #psi, Energies, Potentials = KS_solve_Emin_cg( 
-    #    pw, V_ionic, Focc, Nstates, NiterMax=1000, E_NN=E_nn )
+    if method == "CG"
+        psi, Energies, Potentials = KS_solve_Emin_cg( 
+            pw, V_ionic, Focc, Nstates, NiterMax=1000, E_NN=E_nn )
+        #
+        Y = ortho_gram_schmidt(psi)
+        mu = Y' * op_H( pw, Potentials, Y )
+        evals, evecs = eig(mu)
+        psi = Y*evecs
+    elseif method == "SCF"
+        Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates )
+    elseif method == "ChebySCF"
+        Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.8 )
+    end
     ##psi, Energies, Potentials = KS_solve_MGC_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
-#
-    #Y = ortho_gram_schmidt(psi)
-    #mu = Y' * op_H( pw, Potentials, Y )
-    #evals, evecs = eig(mu)
-    #psi = Y*evecs
-
-    #Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates )
-    Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.8 )
 
     for st = 1:Nstates
         @printf("State # %d, Energy = %f\n", st, real(evals[st]))
@@ -86,4 +89,6 @@ function test_main( Ns )
 
 end
 
-@time test_main( [64,64,64] )
+@time test_main( [64,64,64], method="CG" )
+@time test_main( [64,64,64], method="SCF" )
+@time test_main( [64,64,64], method="ChebySCF" )
