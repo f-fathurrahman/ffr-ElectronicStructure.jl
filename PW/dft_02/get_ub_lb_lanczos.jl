@@ -1,4 +1,4 @@
-function lanczos(pw::PWGrid, Potentials::PotentialsT, nlancz::Int64)
+function get_ub_lb_lanczos(pw::PWGrid, Potentials::PotentialsT, nlancz::Int64)
     #
     Ngwx = pw.gvecw.Ngwx
     V = zeros(Complex128,Ngwx,nlancz)

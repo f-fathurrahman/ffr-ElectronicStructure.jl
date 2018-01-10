@@ -21,7 +21,7 @@ include("Kprec.jl")
 include("diag_lobpcg.jl")
 include("KS_solve_SCF.jl")
 
-include("lanczos.jl")
+include("get_ub_lb_lanczos.jl")
 include("KS_solve_ChebySCF.jl")
 include("chebyfilt.jl")
 include("norm_matrix_induced.jl")
@@ -73,7 +73,7 @@ function test_main( Ns )
 
     #Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, β=0.5 )
 
-    Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.5 )
+    Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.1 )
 
     print_Energies(Energies)
     for st = 1:Nstates

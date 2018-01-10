@@ -50,16 +50,11 @@ function KS_solve_ChebySCF( pw::PWGrid,
 
     for iter = 1:NiterMax
 
-        #[ub, lb] = get_ub_lb_lanczos(pw, Potentials, Nstates*2)
-        lb, ub = lanczos(pw, Potentials, Nstates*2)
+        ub, lb = get_ub_lb_lanczos(pw, Potentials, Nstates*2)
         #@printf("lb = %f, ub = %f\n", lb, ub)
 
-        #λ, v = diag_lobpcg( pw, Potentials, v, verbose_last=false )
-        v = chebyfilt(pw, Potentials, v, 10, lb, ub)
+        v = chebyfilt(pw, Potentials, v, 8, lb, ub)
         v = ortho_gram_schmidt(v)
-
-        #println("Check = ", v[:,1]'*v[:,1])
-        #println("Check = ", v[:,1]'*v[:,2]) 
 
         #
         rho_new = calc_rho( pw, Focc, v )
@@ -67,8 +62,8 @@ function KS_solve_ChebySCF( pw::PWGrid,
         #
         rho = β*rho_new[:] + (1-β)*rho[:]
         #
-        #integRho = sum(rho)*ΔV
-        #@printf("integRho = %18.10f\n", integRho)
+        integRho = sum(rho)*ΔV
+        @printf("integRho = %18.10f\n", integRho)
         #
         V_Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
         V_xc = excVWN( rho ) + rho .* excpVWN( rho )
