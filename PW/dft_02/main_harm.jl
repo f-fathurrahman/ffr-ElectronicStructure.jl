@@ -24,6 +24,9 @@ include("KS_solve_SCF.jl")
 include("andersonmix.jl")
 include("KS_solve_SCF_andersonmix.jl")
 
+include("pulaymix.jl")
+include("KS_solve_SCF_pulaymix.jl")
+
 include("get_ub_lb_lanczos.jl")
 include("KS_solve_ChebySCF.jl")
 include("chebyfilt.jl")
@@ -71,7 +74,9 @@ function test_main( Ns; method="SCF" )
     elseif method == "SCF"
         Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, β=0.5 )
     elseif method == "SCF_andersonmix"
-        Energies, Potentials, psi, evals = KS_solve_SCF_andersonmix( pw, V_ionic, Focc, Nstates, β=0.5 )        
+        Energies, Potentials, psi, evals = KS_solve_SCF_andersonmix( pw, V_ionic, Focc, Nstates, β=0.5 )
+    elseif method == "SCF_pulaymix"
+        Energies, Potentials, psi, evals = KS_solve_SCF_pulaymix( pw, V_ionic, Focc, Nstates, β=0.5 )
     elseif method == "ChebySCF"
         Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.1 )
     else
@@ -98,4 +103,5 @@ end
 #@time test_main( [30, 30, 30], method="CG" )
 @time test_main( [30, 30, 30], method="SCF" )
 @time test_main( [30, 30, 30], method="SCF_andersonmix" )
+@time test_main( [30, 30, 30], method="SCF_pulaymix")
 #@time test_main( [30, 30, 30], method="ChebySCF" )
