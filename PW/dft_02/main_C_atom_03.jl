@@ -90,9 +90,9 @@ function test_main( ecutwfc_Ry::Float64; method="SCF" )
     elseif method == "ChebySCF"
         Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.8, E_NN=E_nn )
     elseif method == "SCF_andersonmix"
-        Energies, Potentials, psi, evals = KS_solve_SCF_andersonmix( pw, V_ionic, Focc, Nstates, β=0.5, E_NN=E_nn )
+        Energies, Potentials, psi, evals = KS_solve_SCF_andersonmix( pw, V_ionic, Focc, Nstates, β=0.1, E_NN=E_nn )
     elseif method == "SCF_pulaymix"
-        Energies, Potentials, psi, evals = KS_solve_SCF_pulaymix( pw, V_ionic, Focc, Nstates, β=0.5, E_NN=E_nn)
+        Energies, Potentials, psi, evals = KS_solve_SCF_pulaymix( pw, V_ionic, Focc, Nstates, β=0.1, E_NN=E_nn)
     else
         println("ERROR: unknown method: ", method)
         exit()

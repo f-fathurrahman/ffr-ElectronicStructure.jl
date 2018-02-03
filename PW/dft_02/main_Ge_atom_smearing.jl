@@ -28,6 +28,8 @@ include("getocc.jl")
 include("fermidirac.jl")
 include("getEntropy.jl")
 
+include("andersonmix.jl")
+
 function test_main( Ns )
 
     const a = 5.66/0.52917721 # Lattice constant (converted from angstroms to bohrs)
@@ -94,8 +96,9 @@ function test_main( Ns )
     Focc = zeros(Nstates)
     Focc[1] = 2.0
     Focc[2] = 2.0
+    Nocc = 4
 
-    Energies, Potentials, psi, evals = KS_solve_SCF_smearing( pw, V_ionic, Focc, Nstates, 4, β=0.7 )
+    Energies, Potentials, psi, evals = KS_solve_SCF_smearing( pw, V_ionic, Focc, Nstates, Nocc, β=0.5 )
 
     for st = 1:Nstates
         @printf("=== State # %4d, Energy = %18.10f ===\n", st, real(evals[st]))

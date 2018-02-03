@@ -46,7 +46,13 @@ function KS_solve_SCF_smearing( pw::PWGrid,
 
     λ = zeros(Nstates)
 
-    const Tbeta = 100.0
+    const Tbeta = 2000.0
+
+    MIXDIM = 8
+    df = zeros(Float64,Npoints,MIXDIM)
+    dv = zeros(Float64,Npoints,MIXDIM)
+
+    Nelectrons = Nocc*2.0
 
     for iter = 1:150
 
@@ -76,11 +82,24 @@ function KS_solve_SCF_smearing( pw::PWGrid,
         rho_new = calc_rho( pw, Focc, v )
         diffRho = norm(rho_new - rho)
         #
-        rho = β*rho_new[:] + (1-β)*rho[:]
+        #rho = β*rho_new[:] + (1-β)*rho[:]
+
+        @printf("Using andersonmix with β = %f, MIXDIM = %d\n", β, MIXDIM)
+        rho = andersonmix!( rho, rho_new, β, df, dv, iter, MIXDIM )
+        
+        for ip = 1:Npoints
+            if rho[ip] < 1e-12
+                rho[ip] = 1e-12
+            end
+        end
         #
-        #integRho = sum(rho)*ΔV
+        integRho = sum(rho)*ΔV
         #@printf("integRho = %18.10f\n", integRho)
-        #
+        if abs(integRho - Nelectrons) < 1e-12
+            println("WARNING: Rescaling electron density")
+            rho[:] = rho[:]*Nelectrons/integRho
+        end
+
         V_Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
         V_xc = excVWN( rho ) + rho .* excpVWN( rho )
         Potentials = PotentialsT( V_ionic, V_Hartree, V_xc )
