@@ -24,6 +24,12 @@ include("calc_ewald_v1.jl")
 include("diag_lobpcg.jl")
 include("KS_solve_SCF.jl")
 
+include("andersonmix.jl")
+include("KS_solve_SCF_andersonmix.jl")
+
+include("pulaymix.jl")
+include("KS_solve_SCF_pulaymix.jl")
+
 include("get_ub_lb_lanczos.jl")
 include("KS_solve_ChebySCF.jl")
 include("chebyfilt.jl")
@@ -75,11 +81,17 @@ function test_main( Ns; method="SCF" )
         evals, evecs = eig(mu)
         psi = Y*evecs
     elseif method == "SCF"
-        Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates )
+        Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, E_NN=E_nn )
     elseif method == "ChebySCF"
-        Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.8 )
+        Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.8, E_NN=E_nn )
+    elseif method == "SCF_andersonmix"
+        Energies, Potentials, psi, evals = KS_solve_SCF_andersonmix( pw, V_ionic, Focc, Nstates, β=0.5, E_NN=E_nn )
+    elseif method == "SCF_pulaymix"
+        Energies, Potentials, psi, evals = KS_solve_SCF_pulaymix( pw, V_ionic, Focc, Nstates, β=0.5, E_NN=E_nn)
+    else
+        println("ERROR: unknown method: ", method)
+        exit()
     end
-    ##psi, Energies, Potentials = KS_solve_MGC_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
     for st = 1:Nstates
         @printf("State # %d, Energy = %f\n", st, real(evals[st]))
@@ -89,6 +101,8 @@ function test_main( Ns; method="SCF" )
 
 end
 
-@time test_main( [64,64,64], method="CG" )
-@time test_main( [64,64,64], method="SCF" )
-@time test_main( [64,64,64], method="ChebySCF" )
+#@time test_main( [64,64,64], method="CG" )
+#@time test_main( [64,64,64], method="SCF" )
+#@time test_main( [64,64,64], method="ChebySCF" )
+@time test_main( [64, 64, 64], method="SCF_andersonmix" )
+@time test_main( [64, 64, 64], method="SCF_pulaymix")

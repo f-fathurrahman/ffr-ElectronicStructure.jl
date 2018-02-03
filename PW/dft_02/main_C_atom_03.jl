@@ -23,7 +23,18 @@ include("../common/calc_ewald_v2.jl")
 include("diag_lobpcg.jl")
 include("KS_solve_SCF.jl")
 
-function test_main( ecutwfc_Ry::Float64 )
+include("andersonmix.jl")
+include("KS_solve_SCF_andersonmix.jl")
+
+include("pulaymix.jl")
+include("KS_solve_SCF_pulaymix.jl")
+
+include("get_ub_lb_lanczos.jl")
+include("KS_solve_ChebySCF.jl")
+include("chebyfilt.jl")
+include("norm_matrix_induced.jl")
+
+function test_main( ecutwfc_Ry::Float64; method="SCF" )
 
     const LatVecs = 16.0*diagm( ones(3) )
 
@@ -66,24 +77,37 @@ function test_main( ecutwfc_Ry::Float64 )
     # We simply need reshape because we only have one species type here.
     V_ionic = reshape( V_ionic, (Npoints) )
 
-    #psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
+    if method == "CG"
+        psi, Energies, Potentials = KS_solve_Emin_cg( 
+            pw, V_ionic, Focc, Nstates, NiterMax=1000, E_NN=E_nn )
+        #
+        Y = ortho_gram_schmidt(psi)
+        mu = Y' * op_H( pw, Potentials, Y )
+        evals, evecs = eig(mu)
+        psi = Y*evecs
+    elseif method == "SCF"
+        Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, E_NN=E_nn )
+    elseif method == "ChebySCF"
+        Energies, Potentials, psi, evals = KS_solve_ChebySCF( pw, V_ionic, Focc, Nstates, β=0.8, E_NN=E_nn )
+    elseif method == "SCF_andersonmix"
+        Energies, Potentials, psi, evals = KS_solve_SCF_andersonmix( pw, V_ionic, Focc, Nstates, β=0.5, E_NN=E_nn )
+    elseif method == "SCF_pulaymix"
+        Energies, Potentials, psi, evals = KS_solve_SCF_pulaymix( pw, V_ionic, Focc, Nstates, β=0.5, E_NN=E_nn)
+    else
+        println("ERROR: unknown method: ", method)
+        exit()
+    end
 
-    #
-    #Y = ortho_gram_schmidt(psi)
-    #mu = Y' * op_H( pw, Potentials, Y )
-    #evals, evecs = eig(mu)
-    #psi = Y*evecs
+    for st = 1:Nstates
+        @printf("State # %d, Energy = %f\n", st, real(evals[st]))
+    end
 
-    @printf("Solution by self-consistent field method\n")
-    Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, β=0.1 )
-
-    #for st = 1:Nstates
-    #    @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
-    #end
-
-    @printf("E_nn = %18.10f\n", E_nn)
-    @printf("E total = %18.10f\n", E_nn + Energies.Total)
+    print_Energies(Energies)
 
 end
 
-@time test_main( 35.0 )
+#@time test_main( 35.0, method="SCF" )
+#@time test_main( 35.0, method="CG" )
+#@time test_main( 35.0, method="ChebySCF" )
+@time test_main( 35.0, method="SCF_pulaymix" )
+@time test_main( 35.0, method="SCF_andersonmix" )
