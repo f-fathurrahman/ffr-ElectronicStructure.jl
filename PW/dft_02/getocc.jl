@@ -1,20 +1,22 @@
-function getocc(evals, Nocc, Tbeta)
+# spin-unpolarized version
+function getocc(evals, Nelectrons, Tbeta)
 
     Nstates = length(evals)
     const TOL = 1e-15
     const MAXITER = 100
 
-    occ = zeros(Nstates)
+    Focc = zeros(Nstates)
+    Nocc = round(Int64,Nelectrons/2)
 
     #
     # use bisection to find efermi such that 
-    #       sum_i fermidirac(evals(i)) = Nocc
-    if Nstates > Nocc 
+    #       sum_i fermidirac(evals(i)) = Nelectrons
+    if Nstates > Nocc
         ilb = Nocc - 1
         iub = Nocc + 1
         lb = evals[ilb]
         ub = evals[iub]
-        # make sure flb < Nocc and fub > Nocc
+        # make sure flb < Nelectrons and fub > Nelectrons
         #@printf("lb = %f, ub = %f\n", lb, ub)
         Focc_lb = fermidirac(evals,lb,Tbeta)
         Focc_ub = fermidirac(evals,ub,Tbeta)
@@ -22,10 +24,10 @@ function getocc(evals, Nocc, Tbeta)
         #println("Focc_ub = ", Focc_ub)
         flb = sum(Focc_lb)
         fub = sum(Focc_ub)
-        while ( (Nocc-flb)*(fub-Nocc) < 0 )
+        while ( (Nelectrons-flb)*(fub-Nelectrons) < 0 )
             #@printf("getocc: initial bounds are off:\n");
-            #@printf("flb = %11.3e, fub = %11.3e, Nocc = %d\n", flb,fub,Nocc)
-            if (flb > Nocc)
+            #@printf("flb = %11.3e, fub = %11.3e, Nelectrons = %d\n", flb,fub,Nelectrons)
+            if (flb > Nelectrons)
                 if (ilb > 1)
                     ilb = ilb - 1
                     lb = evals[ilb]
@@ -36,7 +38,7 @@ function getocc(evals, Nocc, Tbeta)
                 end
             end
             #
-            if (fub < Nocc)
+            if (fub < Nelectrons)
                 if (iub < Nstates)
                     iub = iub + 1
                     ub  = evals[iub]
@@ -51,37 +53,37 @@ function getocc(evals, Nocc, Tbeta)
         
         #@printf("flb = %11.3e, fub = %11.3e\n", flb, fub)
         
-        efermi = (lb+ub)/2
-        occ = fermidirac(evals,efermi,Tbeta)
-        occsum = sum(occ)
+        efermi = (lb + ub)/2
+        Focc = fermidirac(evals,efermi,Tbeta)
+        occsum = sum(Focc)
         
         iter = 1
         
-        while ( abs(occsum-Nocc) > TOL && iter < MAXITER )
+        while ( abs(occsum-Nelectrons) > TOL && iter < MAXITER )
             #@printf("iter = %d, efermi = %11.3e, sum = %11.3e\n", iter, efermi, occsum)
             #@printf("lb = %11.3e, ub = %11.3e\n", lb, ub)
-            if (occsum < Nocc)
+            if (occsum < Nelectrons)
                 lb = efermi
             else
                 ub = efermi
             end
             efermi = (lb + ub)/2
-            occ = fermidirac(evals,efermi,Tbeta)
-            occsum = sum(occ)
+            Focc = fermidirac(evals,efermi,Tbeta)
+            occsum = sum(Focc)
             iter = iter + 1
         end #
     
     # 
     elseif (Nstates == Nocc)
         @printf("Nstates is equal to Nocc\n")
-        occ    = ones(Nocc)
-        efermi = evals[Nocc]
+        Focc    = ones(Nelectrons)
+        efermi = evals[Nelectrons]
     
     else
-        @printf("ERROR: The number of eigenvalues in evals should be larger than Nocc")
+        @printf("ERROR: The number of eigenvalues in evals should be larger than Nelectrons")
     
     end
 
-    return occ, efermi
+    return Focc, efermi
 
 end

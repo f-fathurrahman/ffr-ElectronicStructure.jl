@@ -48,7 +48,7 @@ function KS_solve_SCF_smearing( pw::PWGrid,
 
     const Tbeta = 2000.0
 
-    MIXDIM = 8
+    MIXDIM = 4
     df = zeros(Float64,Npoints,MIXDIM)
     dv = zeros(Float64,Npoints,MIXDIM)
 
