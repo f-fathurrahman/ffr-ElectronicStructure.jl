@@ -75,10 +75,10 @@ function KS_solve_SCF_smearing( pw::PWGrid,
         rho_new = calc_rho( pw, Focc, v )
         diffRho = norm(rho_new - rho)
         #
-        #rho = β*rho_new[:] + (1-β)*rho[:]
+        rho = β*rho_new[:] + (1-β)*rho[:]
 
-        @printf("Using andersonmix with β = %f, MIXDIM = %d\n", β, MIXDIM)
-        rho = andersonmix!( rho, rho_new, β, df, dv, iter, MIXDIM )
+        #@printf("Using andersonmix with β = %f, MIXDIM = %d\n", β, MIXDIM)
+        #rho = andersonmix!( rho, rho_new, β, df, dv, iter, MIXDIM )
         
         for ip = 1:Npoints
             if rho[ip] < 1e-12

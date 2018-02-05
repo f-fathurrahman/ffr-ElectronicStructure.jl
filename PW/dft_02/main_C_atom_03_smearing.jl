@@ -55,7 +55,7 @@ function test_main( ecutwfc_Ry::Float64 )
     const Zatm = 6.0;
     const Nstates = 6
     # initial Focc
-    Focc = [2.0, 2.0, 2.0, 0.0, 0.0, 0.0]
+    Focc = [2.0, 2.0, 1.0, 1.0, 0.0, 0.0]
     #
     Nelectrons = 6
 
