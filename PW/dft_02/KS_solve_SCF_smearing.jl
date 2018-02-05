@@ -1,5 +1,5 @@
 function KS_solve_SCF_smearing( pw::PWGrid,
-                       V_ionic, Focc_in, Nstates::Int64, Nocc::Int64;
+                       V_ionic, Focc_in, Nstates::Int64, Nelectrons::Int64;
                        β = 0.5, E_NN = nothing,
                        rho0 = nothing,
                        Potentials0 = nothing,
@@ -52,18 +52,11 @@ function KS_solve_SCF_smearing( pw::PWGrid,
     df = zeros(Float64,Npoints,MIXDIM)
     dv = zeros(Float64,Npoints,MIXDIM)
 
-    Nelectrons = Nocc*2.0
-
     for iter = 1:150
 
         λ, v = diag_lobpcg( pw, Potentials, v, verbose_last=false )
 
-        #Tbeta = 50.0
-        #Focc_lb = fermidirac( λ, λ[1], 50.0 )
-        #println("Focc_lb = ", Focc_lb)
-        #println("sum(Focc_lb) = ", sum(Focc_lb))
-
-        Focc, Efermi = getocc(λ, Nocc, Tbeta)
+        Focc, Efermi = getocc(λ, Nelectrons, Tbeta)
 
         for ist = 1:Nstates
             @printf("%5d %18.10f %18.10f\n", ist, λ[ist], Focc[ist] )
@@ -95,8 +88,9 @@ function KS_solve_SCF_smearing( pw::PWGrid,
         #
         integRho = sum(rho)*ΔV
         #@printf("integRho = %18.10f\n", integRho)
-        if abs(integRho - Nelectrons) < 1e-12
-            println("WARNING: Rescaling electron density")
+        diffNelec = abs(integRho - Nelectrons)
+        if diffNelec > 1e-12
+            println("WARNING: Rescaling electron density, diffNelec = ", diffNelec)
             rho[:] = rho[:]*Nelectrons/integRho
         end
 

@@ -96,9 +96,9 @@ function test_main( Ns )
     Focc = zeros(Nstates)
     Focc[1] = 2.0
     Focc[2] = 2.0
-    Nocc = 4
+    Nelectrons = 4
 
-    Energies, Potentials, psi, evals = KS_solve_SCF_smearing( pw, V_ionic, Focc, Nstates, Nocc, β=0.5 )
+    Energies, Potentials, psi, evals = KS_solve_SCF_smearing( pw, V_ionic, Focc, Nstates, Nelectrons, β=0.5 )
 
     for st = 1:Nstates
         @printf("=== State # %4d, Energy = %18.10f ===\n", st, real(evals[st]))
