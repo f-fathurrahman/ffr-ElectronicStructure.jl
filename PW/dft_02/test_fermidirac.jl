@@ -1,4 +1,5 @@
 include("fermidirac.jl")
+include("getEntropy.jl")
 
 const SWIDTH = 0.001
 
@@ -15,6 +16,7 @@ function test_fermidirac()
         @printf("%f %f\n", ev[ist], Focc[ist])
     end
     @printf("sum(Focc) = %f\n", sum(Focc))
+    @printf("Entropy = %f\n", getEntropy(Focc, Tbeta))
 end
 
 function test_fermidirac_v2()
@@ -29,6 +31,7 @@ function test_fermidirac_v2()
         @printf("%f %f\n", ev[ist], Focc[ist])
     end
     @printf("sum(Focc) = %f\n", sum(Focc))
+    @printf("Entropy = %f\n", getEntropy_v2(Focc, swidth))
 end
 
 test_fermidirac()
