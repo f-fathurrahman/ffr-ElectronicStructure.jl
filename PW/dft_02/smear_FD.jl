@@ -22,9 +22,9 @@ end
 function smear_FD( ev::Float64, efermi::Float64, kT::Float64; is_spinpol=false )
     x = (ev- efermi)/kT
     if is_spinpol
-        f[ist] = 1.0/( 1.0 + exp(x))
+        f = 1.0/( 1.0 + exp(x))
     else
-        f[ist] = 2.0/( 1.0 + exp(x))
+        f = 2.0/( 1.0 + exp(x))
     end
     return f
 end
