@@ -25,9 +25,10 @@ include("andersonmix.jl")
 include("pulaymix.jl")
 include("KS_solve_SCF_smearing.jl")
 
-include("getocc.jl")
-include("fermidirac.jl")
-include("getEntropy.jl")
+include("calc_Focc.jl")
+include("smear_FD.jl")
+include("calc_entropy.jl")
+include("sum_upto_E_fermi.jl")
 
 function test_main( ecutwfc_Ry::Float64 )
 
@@ -53,9 +54,9 @@ function test_main( ecutwfc_Ry::Float64 )
 
     # C atom
     const Zatm = 6.0;
-    const Nstates = 6
+    const Nstates = 8
     # initial Focc
-    Focc = [2.0, 2.0, 1.0, 1.0, 0.0, 0.0]
+    Focc = [2.0, 2.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0]
     #
     Nelectrons = 6
 
