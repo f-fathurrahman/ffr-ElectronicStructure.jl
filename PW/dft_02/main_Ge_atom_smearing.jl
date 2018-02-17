@@ -24,9 +24,10 @@ include("../common/calc_ewald_v2.jl")
 include("diag_lobpcg.jl")
 include("KS_solve_SCF_smearing.jl")
 
-include("getocc.jl")
-include("fermidirac.jl")
-include("getEntropy.jl")
+include("calc_Focc.jl")
+include("smear_FD.jl")
+include("calc_entropy.jl")
+include("sum_upto_E_fermi.jl")
 
 include("andersonmix.jl")
 
@@ -91,17 +92,18 @@ function test_main( Ns )
     # needed to sum up over Nspecies for more than one species
     V_ionic = reshape( V_ionic, (Npoints) )
 
-    const Nstates = 6
+    const Nstates = 7
     # Initial Focc
     Focc = zeros(Nstates)
     Focc[1] = 2.0
-    Focc[2] = 2.0
+    Focc[2] = 1.0
+    Focc[3] = 1.0
     Nelectrons = 4
 
     Energies, Potentials, psi, evals = KS_solve_SCF_smearing( pw, V_ionic, Focc, Nstates, Nelectrons, β=0.5 )
 
     for st = 1:Nstates
-        @printf("=== State # %4d, Energy = %18.10f ===\n", st, real(evals[st]))
+        @printf("State #%4d, Energy = %18.10f\n", st, real(evals[st]))
     end
 
     @printf("E_nn = %18.10f\n", E_nn)

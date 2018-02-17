@@ -46,7 +46,7 @@ function KS_solve_SCF_smearing( pw::PWGrid,
 
     λ = zeros(Nstates)
 
-    const Tbeta = 2000.0
+    const kT = 0.01
 
     MIXDIM = 4
     df = zeros(Float64,Npoints,MIXDIM)
@@ -56,25 +56,21 @@ function KS_solve_SCF_smearing( pw::PWGrid,
 
         λ, v = diag_lobpcg( pw, Potentials, v, verbose_last=false )
 
-        Focc, Efermi = getocc(λ, Nelectrons, Tbeta)
+        Focc, E_fermi = calc_Focc(λ, Nelectrons, kT)
+        Entropy = calc_entropy(Focc, kT)
 
         for ist = 1:Nstates
             @printf("%5d %18.10f %18.10f\n", ist, λ[ist], Focc[ist] )
         end
         
-        #println("occ = ", Focc)
         println("sum(Focc) = ", sum(Focc))
-        println("efermi = ", Efermi)
+        println("integFocc = ", sum_upto_E_fermi(Focc, λ, E_fermi))
+        println("E_fermi = ", E_fermi)
 
-        Entropy = getEntropy(Focc, Tbeta)
-        #println("Entropy = ", Entropy)
-
-        #exit()
-
-        #
         rho_new = calc_rho( pw, Focc, v )
         diffRho = norm(rho_new - rho)
-        #
+        
+        #@printf("Using simple mix with β = %10.5f\n", β)
         #rho = β*rho_new[:] + (1-β)*rho[:]
 
         @printf("Using andersonmix with β = %f, MIXDIM = %d\n", β, MIXDIM)

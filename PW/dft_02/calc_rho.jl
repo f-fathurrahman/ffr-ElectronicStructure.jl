@@ -17,7 +17,7 @@ function calc_rho( pw::PWGrid, Focc, psi::Array{Complex128,2} )
 
     for is = 1:Nstates
         for ip = 1:Npoints
-            rho[ip] = rho[ip] + conj(psiR[ip,is])*psiR[ip,is]*Focc[is]
+            rho[ip] = rho[ip] + Focc[is]*conj(psiR[ip,is])*psiR[ip,is]
         end
     end
     return real(rho)

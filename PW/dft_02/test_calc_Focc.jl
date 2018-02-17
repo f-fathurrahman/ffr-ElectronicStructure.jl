@@ -1,6 +1,7 @@
 include("smear_FD.jl")
 include("calc_Focc.jl")
 include("calc_entropy.jl")
+include("sum_upto_E_fermi.jl")
 
 function test_main(kT::Float64)
     Nstates = 8
@@ -15,12 +16,7 @@ function test_main(kT::Float64)
         @printf("%18.10f %18.10f\n", evals[ist], Focc[ist])
     end
     @printf("E_fermi = %18.10f\n", E_fermi)
-    integFocc = 0.0
-    for ist = 1:Nstates
-        if evals[ist] <= E_fermi 
-            integFocc = integFocc + Focc[ist]
-        end
-    end
+    integFocc = sum_upto_E_fermi( Focc, evals, E_fermi )
     @printf("integFocc = %18.10f\n", integFocc)
     @printf("sum(Focc) = %18.10f\n", sum(Focc))
     @printf("Entropy (-TS) = %18.10f\n", calc_entropy(Focc, kT, is_spinpol=spinpol))

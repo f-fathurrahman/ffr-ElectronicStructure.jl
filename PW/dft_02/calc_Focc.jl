@@ -2,7 +2,7 @@
 function calc_Focc(evals, Nelectrons, kT::Float64; is_spinpol=false)
 
     Nstates = length(evals)
-    const TOL = 1e-15
+    const TOL = 1e-10
     const MAXITER = 100
 
     Focc = zeros(Nstates)
@@ -15,26 +15,26 @@ function calc_Focc(evals, Nelectrons, kT::Float64; is_spinpol=false)
     if Nstates > Nocc
         ilb = Nocc - 1
         iub = Nocc + 1
+        # FIXME: Need to guard against the case Nocc == 1
         lb = evals[ilb]
         ub = evals[iub]
         # make sure flb < Nelectrons and fub > Nelectrons
-        @printf("lb = %f, ub = %f\n", lb, ub)
+        # Use lb and ub as guess interval for searching Fermi energy
         Focc_lb = smear_FD(evals, lb, kT, is_spinpol=is_spinpol)
         Focc_ub = smear_FD(evals, ub, kT, is_spinpol=is_spinpol)
-        #println("Focc_lb = ", Focc_lb)
-        #println("Focc_ub = ", Focc_ub)
         flb = sum(Focc_lb)
         fub = sum(Focc_ub)
         while ( (Nelectrons-flb)*(fub-Nelectrons) < 0 )
-            @printf("getocc: initial bounds are off:\n");
-            @printf("flb = %11.3e, fub = %11.3e, Nelectrons = %d\n", flb,fub,Nelectrons)
+            @printf("calc_Focc: initial bounds are off:\n");
+            @printf("flb = %18.10f, fub = %18.10f, Nelectrons = %d\n", flb, fub, Nelectrons)
             if (flb > Nelectrons)
                 if (ilb > 1)
                     ilb = ilb - 1
                     lb = evals[ilb]
-                    flb = sum( smear_FD(evals, lb, kT, is_spinpol=spinpol) )
+                    Focc = smear_FD(evals, lb, kT, is_spinpol=is_spinpol)
+                    flb = sum(Focc)
                 else
-                    @printf("getocc: cannot find a lower bound for E_fermi, something is wrong\n")
+                    @printf("ERROR in calc_Focc: cannot find a lower bound for E_fermi\n")
                     exit()
                 end
             end
@@ -43,26 +43,29 @@ function calc_Focc(evals, Nelectrons, kT::Float64; is_spinpol=false)
                 if (iub < Nstates)
                     iub = iub + 1
                     ub  = evals[iub]
-                    fub = sum( smear_FD(evals, ub, kT, is_spinpol=spinpol))
+                    Focc = smear_FD(evals, ub, kT, is_spinpol=is_spinpol)
+                    fub = sum(Focc)
                 else
-                    @printf("getocc: cannot find an upper bound for E_fermi\n")
-                    @printf("something is wrong, try increasing the number of wavefunctions in X0\n")
+                    @printf("ERROR in calc_Focc: cannot find an upper bound for E_fermi\n")
+                    @printf("Try increasing the number of states\n")
                     exit()
                 end
             end
         end  # while
         
-        @printf("flb = %11.3e, fub = %11.3e\n", flb, fub)
+        @printf("\nInitial bounds are OK: flb = %18.10f, fub = %18.10f\n", flb, fub)
         
         E_fermi = (lb + ub)/2
         Focc = smear_FD(evals, E_fermi, kT, is_spinpol=is_spinpol)
         occsum = sum(Focc)
         
-        iter = 1
-        
-        while ( abs(occsum-Nelectrons) > TOL && iter < MAXITER )
-            @printf("iter = %d, E_fermi = %11.3e, sum = %11.3e\n", iter, E_fermi, occsum)
-            @printf("lb = %11.3e, ub = %11.3e\n", lb, ub)
+        for iter = 1:MAXITER
+            diffNelec = abs(occsum-Nelectrons)
+            if diffNelec < TOL
+                @printf("Found E_fermi = %18.10f, occsum = %18.10f\n", E_fermi, occsum )
+                return Focc, E_fermi
+            end
+            @printf("%3d %18.10f %18.10f %18.10e\n", iter, E_fermi, occsum, diffNelec)
             if (occsum < Nelectrons)
                 lb = E_fermi
             else
@@ -71,25 +74,25 @@ function calc_Focc(evals, Nelectrons, kT::Float64; is_spinpol=false)
             E_fermi = (lb + ub)/2
             Focc = smear_FD(evals, E_fermi, kT, is_spinpol=is_spinpol)
             occsum = sum(Focc)
-            iter = iter + 1
         end #
+        @printf("WARNING: Maximum iteration achieved, E_fermi is not found within specified tolarance\n")
+        return Focc, E_fermi
     
     # 
     elseif (Nstates == Nocc)
         @printf("Nstates is equal to Nocc\n")
-        if spinpol
+        if is_spinpol
             Focc = 2.0*ones(Nstates)
             E_fermi = evals[Nstates]
         else
             Focc    = ones(Nstates)
             E_fermi = evals[Nstates]
         end
+        return Focc, E_fermi
     
     else
         @printf("ERROR: The number of eigenvalues in evals should be larger than Nelectrons")
         exit()
     end
-
-    return Focc, E_fermi
 
 end
