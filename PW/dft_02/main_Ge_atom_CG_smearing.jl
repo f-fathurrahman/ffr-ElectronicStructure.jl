@@ -11,8 +11,7 @@ include("op_H.jl")
 include("calc_rho.jl")
 include("calc_grad.jl")
 include("calc_Energies.jl")
-include("KS_solve_Emin_sd.jl")
-include("KS_solve_Emin_cg.jl")
+include("KS_solve_Emin_CG_smearing.jl")
 include("Poisson_solve.jl")
 include("LDA_VWN.jl")
 include("Kprec.jl")
@@ -99,29 +98,7 @@ function test_main( Ns )
     Focc[3] = 1.0
     Nelectrons = 4
 
-    srand(1234)
-    psi = randn(Ngwx,Nstates) + im*randn(Ngwx,Nstates)
-    psi = ortho_gram_schmidt(psi)
-
-    Potentials = PotentialsT( V_ionic, zeros(Npoints), zeros(Npoints) )
-    rho = calc_rho( pw, Focc, psi )
-    Potentials.Hartree = real( G_to_R( Ns, Poisson_solve(pw, rho) ) )
-    Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
-
-    # Get eigenvalues
-    mu = psi' * op_H(pw, Potentials, psi)
-    evals = sort(real(eigvals(mu)))
-    println(evals)
-
-    kT = 0.01
-    Focc, E_fermi = calc_Focc(evals, Nelectrons, kT, is_spinpol=false)
-    
-    println("Focc = ", Focc)
-
-    @time g_Haux = calc_grad_Haux(pw, Potentials, Focc, evals, psi, 0.01)
-
-    println("g_Haux = ")
-    printMatrix(g_Haux)
+    Energies, Potentials, psi, evals = KS_solve_Emin_CG_smearing( pw, V_ionic, Focc, Nstates, E_NN=E_nn )
 
 end
 
