@@ -62,6 +62,6 @@ function calc_ewald( pw::PWGrid, Sf, Xpos, Nspecies::Int, atm2species,
         Eself = Eself + Zv[isp]^2/(2*sqrt(pi))*(1.0/sigma[isp])
     end
     E_nn = Ehartree - Eself
-    @printf("Ehartree, Eself, E_nn = %20.16f %20.16f %20.16f\n", Ehartree, Eself, E_nn)
+    @printf("Ehartree, Eself, E_nn = %18.10f %18.10f %18.10f\n", Ehartree, Eself, E_nn)
     return E_nn
 end

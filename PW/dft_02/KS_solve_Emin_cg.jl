@@ -51,6 +51,10 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
             #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g-g_old).*d))
             #β = real(sum(conj(g).*Kg))/real(sum((g-g_old).*conj(d_old)))
         end
+        if β < 0.0
+            @printf("β is smaller than 0, setting it to zero\n")
+            β = 0.0
+        end
 
         d = -Kprec(pw, g) + β * d_old
 
