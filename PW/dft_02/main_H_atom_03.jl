@@ -75,5 +75,5 @@ function test_main( ecutwfc_Ry::Float64 )
 
 end
 
-@code_native test_main(1.0)
-@time test_main( 35.0 )
+#@code_native test_main(1.0)
+@time test_main( 40.0 )

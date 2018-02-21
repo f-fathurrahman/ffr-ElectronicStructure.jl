@@ -101,8 +101,8 @@ function test_main( Ns; method="SCF" )
 
 end
 
-#@time test_main( [64,64,64], method="CG" )
+@time test_main( [66,66,66], method="CG" )
 #@time test_main( [64,64,64], method="SCF" )
 #@time test_main( [64,64,64], method="ChebySCF" )
-@time test_main( [64, 64, 64], method="SCF_andersonmix" )
-@time test_main( [64, 64, 64], method="SCF_pulaymix")
+#@time test_main( [64, 64, 64], method="SCF_andersonmix" )
+#@time test_main( [64, 64, 64], method="SCF_pulaymix")
