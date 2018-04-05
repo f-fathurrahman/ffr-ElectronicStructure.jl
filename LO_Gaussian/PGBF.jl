@@ -1,7 +1,7 @@
 struct PGBF
-    expn::Float64
     center::Tuple3F64
     power::Tuple3I64
+    expn::Float64
     NORM::Float64
 end
 
@@ -16,9 +16,9 @@ function println( bf::PGBF )
     @printf("\n")
 end
 
-function PGBF( expn, center::Tuple3F64, power::Tuple3I64 )
+function PGBF( expn::Float64, center::Tuple3F64, power::Tuple3I64 )
     NORM = 1.0 / sqrt(overlap(expn,center,power))
-    p = PGBF( expn, center, power, NORM )
+    p = PGBF( center, power, expn, NORM )
     return p
 end
 

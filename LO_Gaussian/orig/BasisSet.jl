@@ -1,4 +1,4 @@
-type BasisSet # list of CGBFs
+mutable struct BasisSet # list of CGBFs
   bfs::Array{CGBF,1}
 end
 
@@ -9,21 +9,22 @@ function push!(basis::BasisSet,cbf::CGBF)
 end
 
 function build_basis(mol::Molecule,name="sto3g")
-  data = basis_set_data[name]
-  basis_set = basisset()
-  for atom in mol.atomlist
-    for btuple in data[atom.atno]
-      sym,primlist = btuple
-      for (I,J,K) in sym2power[sym]
-        cbf = init_CGBF(atom.x,atom.y,atom.z,I,J,K)
-        push!(basis_set,cbf)
-        for (expn,coef) in primlist
-          push!(cbf,expn,coef)
+    data = basis_set_data[name]
+    basis_set = basisset()
+    for atom in mol.atomlist
+        for btuple in data[atom.atno]
+            sym,primlist = btuple
+            for (I,J,K) in sym2power[sym]
+                cbf = init_CGBF( (atom.x,atom.y,atom.z), (I,J,K) )
+                push!(basis_set,cbf)
+                # add primitives
+                for (expn,coef) in primlist
+                  push!(cbf,expn,coef)
+                end
+            end
         end
-      end
     end
-  end
-  return basis_set
+    return basis_set
 end
 
 const sym2power = Dict{Any,Any}(

@@ -61,4 +61,4 @@ function binomial_prefactor(s::Int64,ia::Int64,ib::Int64,xpa::Float64,xpb::Float
 end
 
 # where should we put this ??
-#overlap(a::CGBF,b::CGBF) = contract(overlap,a,b)
+overlap(a::CGBF,b::CGBF) = contract(overlap,a,b)
