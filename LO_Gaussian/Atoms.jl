@@ -124,9 +124,7 @@ function init_atoms_xyz(filexyz; in_bohr=false, verbose=false)
 end
 
 
-function get_Zatoms( atoms::Atoms )
-
-    ZATOMS = Dict(
+const ZATOMS = Dict(
     "H"  => 1,
     "He" => 2,
     "Li" => 3,
@@ -164,7 +162,7 @@ function get_Zatoms( atoms::Atoms )
     "Br" => 34,
     "Kr" => 36, )
 
-
+function get_Zatoms( atoms::Atoms )
     Nspecies = atoms.Nspecies
     SpeciesSymbols = atoms.SpeciesSymbols
     Zatoms = zeros(Float64,Nspecies)

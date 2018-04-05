@@ -34,31 +34,32 @@ function overlap(aexpn::Float64, acenter::Tuple3F64, apower::Tuple3I64,
 end
 
 function gaussian_product_center(a::PGBF,b::PGBF)
-  return (a.expn*[a.x,a.y,a.z]+b.expn*[b.x,b.y,b.z])/(a.expn+b.expn)
+    return (a.expn*[a.x,a.y,a.z]+b.expn*[b.x,b.y,b.z])/(a.expn+b.expn)
 end
 
 function gaussian_product_center(aexpn::Float64,ax::Float64,ay::Float64,az::Float64,
                   bexpn::Float64,bx::Float64,by::Float64,bz::Float64)
-  return (aexpn*[ax,ay,az]+bexpn*[bx,by,bz])/(aexpn+bexpn)
+    return (aexpn*[ax,ay,az]+bexpn*[bx,by,bz])/(aexpn+bexpn)
 end
 
 function overlap1d(la::Int64,lb::Int64,ax::Float64,bx::Float64,gamma::Float64)
-  total = 0
-  for i in 0:div(la+lb,2)
-    total += binomial_prefactor(2i,la,lb,ax,bx)*factorial2(2i-1)/(2gamma)^i
-  end
-  return total
+    total = 0
+    for i in 0:div(la+lb,2)
+        total += binomial_prefactor(2i,la,lb,ax,bx)*factorial2(2i-1)/(2gamma)^i
+    end
+    return total
 end
 
-function binomial_prefactor( s::Int64,ia::Int64,ib::Int64,xpa::Float64,xpb::Float64 )
-  total = 0
-  for t in 0:s
-    if (s-ia) <= t <= ib
-      total += binomial(ia,s-t)*binomial(ib,t)*xpa^(ia-s+t)*xpb^(ib-t)
+function binomial_prefactor( s::Int64, ia::Int64, ib::Int64, xpa::Float64, xpb::Float64 )
+    total = 0
+    for t in 0:s
+        if (s-ia) <= t <= ib
+          total += binomial(ia,s-t)*binomial(ib,t)*xpa^(ia-s+t)*xpb^(ib-t)
+        end
     end
-  end
-  return total
+    return total
 end
 
 # where should we put this ??
 overlap( a::CGBF, b::CGBF ) = contract( overlap, a, b )
+

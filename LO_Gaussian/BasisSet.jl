@@ -8,18 +8,24 @@ function push!(basis::BasisSet,cbf::CGBF)
     Base.push!(basis.bfs,cbf)
 end
 
-function build_basis( atoms::Atoms,name="sto3g" )
+function build_basis( atoms::Atoms, name="sto3g" )
     data = basis_set_data[name]
     basis_set = basisset()
     
-    for atom in atoms.atomlist
+    Natoms = atoms.Natoms
+    atsymbs = atoms.atsymbs
+    
+    for ia = 1:Natoms
+
+        atno = ZATOMS[atsymbs[ia]]
+        x = atoms.positions[1,ia]
+        y = atoms.positions[2,ia]
+        z = atoms.positions[3,ia]                
         
-        #atno = get_Zatoms(atoms)
-        
-        for btuple in data[atoms.atno]
+        for btuple in data[atno]
             sym,primlist = btuple
             for (I,J,K) in sym2power[sym]
-                cbf = init_CGBF( (atom.x,atom.y,atom.z), (I,J,K) )
+                cbf = init_CGBF( (x,y,z), (I,J,K) )
                 push!(basis_set,cbf)
                 for (expn,coef) in primlist
                     push!(cbf,expn,coef)
