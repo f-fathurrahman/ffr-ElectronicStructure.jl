@@ -30,7 +30,7 @@ function evaluate(bf::CGBF,x::Float64,y::Float64,z::Float64)
     for (c,pbf) in primitives(bf)
         s += c*evaluate(pbf,x,y,z)
     end
-    return bf.norm*s
+    return bf.NORM*s
 end
 
 function normalize!(bf::CGBF)
