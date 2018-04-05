@@ -24,4 +24,5 @@ function test_main(filename)
     end
 end
 
-test_main("CO2.xyz")
+test_main("H.xyz")
+test_main("Li.xyz")
