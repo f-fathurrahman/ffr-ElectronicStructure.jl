@@ -63,6 +63,11 @@ function KS_solve_Emin_CG_smearing( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 
     const κ = 0.1
 
+    Haux = zeros(Complex128,Nstates,Nstates)
+    for ist = 1:Nstates
+        Haux[ist,ist] = evals[ist]
+    end
+
     for iter = 1:NiterMax
 
         g = calc_grad(pw, Potentials, Focc, psi)

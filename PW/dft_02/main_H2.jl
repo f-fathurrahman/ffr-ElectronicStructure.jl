@@ -98,8 +98,9 @@ function test_main( Ns, xx; method="SCF" )
         @printf("State # %d, Energy = %f\n", st, real(evals[st]))
     end
 
-    #@printf("E_nn = %18.10f\n", E_nn)
+    @printf("E_nn = %18.10f\n", E_nn)
     @printf("E total = %18.10f\n", Energies.Total)
+    print_Energies(Energies)
 
 end
 
