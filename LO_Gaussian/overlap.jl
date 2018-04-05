@@ -3,10 +3,10 @@
 ### Overlap matrix elements
 """
 
-#function overlap( a::PGBF, b::PGBF )
-#    return a.norm*b.norm*overlap(a.expn,a.x,a.y,a.z,a.I,a.J,a.K,
-#    b.expn,b.x,b.y,b.z,b.I,b.J,b.K)
-#end
+function overlap( a::PGBF, b::PGBF )
+    s = overlap( a.expn, a.center, a.power, b.expn, b.center, b.power)
+    return a.NORM*b.NORM*s
+end
 
 # overlap with itself
 function overlap(aexpn::Float64, acenter::Tuple3F64, apower::Tuple3I64)
