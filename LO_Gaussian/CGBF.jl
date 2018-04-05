@@ -1,9 +1,22 @@
+
+# TODO: make this immutable, possibly by changing the mechanism to build
+# the `BasisSet`
 mutable struct CGBF
     center::Tuple3F64
     power::Tuple3I64
     pgbfs::Array{PGBF,1}
     coefs::Array{Float64,1}
     NORM::Float64
+end
+
+import Base.println
+function println(bf::CGBF)
+    Ncontr = length(bf.pgbfs)
+    @printf("\nNcontr = %d\n\n", Ncontr)
+    for i = 1:Ncontr
+        @printf("Coef = %18.10f", bf.coefs[i])
+        println(bf.pgbfs[i])
+    end
 end
 
 function init_CGBF( center::Tuple3F64, power::Tuple3I64 )
@@ -22,7 +35,6 @@ end
 
 function normalize!(bf::CGBF)
     bf.NORM /= sqrt(overlap(bf,bf))
-    @printf("normalize!: %18.10f\n", bf.NORM)
 end
 
 primitives(a::CGBF) = zip(a.coefs,a.pgbfs)

@@ -8,11 +8,11 @@ end
 import Base.println
 function println( bf::PGBF )
     @printf("\n")
-    @printf("Info for PGBF\n")
+    @printf("Primitive Gaussian:\n")
     @printf("Exponent: %18.10f\n", bf.expn)
-    @printf("Center: (%18.10f,%18.10f,%18.10f)\n", bf.center[1], bf.center[2], bf.center[3])
-    @printf("Angular momentum: (%2d,%2d,%2d)\n", bf.power[1], bf.power[2], bf.power[3])
-    @printf("Norm: %18.10f\n", bf.NORM)
+    @printf("Center  : (%18.10f,%18.10f,%18.10f)\n", bf.center[1], bf.center[2], bf.center[3])
+    @printf("AM      : (%2d,%2d,%2d)\n", bf.power[1], bf.power[2], bf.power[3])
+    @printf("Norm    : %18.10f\n", bf.NORM)
     @printf("\n")
 end
 

@@ -1,16 +1,13 @@
-mutable struct BasisSet # list of CGBFs
-    bfs::Array{CGBF,1}
-end
 
-basisset() = BasisSet(CGBF[])
+const BasisSet = Array{CGBF,1}
 
 function push!(basis::BasisSet,cbf::CGBF)
-    Base.push!(basis.bfs,cbf)
+    Base.push!(basis,cbf)
 end
 
 function build_basis( atoms::Atoms, name="sto3g" )
     data = basis_set_data[name]
-    basis_set = basisset()
+    basis = BasisSet()
     
     Natoms = atoms.Natoms
     atsymbs = atoms.atsymbs
@@ -26,7 +23,7 @@ function build_basis( atoms::Atoms, name="sto3g" )
             sym,primlist = btuple
             for (I,J,K) in sym2power[sym]
                 cbf = init_CGBF( (x,y,z), (I,J,K) )
-                push!(basis_set,cbf)
+                push!(basis,cbf)
                 for (expn,coef) in primlist
                     push!(cbf,expn,coef)
                 end
@@ -35,7 +32,7 @@ function build_basis( atoms::Atoms, name="sto3g" )
 
     end
 
-    return basis_set
+    return basis
 end
 
 const sym2power = Dict{Any,Any}(

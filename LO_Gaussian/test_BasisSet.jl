@@ -8,12 +8,20 @@ include("Atoms.jl")
 include("sto3g.jl")
 include("BasisSet.jl")
 
-function test_main()
-    atoms = init_atoms_xyz("H2.xyz")
+function test_main(filename)
+    atoms = init_atoms_xyz(filename)
     println(atoms)
 
-    bas = build_basis(atoms)
-    println(bas)
+    basis = build_basis(atoms)
+    Nbasis = length(basis)
+    
+    println("\nNbasis = ", Nbasis)
+    for i = 1:Nbasis
+        @printf("------------\n")        
+        @printf("basis #%d\n", i)
+        @printf("------------\n")
+        println(basis[i])
+    end
 end
 
-test_main()
+test_main("CO2.xyz")
