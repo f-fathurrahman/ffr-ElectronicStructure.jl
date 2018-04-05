@@ -1,11 +1,17 @@
+if VERSION > v"0.6.2"
+    using Printf
+end
+
 include("alias.jl")
 include("utils.jl")
 include("PGBF.jl")
+include("CGBF.jl")
 include("overlap.jl")
 
-using PyPlot
-
-const plt = PyPlot
+if VERSION <= v"0.6.2"
+    using PyPlot
+    const plt = PyPlot
+end
 
 function do_plot_x( bf::PGBF, filesave::String )
     const N = 100

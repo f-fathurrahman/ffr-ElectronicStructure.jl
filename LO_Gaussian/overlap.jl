@@ -1,7 +1,5 @@
-"""
 ## One-electron integrals
 ### Overlap matrix elements
-"""
 
 function overlap( a::PGBF, b::PGBF )
     s = overlap( a.expn, a.center, a.power, b.expn, b.center, b.power)
