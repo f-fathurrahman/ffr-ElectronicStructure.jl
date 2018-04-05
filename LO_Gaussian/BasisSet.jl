@@ -8,11 +8,15 @@ function push!(basis::BasisSet,cbf::CGBF)
     Base.push!(basis.bfs,cbf)
 end
 
-function build_basis(mol::Molecule,name="sto3g")
+function build_basis( atoms::Atoms,name="sto3g" )
     data = basis_set_data[name]
     basis_set = basisset()
-    for atom in mol.atomlist
-        for btuple in data[atom.atno]
+    
+    for atom in atoms.atomlist
+        
+        #atno = get_Zatoms(atoms)
+        
+        for btuple in data[atoms.atno]
             sym,primlist = btuple
             for (I,J,K) in sym2power[sym]
                 cbf = init_CGBF( (atom.x,atom.y,atom.z), (I,J,K) )
@@ -22,7 +26,9 @@ function build_basis(mol::Molecule,name="sto3g")
                 end
             end
         end
+
     end
+
     return basis_set
 end
 

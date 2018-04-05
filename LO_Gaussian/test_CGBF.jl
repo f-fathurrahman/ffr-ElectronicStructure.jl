@@ -5,7 +5,7 @@ include("CGBF.jl")
 include("overlap.jl")
 
 function test_CGBF()
-    c = init_CGBF( 0.0,0.0,0.0 )
+    c = init_CGBF( 0.0,0.0,0.0 )  # specifying center
     
     push!(c, 0.20, 1.0)
     #@assert isapprox( evaluate(c,0,0,0), 0.71270547 )

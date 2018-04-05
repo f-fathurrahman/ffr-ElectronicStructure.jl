@@ -50,7 +50,7 @@ function overlap1d(la::Int64,lb::Int64,ax::Float64,bx::Float64,gamma::Float64)
   return total
 end
 
-function binomial_prefactor(s::Int64,ia::Int64,ib::Int64,xpa::Float64,xpb::Float64)
+function binomial_prefactor( s::Int64,ia::Int64,ib::Int64,xpa::Float64,xpb::Float64 )
   total = 0
   for t in 0:s
     if (s-ia) <= t <= ib
@@ -61,4 +61,4 @@ function binomial_prefactor(s::Int64,ia::Int64,ib::Int64,xpa::Float64,xpb::Float
 end
 
 # where should we put this ??
-overlap(a::CGBF,b::CGBF) = contract(overlap,a,b)
+overlap( a::CGBF, b::CGBF ) = contract( overlap, a, b )
