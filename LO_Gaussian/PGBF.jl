@@ -1,34 +1,38 @@
-type PGBF
-  expn::Float64
-  x::Float64
-  y::Float64
-  z::Float64
-  I::Int64
-  J::Int64
-  K::Int64
-  norm::Float64
+struct PGBF
+    expn::Float64
+    center::Tuple3F64
+    power::Tuple3I64
+    norm::Float64
 end
 
-function init_PGBF( expn, center::Array{Float64,1}, power::Array{Int,1} )
-  p = PGBF( expn, center[1], center[2], center[3], power[1], power[2], power[3], 1.0 )
-  normalize!(p)
-  return p
+import Base.println
+function println( bf::PGBF )
+    @printf("\n")
+    @printf("Info for PGBF\n")
+    @printf("Exponent: %18.10f\n", bf.expn)
+    @printf("Center: (%18.10f,%18.10f,%18.10f)\n", bf.center[1], bf.center[2], bf.center[3])
+    @printf("Angular momentum: (%2d,%2d,%2d)\n", bf.power[1], bf.power[2], bf.power[3])
+    @printf("Norm: %18.10f\n", bf.norm)
+    @printf("\n")
 end
 
-function init_PGBF(expn, x=0,y=0,z=0,I=0,J=0,K=0,norm=1)
-  p = PGBF(expn,x,y,z,I,J,K,norm)
-  normalize!(p)
-  return p
+function PGBF( expn, center::Tuple3F64, power::Tuple3I64 )
+    norm = 1.0 / sqrt(overlap(expn,center,power))
+    p = PGBF( expn, center, power, norm )
+    return p
 end
 
-function amplitude( bf::PGBF, x, y, z)
-  #
-  dx, dy, dz = x-bf.x, y-bf.y, z-bf.z
-  r2 = dist2(dx, dy, dz)
-  #
-  return bf.norm*(dx^bf.I)*(dy^bf.J)*(dz^bf.K)*exp(-bf.expn*r2)
+function evaluate( bf::PGBF, x::Float64, y::Float64, z::Float64 )
+    xo = bf.center[1]
+    yo = bf.center[2]
+    zo = bf.center[3]
+    I = bf.power[1]
+    J = bf.power[2]
+    K = bf.power[3]
+    expn = bf.expn
+
+    dx, dy, dz = x-xo, y-yo, z-zo
+    r2 = dist2(dx, dy, dz)
+    return bf.norm*(dx^I)*(dy^J)*(dz^K)*exp(-expn*r2)
 end
 
-function normalize!( pbf::PGBF )
-  pbf.norm /= sqrt( overlap(pbf,pbf) )
-end
