@@ -1,3 +1,4 @@
+include("constants.jl")
 include("alias.jl")
 include("Atoms.jl")
 include("utils.jl")
@@ -6,6 +7,8 @@ include("CGBF.jl")
 include("overlap.jl")
 include("kinetic.jl")
 include("nuclear.jl")
+include("sto3g.jl")
+include("BasisSet.jl")
 
 function test_a_terms()
     @assert Aterm(0,0,0,0,0,0.,0.,0.,0.) == 1.0
@@ -97,13 +100,31 @@ end
 
 #test_one()
 
-#function test_na2()
-#  li,h = lih.atomlist
-#  bfs = build_basis(lih)
-#  s1,s2,x,y,z,h1s = bfs.bfs
-#  @assert isapprox(nuclear_attraction(s1,s1,lih),-8.307532656)
-#end
+function test_LiH()
+    LiH = init_atoms_xyz("LiH.xyz")
+    bfs = build_basis(LiH)
+    
+    println(LiH)
+    Nbasis = length(bfs)
+    for i = 1:Nbasis
+        println("--------")
+        println("Basis #", i)
+        println("--------")        
+        println(bfs[i])
+    end
 
+    Lis1 = bfs[1]
+    Lis2 = bfs[2]
+    Lipx = bfs[3]
+    Lipy = bfs[4]
+    Lipz = bfs[5]
+    H1s  = bfs[6]
+    Vab = nuclear_attraction(Lis1,Lis1,LiH)
+    println("Vab = ", Vab)
+    #@assert isapprox(nuclear_attraction(Lis1,Lis1,LiH),-8.307532656)
+end
+
+test_LiH()
 
 #nuclear_repulsion(a::Atom,b::Atom)= a.atno*b.atno/sqrt(dist2(a.x-b.x,a.y-b.y,a.z-b.z))
 #function nuclear_repulsion(mol::Molecule)
