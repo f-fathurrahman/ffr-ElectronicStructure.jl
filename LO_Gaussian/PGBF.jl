@@ -22,6 +22,13 @@ function PGBF( expn::Float64, center::Tuple3F64, power::Tuple3I64 )
     return p
 end
 
+function PGBF( expn::Float64, center::Tuple3F64 )
+    power = (0,0,0)
+    NORM = 1.0 / sqrt(overlap(expn,center,power))
+    p = PGBF( center, power, expn, NORM )
+    return p
+end
+
 function PGBF( expn::Float64 )
     center = (0.0,0.0,0.0)
     power = (0,0,0)
