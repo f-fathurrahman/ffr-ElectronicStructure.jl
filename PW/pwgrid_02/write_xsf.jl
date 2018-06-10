@@ -1,4 +1,4 @@
-function write_xsf( filnam, LL, atpos; molecule=false )
+function write_xsf( filnam, LL_in, atpos; molecule=false )
     #
     f = open(filnam, "w")
     Natoms = size(atpos)[2]
@@ -8,6 +8,7 @@ function write_xsf( filnam, LL, atpos; molecule=false )
     else
         @printf(f, "CRYSTAL\n")
     end
+    LL = LL_in'
     @printf(f, "PRIMVEC\n")
     @printf(f, "%18.10f %18.10f %18.10f\n", LL[1,1], LL[1,2], LL[1,3])
     @printf(f, "%18.10f %18.10f %18.10f\n", LL[2,1], LL[2,2], LL[2,3])
@@ -21,10 +22,11 @@ function write_xsf( filnam, LL, atpos; molecule=false )
     close(f)
 end
 
-function write_xsf_3d_crystal( filnam, Ns, LL, data3d; center=zeros(3) )
+function write_xsf_3d_crystal( filnam, Ns, LL_in, data3d; center=zeros(3) )
     #
     f = open(filnam, "a")  # FIXME: What if filnam is not exist?
     #
+    LL = LL_in'
     @printf(f, "BEGIN_BLOCK_DATAGRID_3D\n")
     @printf(f, "made_by_ffr\n")
     @printf(f, "DATAGRID_3D_UNKNOWN\n")

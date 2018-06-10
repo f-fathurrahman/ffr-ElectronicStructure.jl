@@ -1,13 +1,15 @@
-include("../common/PWGrid_v01.jl")
-include("../common/wrappers_fft_v01.jl")
+using Printf
+using LinearAlgebra
 
+include("../common/PWGrid_v01.jl")
+include("../common/wrappers_fft.jl")
+include("../common/gen_lattice_pwscf.jl")
 include("structure_factor.jl")
 include("write_xsf.jl")
 
 function test_main()
     Ns = [50,50,50]
-    const a = 10.0
-    LatVecs = a*diagm( [1.0, 1.0, 1.0] )
+    LatVecs = gen_lattice_sc(10.0)
     pwgrid = PWGrid(Ns,LatVecs)
 
     Npoints = prod(Ns)
@@ -23,8 +25,8 @@ function test_main()
     Sf = structure_factor( Xpos, pwgrid.G )
 
     Ng = Npoints
-    Vg = zeros(Complex128, Ng)
-    const prefact = -4.0*pi/Ω
+    Vg = zeros(ComplexF64, Ng)
+    prefact = -4.0*pi/Ω
     for ig = 2:Ng
         Vg[ig] = prefact/G2[ig]
     end

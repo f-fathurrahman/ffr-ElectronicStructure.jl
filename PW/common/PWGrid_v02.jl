@@ -32,9 +32,9 @@ function PWGrid( Ns, LatVecs::Array{Float64,2} )
     Ω = det(LatVecs)
     #
     LatVecsLen = Array{Float64}(3)
-    LatVecsLen[1] = norm(LatVecs[1,:])
-    LatVecsLen[2] = norm(LatVecs[2,:])
-    LatVecsLen[3] = norm(LatVecs[3,:])
+    LatVecsLen[1] = norm(LatVecs[:,1])
+    LatVecsLen[2] = norm(LatVecs[:,2])
+    LatVecsLen[3] = norm(LatVecs[:,3])
 
     Npoints = prod(Ns)
     r = init_grid_R( Ns, LatVecs )
@@ -69,9 +69,9 @@ function init_grid_G( Ns, RecVecs )
         gi = mm_to_nn( i, Ns[1] )
         gj = mm_to_nn( j, Ns[2] )
         gk = mm_to_nn( k, Ns[3] )
-        G[1,ig] = RecVecs[1,1]*gi + RecVecs[2,1]*gj + RecVecs[3,1]*gk
-        G[2,ig] = RecVecs[1,2]*gi + RecVecs[2,2]*gj + RecVecs[3,2]*gk
-        G[3,ig] = RecVecs[1,3]*gi + RecVecs[2,3]*gj + RecVecs[3,3]*gk
+        G[1,ig] = RecVecs[1,1]*gi + RecVecs[1,2]*gj + RecVecs[1,3]*gk
+        G[2,ig] = RecVecs[2,1]*gi + RecVecs[2,2]*gj + RecVecs[2,3]*gk
+        G[3,ig] = RecVecs[3,1]*gi + RecVecs[3,2]*gj + RecVecs[3,3]*gk
         G2[ig] = G[1,ig]^2 + G[2,ig]^2 + G[3,ig]^2
     end
     end
@@ -122,9 +122,9 @@ function init_grid_R( Ns, LatVecs )
     for j in 0:Ns[2]-1
     for i in 0:Ns[1]-1
         ip = ip + 1
-        R[1,ip] = LatVecs[1,1]*i/Ns[1] + LatVecs[2,1]*j/Ns[2] + LatVecs[3,1]*k/Ns[3]
-        R[2,ip] = LatVecs[1,2]*i/Ns[1] + LatVecs[2,2]*j/Ns[2] + LatVecs[3,2]*k/Ns[3]
-        R[3,ip] = LatVecs[1,3]*i/Ns[1] + LatVecs[2,3]*j/Ns[2] + LatVecs[3,3]*k/Ns[3]
+        R[1,ip] = LatVecs[1,1]*i/Ns[1] + LatVecs[1,2]*j/Ns[2] + LatVecs[1,3]*k/Ns[3]
+        R[2,ip] = LatVecs[2,1]*i/Ns[1] + LatVecs[2,2]*j/Ns[2] + LatVecs[2,3]*k/Ns[3]
+        R[3,ip] = LatVecs[3,1]*i/Ns[1] + LatVecs[3,2]*j/Ns[2] + LatVecs[3,3]*k/Ns[3]
     end
     end
     end

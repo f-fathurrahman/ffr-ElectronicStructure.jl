@@ -1,5 +1,9 @@
+using Printf
+using LinearAlgebra
+
 include("../common/PWGrid_v01.jl")
-include("../common/wrappers_fft_v01.jl")
+include("../common/wrappers_fft.jl")
+include("../common/gen_lattice.jl")
 
 include("structure_factor.jl")
 include("gen_dr.jl")
@@ -8,8 +12,8 @@ include("write_xsf.jl")
 
 function test_main()
     Ns = [64,64,64]
-    const a = 16.0
-    LatVecs = a*diagm( [1.0, 1.0, 1.0] )
+    a = 16.0
+    LatVecs = gen_lattice_sc(a)
     pwgrid = PWGrid(Ns,LatVecs)
 
     Npoints = prod(Ns)
