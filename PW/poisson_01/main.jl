@@ -1,6 +1,9 @@
+using Printf
+using LinearAlgebra
+
 include("../common/PWGrid_v01.jl")
-#include("../common/wrappers_fft_v01.jl")
 include("../common/wrappers_fft.jl")
+include("../common/gen_lattice.jl")
 
 include("gen_dr.jl")
 include("gen_rho.jl")
@@ -8,25 +11,26 @@ include("Poisson_solve.jl")
 
 function test_main()
     #
-    const Ns = [64, 64, 64]
-    const LatVecs = 16.0*diagm( ones(3) )
+    Ns = [64, 64, 64]
+    LatVecs = gen_lattice_sc(16.0)
     #
     pw = PWGrid( Ns, LatVecs )
     #
-    const Npoints = pw.Npoints
-    const Ω = pw.Ω
-    const r = pw.r
-    const Ns = pw.Ns
+    Npoints = pw.Npoints
+    Ω = pw.Ω
+    r = pw.r
+    Ns = pw.Ns
     #
     # Generate array of distances
     #
-    center = sum(LatVecs,2)/2
+    center = sum(LatVecs,dims=2)/2
+    println("center = ", center)
     dr = gen_dr( r, center )
     #
     # Generate charge density
     #
-    const σ1 = 0.75
-    const σ2 = 0.50
+    σ1 = 0.75
+    σ2 = 0.50
     rho = gen_rho( dr, σ1, σ2 )
     #
     # Solve Poisson equation and calculate Hartree energy
@@ -38,5 +42,4 @@ function test_main()
     @printf("Num, ana, diff = %18.10f %18.10f %18.10e\n", Ehartree, Uanal, abs(Ehartree-Uanal))
 end
 
-#@code_native test_main()
-test_main()
+@time test_main()
