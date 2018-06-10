@@ -1,7 +1,11 @@
+using Printf
+using LinearAlgebra
+
 include("../common/PWGrid_v01.jl")
 include("../common/gen_lattice.jl")
+include("../common/print_matrix.jl")
 
-function write_XSF( filnam, LL, atpos; molecule=false )
+function write_XSF( filnam, LL_in, atpos; molecule=false )
     #
     f = open(filnam, "w")
     Natoms = size(atpos)[2]
@@ -11,6 +15,7 @@ function write_XSF( filnam, LL, atpos; molecule=false )
     else
         @printf(f, "CRYSTAL\n")
     end
+    LL = LL_in'  # Xcrysden uses lattice vectors by rows
     @printf(f, "PRIMVEC\n")
     @printf(f, "%18.10f %18.10f %18.10f\n", LL[1,1], LL[1,2], LL[1,3])
     @printf(f, "%18.10f %18.10f %18.10f\n", LL[2,1], LL[2,2], LL[2,3])
@@ -35,8 +40,10 @@ function test_main_hexagonal()
     pw = PWGrid( Ns, LL )
     atpos = pw.r
 
-    println(pw.LatVecs)
-    println(pw.RecVecs)
+    println("Lattice vectors (by column)")
+    print_matrix(pw.LatVecs)
+    println("Reciprocal lattice vectors (by column)")    
+    print_matrix(pw.RecVecs)
 
     write_XSF("R_grid_hexagonal.xsf", LL, atpos)
 
@@ -45,15 +52,15 @@ function test_main_hexagonal()
     write_XSF("G_grid_hexagonal.xsf", LL, atpos, molecule=true)
 
     for ii = 1:3
-        @printf("LatVecLen %d %18.10f\n", ii, norm(pw.LatVecs[ii,:]))
+        @printf("LatVecLen %d %18.10f\n", ii, norm(pw.LatVecs[:,ii]))
     end
-    @printf("Ratio coa: %18.10f\n", norm(pw.LatVecs[1,:])/norm(pw.LatVecs[3,:]))
+    @printf("Ratio coa: %18.10f\n", norm(pw.LatVecs[:,1])/norm(pw.LatVecs[:,3]))
 
     @printf("\n")
     for ii = 1:3
         @printf("RecVecLen %d %18.10f\n", ii, norm(pw.RecVecs[ii,:]))
     end
-    @printf("Ratio coa: %18.10f\n", norm(pw.RecVecs[1,:])/norm(pw.RecVecs[3,:]))
+    @printf("Ratio coa: %18.10f\n", norm(pw.RecVecs[:,3])/norm(pw.RecVecs[:,3]))
 
 end
 
