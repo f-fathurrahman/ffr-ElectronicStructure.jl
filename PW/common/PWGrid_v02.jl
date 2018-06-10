@@ -31,7 +31,7 @@ function PWGrid( Ns, LatVecs::Array{Float64,2} )
     RecVecs = 2*pi*inv(LatVecs')
     Ω = det(LatVecs)
     #
-    LatVecsLen = Array{Float64}(3)
+    LatVecsLen = Array{Float64}(undef,3)
     LatVecsLen[1] = norm(LatVecs[:,1])
     LatVecsLen[2] = norm(LatVecs[:,2])
     LatVecsLen[3] = norm(LatVecs[:,3])
@@ -58,8 +58,8 @@ function init_grid_G( Ns, RecVecs )
 
     Ng = prod(Ns)
 
-    G  = Array{Float64}(3,Ng)
-    G2 = Array{Float64}(Ng)
+    G  = Array{Float64}(undef,3,Ng)
+    G2 = Array{Float64}(undef,Ng)
 
     ig = 0
     for k in 0:Ns[3]-1
@@ -85,13 +85,13 @@ function init_gvecw( Ns, G2 )
     G2mx = minimum( G2[edges] )
     #@printf("G2mx = %f\n", G2mx)
     @printf("ecutwfc_Ry = %f\n", G2mx/4)
-    idx_gw2r = findn( G2 .< G2mx/4 )
+    idx_gw2r = findall( G2 .< G2mx/4 )
     Ngwx = length(idx_gw2r)
     return GVectorsW( Ngwx, idx_gw2r )
 end
 
 function find_edges( Ns )
-    eS = Ns/2 + 0.5
+    eS = Ns/2 .+ 0.5
     edges = []
     ip = 1
     for k in 0:Ns[3]-1
@@ -116,7 +116,7 @@ function init_grid_R( Ns, LatVecs )
     #
     Npoints = prod(Ns)
     #
-    R = Array{Float64}(3,Npoints)
+    R = Array{Float64}(undef,3,Npoints)
     ip = 0
     for k in 0:Ns[3]-1
     for j in 0:Ns[2]-1
