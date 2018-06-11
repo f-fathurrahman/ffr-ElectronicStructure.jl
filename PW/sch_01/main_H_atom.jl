@@ -49,9 +49,9 @@ function test_main( ns1::Int64,ns2::Int64,ns3::Int64 )
     end
     Vpot = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
 
-    println("sum(Sf) = $(sum(Sf))")
-    println("sum(Vg) = $(sum(Vg))")
-    println("sum(Vpot) = $(sum(Vpot))")
+    println("sum(Sf) = ", sum(Sf))
+    println("sum(Vg) = ", sum(Vg))
+    println("sum(Vpot) = ", sum(Vpot))
     for ip = 1:10
         @printf("%8d %18.10f\n", ip, Vpot[ip])
     end
@@ -84,4 +84,5 @@ function test_main( ns1::Int64,ns2::Int64,ns3::Int64 )
 
 end
 
+@time test_main( 64,64,64 )
 @time test_main( 64,64,64 )
