@@ -1,4 +1,4 @@
-function diag_lobpcg( pw_grid::PWGrid, Vpot, X0; tol=1e-5, tol_avg=1e-7, maxit=200, verbose=false )
+function diag_lobpcg( pw::PWGrid, Vpot, X0; tol=1e-5, tol_avg=1e-7, maxit=200, verbose=false )
 
     Nbasis = size(X0)[1]
     # get size info
@@ -10,7 +10,7 @@ function diag_lobpcg( pw_grid::PWGrid, Vpot, X0; tol=1e-5, tol_avg=1e-7, maxit=2
     # orthonormalize the initial wave functions.
     X = ortho_gram_schmidt(X0)  # normalize (again)
 
-    HX = op_H( pw_grid, Vpot, X )
+    HX = op_H( pw, Vpot, X )
 
     nconv = 0
     iter = 1
@@ -49,11 +49,11 @@ function diag_lobpcg( pw_grid::PWGrid, Vpot, X0; tol=1e-5, tol_avg=1e-7, maxit=2
         end
         #
         # apply preconditioner
-        W = Kprec(pw_grid,R)
+        W = Kprec(pw,R)
         #
         # nlock == 0
         #
-        HW = op_H( pw_grid, Vpot, W )
+        HW = op_H( pw, Vpot, W )
         #
         C  = W'*W
         C = ( C + C' )/2
