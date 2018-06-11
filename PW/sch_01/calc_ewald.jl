@@ -10,7 +10,7 @@ function calc_ewald( pw::PWGrid, Xpos, Sf; sigma=0.25 )
     G2 = pw.G2
     #
     # Generate array of distances
-    center = sum(pw.LatVecs,2)/2
+    center = sum(pw.LatVecs,dims=2)/2
     dr = gen_dr( r, center )
     #
     # Generate charge density
