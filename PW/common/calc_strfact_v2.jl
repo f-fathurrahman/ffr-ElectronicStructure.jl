@@ -4,8 +4,7 @@ function calc_strfact( Xpos::Array{Float64,2}, Nspecies::Int,
     #
     Ng = size(G)[2]
     Na = size(Xpos)[2]
-    println("Natoms = $(Na)")
-    Sf = zeros(Complex128,Ng,Nspecies)
+    Sf = zeros(ComplexF64,Ng,Nspecies)
     for ia = 1:Na
         isp = atm2species[ia]
         for ig = 1:Ng
