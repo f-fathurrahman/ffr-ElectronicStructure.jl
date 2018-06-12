@@ -1,13 +1,13 @@
 function is_good_factors( N::Int )
 
-  const good_factors = [2, 3, 5, 7]
+    good_factors = [2, 3, 5, 7]
 
-  for k in keys( factor(N) )
-    is_in = k in good_factors
-    if !is_in
-      return false
+    for k in keys( factor(N) )
+        is_in = k in good_factors
+        if !is_in
+            return false
+        end
     end
-  end
-  return true
+    return true
 
 end

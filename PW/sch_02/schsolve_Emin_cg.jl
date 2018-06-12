@@ -1,11 +1,11 @@
-function schsolve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
+function schsolve_Emin_cg( pw::PWGrid, Vpot, psi::Array{ComplexF64,2};
                            NiterMax=1000 )
   #
   Npoints = size(psi)[1]
   Nstates = size(psi)[2]
-  d = zeros(Complex128, Npoints, Nstates)
-  g_old = zeros(Complex128, Npoints, Nstates)
-  d_old = zeros(Complex128, Npoints, Nstates)
+  d = zeros(ComplexF64, Npoints, Nstates)
+  g_old = zeros(ComplexF64, Npoints, Nstates)
+  d_old = zeros(ComplexF64, Npoints, Nstates)
   #
   alphat = 1.e-5
   beta = 0.0
@@ -21,9 +21,9 @@ function schsolve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
       nrm = nrm + real( dot( g[:,is], g[:,is] ) )
     end
     if iter != 1
-      #beta = real(trace(g'*Kprec(pw,g)))/real(trace(g_old'*Kprec(pw,g_old)))
-      beta = real(trace((g-g_old)'*Kprec(pw,g)))/real(trace(g_old'*Kprec(pw,g_old)))
-      #beta = real(trace((g-g_old)'*Kprec(pw,g)))/real(trace((g-g_old)'*d))
+      #beta = real(tr(g'*Kprec(pw,g)))/real(tr(g_old'*Kprec(pw,g_old)))
+      beta = real(tr((g-g_old)'*Kprec(pw,g)))/real(tr(g_old'*Kprec(pw,g_old)))
+      #beta = real(tr((g-g_old)'*Kprec(pw,g)))/real(tr((g-g_old)'*d))
     end
     d = -Kprec(pw, g) + beta * d_old
     #println("sum(d) = ", sum(d))
@@ -34,10 +34,10 @@ function schsolve_Emin_cg( pw::PWGrid, Vpot, psi::Array{Complex128,2};
 
     gt = calc_grad( pw, Vpot, psic )
 
-    denum = real(trace((g-gt)'*d))
+    denum = real(tr((g-gt)'*d))
     #println("denum = ", denum)
     if denum != 0.0
-      alpha = abs(alphat*real(trace(g'*d))/denum )
+      alpha = abs(alphat*real(tr(g'*d))/denum )
     else
       alpha = 0.0
     end

@@ -1,6 +1,11 @@
+using Printf
+using LinearAlgebra
+using Random
+
 include("../common/PWGrid_v02.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
+include("../common/gen_lattice_pwscf.jl")
 
 include("op_K.jl")
 include("op_Vpot.jl")
@@ -20,70 +25,60 @@ include("calc_ewald.jl")
 
 function test_main( Ns )
 
-  const LatVecs = 16.0*diagm( ones(3) )
+    LatVecs = gen_lattice_sc(16.0)
 
-  pw = PWGrid( Ns, LatVecs )
+    pw = PWGrid( Ns, LatVecs )
 
-  const Ω  = pw.Ω
-  const r  = pw.r
-  const G  = pw.gvec.G
-  const G2 = pw.gvec.G2
-  const Npoints = prod(Ns)
-  const Ngwx = pw.gvecw.Ngwx
+    Ω  = pw.Ω
+    r  = pw.r
+    G  = pw.gvec.G
+    G2 = pw.gvec.G2
+    Npoints = prod(Ns)
+    Ngwx = pw.gvecw.Ngwx
 
-  @printf("Ns   = (%d,%d,%d)\n", Ns[1], Ns[2], Ns[3])
-  @printf("Ngwx = %d\n", Ngwx)
+    @printf("Ns   = (%d,%d,%d)\n", Ns[1], Ns[2], Ns[3])
+    @printf("Ngwx = %d\n", Ngwx)
 
-  const actual = Npoints/Ngwx
-  const theor = 1/(4*pi*0.25^3/3)
-  @printf("Compression: actual, theor: %f , %f\n", actual, theor)
+    actual = Npoints/Ngwx
+    theor = 1/(4*pi*0.25^3/3)
+    @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
-  Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
+    Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
 
-  Sf = structure_factor( Xpos, G )
+    Sf = structure_factor( Xpos, G )
 
-  E_nn = calc_ewald( pw, Xpos, Sf )
+    E_nn = calc_ewald( pw, Xpos, Sf )
 
-  Vg = zeros(Complex128,Npoints)
-  prefactor = -4*pi/Ω
-  for ig=2:Npoints
-    Vg[ig] = prefactor/G2[ig]
-  end
-  Vpot = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
+    Vg = zeros(ComplexF64,Npoints)
+    prefactor = -4*pi/Ω
+    for ig=2:Npoints
+        Vg[ig] = prefactor/G2[ig]
+    end
+    Vpot = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
 
-  println("sum(Sf) = $(sum(Sf))")
-  println("sum(Vg) = $(sum(Vg))")
-  println("sum(Vpot) = $(sum(Vpot))")
-  for ip = 1:10
-    @printf("%8d %18.10f\n", ip, Vpot[ip])
-  end
-  @printf("Ω = %f\n", Ω)
-  @printf("maximum(Vpot) = %18.10f\n", maximum(Vpot))
-  @printf("minimum(Vpot) = %18.10f\n", minimum(Vpot))
+    Nstates = 1
+    srand(2222)
+    psi = rand(ComplexF64,Ngwx,Nstates)
+    psi = ortho_gram_schmidt(psi)
+    #
+    #evals, evecs = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
 
-  #
-  const Nstates = 1
-  srand(2222)
-  psi = randn(Ngwx,Nstates) + im*randn(Ngwx,Nstates)
-  psi = ortho_gram_schmidt(psi)
-  #
-  #evals, evecs = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
+    psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
+    psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
+    #
+    Y = ortho_gram_schmidt(psi)
+    mu = Y' * op_H( pw, Vpot, Y )
+    evals, evecs = eigen(mu)
+    psi = Y*evecs
 
-  psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
-  psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
-  #
-  Y = ortho_gram_schmidt(psi)
-  mu = Y' * op_H( pw, Vpot, Y )
-  evals, evecs = eig(mu)
-  psi = Y*evecs
+    for ist = 1:Nstates
+        @printf("State %d, Energy = %18.10f\n", ist, real(evals[ist]))
+    end
 
-  for st = 1:Nstates
-    @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
-  end
-
-  @printf("E_nn    = %18.10f\n", E_nn)
-  @printf("E total = %18.10f\n", E_nn + Etot)
+    @printf("E_nn    = %18.10f\n", E_nn)
+    @printf("E total = %18.10f\n", E_nn + Etot)
 
 end
 
-@time test_main( [100, 100, 100] )
+@time test_main( [64, 64, 64] )
+@time test_main( [64, 64, 64] )

@@ -1,4 +1,4 @@
-function schsolve_Emin_sd( pw::PWGrid, Vpot, psi::Array{Complex128,2};
+function schsolve_Emin_sd( pw::PWGrid, Vpot, psi::Array{ComplexF64,2};
                            NiterMax=1000 )
   α = 3e-5
   Etot_old = 0.0

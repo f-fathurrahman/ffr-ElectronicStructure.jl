@@ -51,7 +51,7 @@ function test_main( ecutwfc_Ry; solution_method="diag_lobpcg" )
   srand(2222)
   psi  = randn(Ngwx,Nstates) + im*randn(Ngwx,Nstates)
   psi = ortho_gram_schmidt(psi)
-  #psi = zeros(Complex128,Ngwx,Nstates)
+  #psi = zeros(ComplexF64,Ngwx,Nstates)
   #for ist = 1:Nstates
   #  psi[ist,ist] = 1.0
   #end
