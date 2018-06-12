@@ -63,7 +63,7 @@ function test_main( Ns )
     #
     #evals, evecs = diag_lobpcg( pw, Vpot, psi, verbose=true, tol_avg=1e-10 )
 
-    psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
+    #psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
     psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
     #
     Y = ortho_gram_schmidt(psi)

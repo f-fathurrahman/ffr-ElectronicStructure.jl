@@ -55,7 +55,7 @@ function test_main( Ns; solution_method="diag_lobpcg" )
     psi = ortho_gram_schmidt(psi)
 
     if solution_method == "Emin"
-        psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
+        #psi, Etot = schsolve_Emin_sd( pw, Vpot, psi, NiterMax=10 )
         psi, Etot = schsolve_Emin_cg( pw, Vpot, psi, NiterMax=1000 )
 
         Y = ortho_gram_schmidt(psi)
@@ -83,5 +83,5 @@ function test_main( Ns; solution_method="diag_lobpcg" )
 end
 
 @time test_main( [30, 30, 30], solution_method="Emin" )
-@time test_main( [30, 30, 30], solution_method="lobpcg" )
-@time test_main( [30, 30, 30], solution_method="davidson" )
+#@time test_main( [30, 30, 30], solution_method="lobpcg" )
+#@time test_main( [30, 30, 30], solution_method="davidson" )
