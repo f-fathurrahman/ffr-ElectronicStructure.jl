@@ -1,19 +1,19 @@
 const PWGRID_VERSION = 4
 
-type GkVectors
+mutable struct GkVectors
     kpts::Array{Float64,2}
     Ngwx::Int
     Ngw::Array{Int,1}
-    idx_gk::Array{Vector,1}
+    idx_gk::Array{Array{Int64,1},1}
 end
 
-type GVectors
+mutable struct GVectors
     Ng::Int
     G::Array{Float64,2}
     G2::Array{Float64}
 end
 
-type PWGrid
+mutable struct PWGrid
     ecutwfc::Float64
     ecutrho::Float64
     Ns::Array{Int64}
@@ -31,12 +31,12 @@ function PWGrid( ecutwfc::Float64, LatVecs::Array{Float64,2}, kpts_red )
     RecVecs = 2*pi*inv(LatVecs')
     Ω = det(LatVecs)
     #
-    LatVecsLen = Array{Float64}(3)
+    LatVecsLen = Array{Float64}(undef,3)
     LatVecsLen[1] = norm(LatVecs[1,:])
     LatVecsLen[2] = norm(LatVecs[2,:])
     LatVecsLen[3] = norm(LatVecs[3,:])
 
-    Ns = Array{Int64}(3)
+    Ns = Array{Int64}(undef,3)
     Ns[1] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[1]/pi ) + 1
     Ns[2] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[2]/pi ) + 1
     Ns[3] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[3]/pi ) + 1
@@ -51,7 +51,10 @@ function PWGrid( ecutwfc::Float64, LatVecs::Array{Float64,2}, kpts_red )
 
     gvec = init_grid_G( Ns, RecVecs )
 
-    kpts = (kpts_red' * RecVecs)'
+    #kpts = (kpts_red' * RecVecs)'
+
+    kpts = RecVecs*kpts_red # new following convention of PWDFT.jl
+
     #kpts = (kpts_red' * RecVecs')'
 
     #kpts = RecVecs' * kpts_red
@@ -85,8 +88,8 @@ function init_grid_G( Ns, RecVecs )
 
     Ng = prod(Ns)
 
-    G  = Array{Float64}(3,Ng)
-    G2 = Array{Float64}(Ng)
+    G  = Array{Float64}(undef,3,Ng)
+    G2 = Array{Float64}(undef,Ng)
 
     ig = 0
     for k in 0:Ns[3]-1
@@ -96,9 +99,9 @@ function init_grid_G( Ns, RecVecs )
         gi = mm_to_nn( i, Ns[1] )
         gj = mm_to_nn( j, Ns[2] )
         gk = mm_to_nn( k, Ns[3] )
-        G[1,ig] = RecVecs[1,1]*gi + RecVecs[2,1]*gj + RecVecs[3,1]*gk
-        G[2,ig] = RecVecs[1,2]*gi + RecVecs[2,2]*gj + RecVecs[3,2]*gk
-        G[3,ig] = RecVecs[1,3]*gi + RecVecs[2,3]*gj + RecVecs[3,3]*gk
+        G[1,ig] = RecVecs[1,1]*gi + RecVecs[1,2]*gj + RecVecs[1,3]*gk
+        G[2,ig] = RecVecs[2,1]*gi + RecVecs[2,2]*gj + RecVecs[2,3]*gk
+        G[3,ig] = RecVecs[3,1]*gi + RecVecs[3,2]*gj + RecVecs[3,3]*gk
         G2[ig] = G[1,ig]^2 + G[2,ig]^2 + G[3,ig]^2
     end
     end
@@ -109,11 +112,11 @@ end
 
 function init_gkvec( ecutwfc, G, kpts )
     Nkpts = size(kpts)[2]
-    idx_gk = Array{Vector,1}(Nkpts)
+    idx_gk = Array{Array{Int64,1},1}(undef,Nkpts)
     Ng = size(G)[2]
     Gk = zeros( 3, Ng )
     Gk2 = zeros( Ng )
-    Ngw = zeros( Int, Nkpts )
+    Ngw = zeros( Int64, Nkpts )
     for ik = 1:Nkpts
         #@printf("\n")
         for ig = 1:Ng
@@ -121,7 +124,7 @@ function init_gkvec( ecutwfc, G, kpts )
             Gk2[ig]  = Gk[1,ig]^2 + Gk[2,ig]^2 + Gk[3,ig]^2
             #@printf("%8d %18.10f %18.10f\n", ig, Gk2[ig], ecutwfc)
         end
-        idx_gk[ik] = findn( 0.5*Gk2 .< ecutwfc )
+        idx_gk[ik] = findall( 0.5*Gk2 .< ecutwfc )
         Ngw[ik] = length(idx_gk[ik])
         #@printf("kpt = %d, Ngw = %d\n", ik, Ngw[ik])
         #@printf("kpts[%d]: %f %f %f\n", ik, kpts[1,ik], kpts[3,ik], kpts[3,ik] )
@@ -135,15 +138,15 @@ function init_grid_R( Ns, LatVecs )
     #
     Npoints = prod(Ns)
     #
-    R = Array{Float64}(3,Npoints)
+    R = Array{Float64}(undef,3,Npoints)
     ip = 0
     for k in 0:Ns[3]-1
     for j in 0:Ns[2]-1
     for i in 0:Ns[1]-1
         ip = ip + 1
-        R[1,ip] = LatVecs[1,1]*i/Ns[1] + LatVecs[2,1]*j/Ns[2] + LatVecs[3,1]*k/Ns[3]
-        R[2,ip] = LatVecs[1,2]*i/Ns[1] + LatVecs[2,2]*j/Ns[2] + LatVecs[3,2]*k/Ns[3]
-        R[3,ip] = LatVecs[1,3]*i/Ns[1] + LatVecs[2,3]*j/Ns[2] + LatVecs[3,3]*k/Ns[3]
+        R[1,ip] = LatVecs[1,1]*i/Ns[1] + LatVecs[1,2]*j/Ns[2] + LatVecs[1,3]*k/Ns[3]
+        R[2,ip] = LatVecs[2,1]*i/Ns[1] + LatVecs[2,2]*j/Ns[2] + LatVecs[2,3]*k/Ns[3]
+        R[3,ip] = LatVecs[3,1]*i/Ns[1] + LatVecs[3,2]*j/Ns[2] + LatVecs[3,3]*k/Ns[3]
     end
     end
     end

@@ -1,12 +1,12 @@
 const PWGRID_VERSION = 3
 
 mutable struct GVectorsW
-    Ngwx::Int
+    Ngwx::Int64
     idx_gw2r::Array{Int}
 end
 
 mutable struct GVectors
-    Ng::Int
+    Ng::Int64
     G::Array{Float64,2}
     G2::Array{Float64}
 end

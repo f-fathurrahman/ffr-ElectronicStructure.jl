@@ -1,9 +1,13 @@
+using Printf
+using LinearAlgebra
+using Random
+
 include("PWGrid_v04.jl")
 include("read_kpts.jl")
 include("../common/gen_lattice.jl")
 
 function test_main()
-    const LatConst = 10.
+    LatConst = 10.
     LatVecs = gen_lattice_hexagonal( LatConst )
     ecutwfc_Ry = 20.0
     kpts_red = read_kpts("KPATH_HCP_60")
