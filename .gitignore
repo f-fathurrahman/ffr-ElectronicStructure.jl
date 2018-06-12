@@ -1,3 +1,6 @@
+TEMP*
+TEMP_*
+
 .ipynb_checkpoints
 
 a.out

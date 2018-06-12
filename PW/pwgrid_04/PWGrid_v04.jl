@@ -28,7 +28,9 @@ end
 function PWGrid( ecutwfc::Float64, LatVecs::Array{Float64,2}, kpts_red )
     ecutrho = 4.0*ecutwfc
     #
-    RecVecs = 2*pi*inv(LatVecs')
+    println("LatVecs = ", LatVecs)
+    RecVecs = 2*pi*inv(LatVecs)'
+    println("RecVecs = ", RecVecs)
     Ω = det(LatVecs)
     #
     LatVecsLen = Array{Float64}(undef,3)
@@ -37,9 +39,9 @@ function PWGrid( ecutwfc::Float64, LatVecs::Array{Float64,2}, kpts_red )
     LatVecsLen[3] = norm(LatVecs[3,:])
 
     Ns = Array{Int64}(undef,3)
-    Ns[1] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[1]/pi ) + 1
-    Ns[2] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[2]/pi ) + 1
-    Ns[3] = 2*round( Int, sqrt(ecutrho/2)*LatVecsLen[3]/pi ) + 1
+    Ns[1] = 2*round( Int64, sqrt(ecutrho/2)*LatVecsLen[1]/pi ) + 1
+    Ns[2] = 2*round( Int64, sqrt(ecutrho/2)*LatVecsLen[2]/pi ) + 1
+    Ns[3] = 2*round( Int64, sqrt(ecutrho/2)*LatVecsLen[3]/pi ) + 1
 
     # Use even sampling numbers
     Ns[1] = Ns[1] % 2 == 1 ? Ns[1] + 1 : Ns[1]

@@ -3,7 +3,7 @@
 function structure_factor( Xpos::Array{Float64,2}, G::Array{Float64,2} )
   Ng = size(G)[2]
   Na = size(Xpos)[2]
-  Sf = zeros(Complex128,Ng)
+  Sf = zeros(ComplexF64,Ng)
   for ia = 1:Na
     for ig = 1:Ng
       GX = Xpos[1,ia]*G[1,ig] +
