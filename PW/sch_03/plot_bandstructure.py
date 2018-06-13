@@ -17,6 +17,11 @@ x = dat[:,0]
 for ist in range(1,Nstates+1):
     plt.plot( x, dat[:,ist], marker='o' )
 
+plt.axes().set_aspect(2.0)
+
 filplot = sys.argv[1].replace(".dat",".pdf")
 plt.savefig(filplot)
+
+import os
+os.system("pdfcrop " + filplot + " " + filplot)
 
