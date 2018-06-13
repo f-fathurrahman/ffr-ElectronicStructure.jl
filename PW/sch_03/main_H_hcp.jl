@@ -88,7 +88,7 @@ function test_main()
         evals[:,ik], psi = diag_lobpcg( pw, Vpot, psi, ik, verbose=true, tol_avg=1e-7 )
     end
 
-    dump_bandstructure( evals, kpts, filename="TEMP_band_hcp_H.dat" )
+    dump_bandstructure( evals, kpts, filename="band_H_hcp.dat" )
 
 end
 
