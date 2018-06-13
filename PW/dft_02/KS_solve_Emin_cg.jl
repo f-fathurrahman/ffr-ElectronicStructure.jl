@@ -8,7 +8,7 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 
     if psi0 == nothing
         srand(2222)
-        psi = randn(Ngwx,Nstates) + im*randn(Ngwx,Nstates)
+        psi = rand(ComplexF64,Ngwx,Nstates)
         psi = ortho_gram_schmidt(psi)
     else
         psi = copy(psi0)
