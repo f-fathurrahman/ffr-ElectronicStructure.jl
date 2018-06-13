@@ -30,10 +30,15 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
     Kg     = zeros(ComplexF64, Npoints, Nstates)
     Kg_old = zeros(ComplexF64, Npoints, Nstates)
 
+    yk1 = zeros(ComplexF64, Npoints, Nstates) # for testing Hager-Zhang beta
+    v1 = zeros(ComplexF64, Npoints, Nstates)
+
     β     = 0.0
     Etot_old = 0.0
     Etot     = 0.0
     Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0 )
+
+    CONVERGED = 0
 
     for iter = 1:NiterMax
 
@@ -41,9 +46,15 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
         Kg = Kprec(pw,g)
         if iter != 1
             #β = real(sum(conj(g).*Kg))/real(sum(conj(g_old).*Kg_old))
-            β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g_old).*Kg_old))
+            #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g_old).*Kg_old))
             #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g-g_old).*d))
-            #β = real(sum(conj(g).*Kg))/real(sum((g-g_old).*conj(d_old)))
+            β = real(sum(conj(g).*Kg))/real(sum((g-g_old).*conj(d_old)))
+
+            #yk1 = g - g_old
+            #tt = real(tr(d_old'*yk1))
+            #v1 = yk1 - 2*d_old*norm(yk1)/tt
+            #β = real(tr(v1'*Kg)/tt)
+
             #@printf("\nβ = %f\n", β)
         end
 
@@ -81,7 +92,14 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 
         diff = abs(Etot-Etot_old)
         @printf("Emin CG: %8d = %18.10f %18.10f\n", iter, Etot, diff)
+
         if diff < 1e-6
+            CONVERGED = CONVERGED + 1
+        else
+            CONVERGED = 0
+        end
+
+        if CONVERGED >= 2
             @printf("CONVERGENCE ACHIEVED\n")
             break
         end
