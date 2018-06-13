@@ -1,7 +1,11 @@
+using Printf
+using LinearAlgebra
+using Random
+
 include("../common/PWGrid_v01.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
-
+include("../common/gen_lattice_pwscf.jl")
 include("EnergiesT.jl")
 include("PotentialsT.jl")
 include("gen_dr.jl")
@@ -22,18 +26,18 @@ include("gen_rho.jl")
 include("gen_dr.jl")
 include("calc_ewald.jl")
 
-function test_main( ns1::Int,ns2::Int,ns3::Int )
+function test_main( ns1::Int64,ns2::Int64,ns3::Int64 )
 
     Ns = [ns1,ns2,ns3]
-    const LatVecs = 16.0*diagm( ones(3) )
+    LatVecs = gen_lattice_sc(16.0)
 
     pw = PWGrid( Ns, LatVecs )
 
-    const Npoints = pw.Npoints
-    const Ω = pw.Ω
-    const r = pw.r
-    const G = pw.G
-    const G2 = pw.G2
+    Npoints = pw.Npoints
+    Ω = pw.Ω
+    r = pw.r
+    G = pw.G
+    G2 = pw.G2
 
     Xpos = reshape( [0.0, 0.0, 0.0], (3,1) )
 
@@ -41,7 +45,7 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
 
     E_nn = calc_ewald( pw, Xpos, Sf )
 
-    Vg = zeros(Complex128,Npoints)
+    Vg = zeros(ComplexF64,Npoints)
     prefactor = -4*pi/Ω
     for ig=2:Npoints
         Vg[ig] = prefactor/G2[ig]
@@ -49,14 +53,14 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
     V_ionic = real( G_to_R(Ns, Vg .* Sf) ) * Npoints
 
     #
-    const Nstates = 1
+    Nstates = 1
     Focc = [1.0]
     psi, Energies, Potentials = KS_solve_Emin_cg( pw, V_ionic, Focc, Nstates, NiterMax=1000 )
 
     #
     Y = ortho_gram_schmidt(psi)
     mu = Y' * op_H( pw, Potentials, Y )
-    evals, evecs = eig(mu)
+    evals, evecs = eigen(mu)
     psi = Y*evecs
 
     for st = 1:Nstates
@@ -68,5 +72,4 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
 
 end
 
-@code_native test_main(2,2,2)
 @time test_main( 64, 64, 64 )

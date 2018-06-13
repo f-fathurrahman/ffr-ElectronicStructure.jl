@@ -7,7 +7,7 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 
     if psi0 == nothing
         srand(2222)
-        psi = randn(Npoints,Nstates) + im*randn(Npoints,Nstates)
+        psi = rand(ComplexF64,Npoints,Nstates)
         psi = ortho_gram_schmidt(psi)
     else
         psi = copy(psi0)
@@ -24,11 +24,11 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
                                   Potentials0.XC )
     end
 
-    d      = zeros(Complex128, Npoints, Nstates)
-    g_old  = zeros(Complex128, Npoints, Nstates)
-    d_old  = zeros(Complex128, Npoints, Nstates)
-    Kg     = zeros(Complex128, Npoints, Nstates)
-    Kg_old = zeros(Complex128, Npoints, Nstates)
+    d      = zeros(ComplexF64, Npoints, Nstates)
+    g_old  = zeros(ComplexF64, Npoints, Nstates)
+    d_old  = zeros(ComplexF64, Npoints, Nstates)
+    Kg     = zeros(ComplexF64, Npoints, Nstates)
+    Kg_old = zeros(ComplexF64, Npoints, Nstates)
 
     β     = 0.0
     Etot_old = 0.0

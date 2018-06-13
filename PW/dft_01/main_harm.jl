@@ -1,7 +1,11 @@
+using Printf
+using LinearAlgebra
+using Random
+
 include("../common/PWGrid_v01.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
-
+include("../common/gen_lattice_pwscf.jl")
 include("EnergiesT.jl")
 include("PotentialsT.jl")
 include("gen_dr.jl")
@@ -18,29 +22,29 @@ include("Poisson_solve.jl")
 include("LDA_VWN.jl")
 include("Kprec.jl")
 
-function test_main( ns1::Int,ns2::Int,ns3::Int )
+function test_main( ns1::Int64,ns2::Int64,ns3::Int64 )
     #
     Ns = [ns1,ns2,ns3]
-    const LatVecs = diagm( [6.0, 6.0, 6.0] )
+    LatVecs = gen_lattice_sc(6.0)
     #
     pw = PWGrid( Ns, LatVecs )
     # Shortcuts
-    const Npoints = pw.Npoints
-    const Ω  = pw.Ω
-    const r  = pw.r
-    const G  = pw.G
-    const G2 = pw.G2
+    Npoints = pw.Npoints
+    Ω  = pw.Ω
+    r  = pw.r
+    G  = pw.G
+    G2 = pw.G2
     #
     # Generate array of distances
     #
-    center = sum(LatVecs,2)/2
+    center = sum(LatVecs,dims=2)/2
     dr = gen_dr( r, center )
     #
     # Setup potential
     #
     V_ionic = init_pot_harm_3d( pw, dr )
     #
-    const Nstates = 4
+    Nstates = 4
     Focc = 2.0*ones(Nstates)
     #
     #psi, Energies, Potentials = kssolve_Emin_sd( pw, V_ionic, Focc, Nstates, NiterMax=10 )
@@ -51,7 +55,7 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
     #
     Y = ortho_gram_schmidt(psi)
     mu = Y' * op_H( pw, Potentials, Y )
-    evals, evecs = eig(mu)
+    evals, evecs = eigen(mu)
     Psi = Y*evecs
     for st = 1:Nstates
         @printf("State # %d, Energy = %18.10f\n", st, real(evals[st]))

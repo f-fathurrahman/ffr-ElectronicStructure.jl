@@ -1,11 +1,11 @@
-function calc_grad( pw::PWGrid, Potentials, Focc, psi::Array{Complex128,2} )
+function calc_grad( pw::PWGrid, Potentials, Focc, psi::Array{ComplexF64,2} )
 
     Npoints = size(psi)[1]
     Nstates = size(psi)[2]
     Ω = pw.Ω
     Ns = pw.Ns
     #
-    grad = zeros( Complex128, Npoints, Nstates )
+    grad = zeros( ComplexF64, Npoints, Nstates )
 
     H_psi = op_H( pw, Potentials, psi )
     for i = 1:Nstates

@@ -1,4 +1,4 @@
-function op_V_ps_loc( pw::PWGrid, V_loc, psi::Array{Complex128,2} )
+function op_V_ps_loc( pw::PWGrid, V_loc, psi::Array{ComplexF64,2} )
     #
     Ns = pw.Ns
     Ω  = pw.Ω
@@ -12,7 +12,7 @@ end
 function Diagprod( a,B )
     Nstates    = size(B)[2]
     Npoints = size(B)[1]
-    out = zeros( Complex128, size(B) )
+    out = zeros( ComplexF64, size(B) )
     for ist = 1:Nstates
         for ip = 1:Npoints
             out[ip,ist] = a[ip]*B[ip,ist]
