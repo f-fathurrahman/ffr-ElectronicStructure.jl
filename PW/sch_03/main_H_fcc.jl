@@ -8,9 +8,9 @@ include("../common/gen_lattice_ase.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
 
-include("apply_K.jl")
-include("apply_Vpot.jl")
-include("apply_H.jl")
+include("op_K.jl")
+include("op_Vpot.jl")
+include("op_H.jl")
 include("diag_lobpcg.jl")
 include("Kprec.jl")
 

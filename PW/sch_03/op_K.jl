@@ -1,6 +1,6 @@
 # Apply kinetic operator to wave function in reciprocal space
 
-function apply_K( pw::PWGrid, psi::Array{ComplexF64,2}, ik::Int64 )
+function op_K( pw::PWGrid, psi::Array{ComplexF64,2}, ik::Int64 )
     #
     out = zeros(ComplexF64,size(psi))
     Ncol = size(psi)[2]
