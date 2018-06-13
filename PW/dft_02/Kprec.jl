@@ -1,9 +1,9 @@
-function Kprec( pw::PWGrid, psi::Array{Complex128,2} )
+function Kprec( pw::PWGrid, psi::Array{ComplexF64,2} )
 
     Ngwx  = size(psi)[1]
     Nstates = size(psi)[2]
     G2    = pw.gvec.G2[pw.gvecw.idx_gw2r]
-    Kpsi  = zeros( Complex128, Ngwx, Nstates )
+    Kpsi  = zeros( ComplexF64, Ngwx, Nstates )
 
     for ist = 1:Nstates
         for ig = 1:Ngwx

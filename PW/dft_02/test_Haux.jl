@@ -17,7 +17,7 @@ function test_main()
     U1 = psi_ortho1'*psi_ortho1
     printMatrix(U1)
 
-    Haux = zeros(Complex128,Nstates,Nstates)
+    Haux = zeros(ComplexF64,Nstates,Nstates)
 
 end
 

@@ -1,4 +1,4 @@
-function printMatrix( A::Array{Complex128,2} )
+function printMatrix( A::Array{ComplexF64,2} )
     Nrows = size(A)[1]
     Ncols = size(A)[2]
     for ir = 1:Nrows

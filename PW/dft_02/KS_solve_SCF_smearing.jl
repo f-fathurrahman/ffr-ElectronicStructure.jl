@@ -14,12 +14,12 @@ function KS_solve_SCF_smearing( pw::PWGrid,
     # starting rho
     if rho0 == nothing
         srand(1234)
-        v = rand( Complex128, Ngwx, Nstates )
+        v = rand( ComplexF64, Ngwx, Nstates )
         v = ortho_gram_schmidt( v )
         rho = calc_rho( pw, Focc_in, v )
     else
         srand(1234)
-        v = rand( Complex128, Ngwx, Nstates ) # What if v0 is provided ?
+        v = rand( ComplexF64, Ngwx, Nstates ) # What if v0 is provided ?
         rho = copy( rho )
     end
 

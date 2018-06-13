@@ -52,7 +52,7 @@ function test_main( ecutwfc_Ry::Float64 )
     Sf = calc_strfact( Xpos, 1, [1], pw.gvec.G )
     E_nn = calc_ewald( pw, Sf, Xpos, 1, [1], [Zatm] )
 
-    Vg = zeros(Complex128,Npoints)
+    Vg = zeros(ComplexF64,Npoints)
     prefactor = -4*pi*Zatm/Ω
     for ig=2:Npoints
         Vg[ig] = prefactor/G2[ig]

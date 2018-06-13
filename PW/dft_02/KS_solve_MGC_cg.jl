@@ -17,21 +17,21 @@ function KS_solve_MGC_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 
     Potentials = PotentialsT( V_ionic, zeros(Npoints), zeros(Npoints) )
 
-    d = zeros(Complex128, Ngwx, Nstates)
-    g_old = zeros(Complex128, Ngwx, Nstates)
-    d_old = zeros(Complex128, Ngwx, Nstates)
-    Kg = zeros(Complex128, Ngwx, Nstates)
-    Kg_old = zeros(Complex128, Ngwx, Nstates)
+    d = zeros(ComplexF64, Ngwx, Nstates)
+    g_old = zeros(ComplexF64, Ngwx, Nstates)
+    d_old = zeros(ComplexF64, Ngwx, Nstates)
+    Kg = zeros(ComplexF64, Ngwx, Nstates)
+    Kg_old = zeros(ComplexF64, Ngwx, Nstates)
 
     β        = 0.0
     Etot     = calc_E_MGC( pw, Potentials, psi )
     Etot_old = Etot
 
-    ctmp = zeros(Complex128, Npoints, Nstates)
+    ctmp = zeros(ComplexF64, Npoints, Nstates)
     idx = pw.gvecw.idx_gw2r
 
-    S = zeros(Complex128,Nstates,Nstates)
-    Q = zeros(Complex128,Nstates,Nstates)
+    S = zeros(ComplexF64,Nstates,Nstates)
+    Q = zeros(ComplexF64,Nstates,Nstates)
 
     rho = zeros(Float64,Npoints)
 
@@ -83,15 +83,15 @@ function KS_solve_MGC_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 end
 
 
-function calc_E_MGC( pw::PWGrid, Potentials, ϕ::Array{Complex128,2}; Nel=1.0, η=1.0 )
+function calc_E_MGC( pw::PWGrid, Potentials, ϕ::Array{ComplexF64,2}; Nel=1.0, η=1.0 )
 
     Ngwx    = size(ϕ)[1]
     Nstates = size(ϕ)[2]
     Npoints = prod(pw.Ns)
     Ω = pw.Ω
 
-    S = zeros(Complex128,Nstates,Nstates)
-    Q = zeros(Complex128,Nstates,Nstates)
+    S = zeros(ComplexF64,Nstates,Nstates)
+    Q = zeros(ComplexF64,Nstates,Nstates)
 
     for j = 1:Nstates
     for i = 1:Nstates
@@ -109,7 +109,7 @@ function calc_E_MGC( pw::PWGrid, Potentials, ϕ::Array{Complex128,2}; Nel=1.0, �
     end
     end
 
-    ctmp = zeros(Complex128, Npoints, Nstates)
+    ctmp = zeros(ComplexF64, Npoints, Nstates)
     idx = pw.gvecw.idx_gw2r
     for ic = 1:Nstates
         ctmp[idx,ic] = ϕ[:,ic]
@@ -155,16 +155,16 @@ function calc_E_MGC( pw::PWGrid, Potentials, ϕ::Array{Complex128,2}; Nel=1.0, �
 end
 
 
-function calc_grad_MGC( pw::PWGrid, Potentials, Focc, psi::Array{Complex128,2} )
+function calc_grad_MGC( pw::PWGrid, Potentials, Focc, psi::Array{ComplexF64,2} )
 
     # Focc are assumed to be 2s
     Ngwx    = size(psi)[1]
     Nstates = size(psi)[2]
 
-    g = zeros(Complex128,Ngwx,Nstates)
-    H = zeros(Complex128,Nstates,Nstates)
-    S = zeros(Complex128,Nstates,Nstates)
-    Q = zeros(Complex128,Nstates,Nstates)
+    g = zeros(ComplexF64,Ngwx,Nstates)
+    H = zeros(ComplexF64,Nstates,Nstates)
+    S = zeros(ComplexF64,Nstates,Nstates)
+    Q = zeros(ComplexF64,Nstates,Nstates)
 
     Hpsi = op_H( pw, Potentials, psi )
 

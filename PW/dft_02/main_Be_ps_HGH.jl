@@ -62,7 +62,7 @@ function test_main( Ns )
     const c3 = -3.326390
     const c4 = 0.165419
     #
-    Vg = zeros(Complex128,Npoints)
+    Vg = zeros(ComplexF64,Npoints)
     pre1 = -4*pi*Zion/Ω
     pre2 = sqrt(8*pi^3)*rloc^3/Ω
     #

@@ -25,11 +25,11 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
                                   Potentials0.XC )
     end
 
-    d = zeros(Complex128, Ngwx, Nstates)
-    g_old = zeros(Complex128, Ngwx, Nstates)
-    d_old = zeros(Complex128, Ngwx, Nstates)
-    Kg = zeros(Complex128, Ngwx, Nstates)
-    Kg_old = zeros(Complex128, Ngwx, Nstates)
+    d = zeros(ComplexF64, Ngwx, Nstates)
+    g_old = zeros(ComplexF64, Ngwx, Nstates)
+    d_old = zeros(ComplexF64, Ngwx, Nstates)
+    Kg = zeros(ComplexF64, Ngwx, Nstates)
+    Kg_old = zeros(ComplexF64, Ngwx, Nstates)
 
     β        = 0.0
     Etot_old = 0.0

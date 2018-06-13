@@ -15,7 +15,7 @@ include("calc_rho.jl")
 include("Poisson_solve.jl")
 include("LDA_VWN.jl")
 
-function printMatrix( A::Array{Complex128,2} )
+function printMatrix( A::Array{ComplexF64,2} )
     Nrows = size(A)[1]
     Ncols = size(A)[2]
     for ir = 1:Nrows
@@ -38,14 +38,14 @@ function printMatrix( A::Array{Float64,2} )
 end
 
 
-function ∇E( pw::PWGrid, Potentials, Focc, W::Array{Complex128,2} )
+function ∇E( pw::PWGrid, Potentials, Focc, W::Array{ComplexF64,2} )
     #
     Ngwx    = size(W)[1]
     Nstates = size(W)[2]
     Ω = pw.Ω
     Ns = pw.Ns
     #
-    grad = zeros( Complex128, Ngwx, Nstates )
+    grad = zeros( ComplexF64, Ngwx, Nstates )
     #
     F = diagm(Focc)
     HW = op_H( pw, Potentials, W )

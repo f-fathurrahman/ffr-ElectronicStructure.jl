@@ -7,16 +7,15 @@ function calc_ewald( pw::PWGrid, Xpos, Sf; sigma=0.25 )
     @printf("Calculating Ewald energy.\n")
     @printf("WARNING: This function should be called only for hydrogen atom.\n")
     @printf("***************************************************************\n")
-
     #
-    const Ω  = pw.Ω
-    const r  = pw.r
-    const Ns = pw.Ns
-    const G2 = pw.gvec.G2
-    const Npoints = prod(Ns)
+    Ω  = pw.Ω
+    r  = pw.r
+    Ns = pw.Ns
+    G2 = pw.gvec.G2
+    Npoints = prod(Ns)
     #
     # Generate array of distances
-    center = sum(pw.LatVecs,2)/2
+    center = sum(pw.LatVecs,dims=2)/2
     dr = gen_dr( r, center )
     #
     # Generate charge density
@@ -28,7 +27,7 @@ function calc_ewald( pw::PWGrid, Xpos, Sf; sigma=0.25 )
     ctmp = 4.0*pi*R_to_G( Ns, rho )
     ctmp[1] = 0.0
     for ip = 2:Npoints
-      ctmp[ip] = ctmp[ip] / G2[ip]
+        ctmp[ip] = ctmp[ip] / G2[ip]
     end
     phi = real( G_to_R( Ns, ctmp ) )
     Ehartree = 0.5*dot( phi, rho ) * Ω/Npoints
@@ -42,7 +41,7 @@ end
 
 function gen_rho( Ns, dr, sigma, Sf )
     Npoints = size(dr)[1]
-    g1 = Array{Float64}(Npoints)
+    g1 = Array{Float64}(undef,Npoints)
     c1 = 2*sigma^2
     cc1 = sqrt(2*pi*sigma^2)^3
     for ip=1:Npoints

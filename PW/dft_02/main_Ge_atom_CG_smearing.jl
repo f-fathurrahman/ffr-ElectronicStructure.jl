@@ -64,7 +64,7 @@ function test_main( Ns )
     E_nn = calc_ewald( pw, Sf, Xpos, Nspecies, atm2species, Zv )
     @printf("E_nn = %18.10f\n", E_nn)
 
-    Vps = zeros(Complex128, Npoints)
+    Vps = zeros(ComplexF64, Npoints)
 
     # Ge pseudopotential
     Z = Zv[1]

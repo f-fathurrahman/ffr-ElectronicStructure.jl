@@ -48,7 +48,7 @@ function test_main( ecutwfc_Ry::Float64 )
 
     E_nn = calc_ewald( pw, Xpos, Sf )
 
-    Vg = zeros(Complex128,Npoints)
+    Vg = zeros(ComplexF64,Npoints)
     prefactor = -4*pi/Ω
     for ig=2:Npoints
         Vg[ig] = prefactor/G2[ig]

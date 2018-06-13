@@ -1,12 +1,12 @@
 function get_ub_lb_lanczos(pw::PWGrid, Potentials::PotentialsT, nlancz::Int64)
     #
     Ngwx = pw.gvecw.Ngwx
-    V = zeros(Complex128,Ngwx,nlancz)
-    HV = zeros(Complex128,Ngwx,nlancz)    
+    V = zeros(ComplexF64,Ngwx,nlancz)
+    HV = zeros(ComplexF64,Ngwx,nlancz)    
     T = zeros(Float64,nlancz,nlancz)
-    f = zeros(Complex128,Ngwx)
-    s = zeros(Complex128,nlancz)
-    h = zeros(Complex128,nlancz)
+    f = zeros(ComplexF64,Ngwx)
+    s = zeros(ComplexF64,nlancz)
+    h = zeros(ComplexF64,nlancz)
     #
     V[:,1] = randn(Ngwx) + im*randn(Ngwx)
     beta = norm(V[:,1])

@@ -1,8 +1,8 @@
 # Apply kinetic operator to wave function in reciprocal space
 
-function op_K( pw::PWGrid, psi::Array{Complex128,2} )
+function op_K( pw::PWGrid, psi::Array{ComplexF64,2} )
     #
-    out = zeros(Complex128,size(psi))
+    out = zeros(ComplexF64,size(psi))
     Ncol = size(psi)[2]
 
     Ngwx = pw.gvecw.Ngwx
@@ -18,8 +18,8 @@ function op_K( pw::PWGrid, psi::Array{Complex128,2} )
 end
 
 
-function op_K( pw::PWGrid, psi::Array{Complex128,1} )
-    out = zeros(Complex128,size(psi))
+function op_K( pw::PWGrid, psi::Array{ComplexF64,1} )
+    out = zeros(ComplexF64,size(psi))
     Ngwx = pw.gvecw.Ngwx
     G2   = pw.gvec.G2[pw.gvecw.idx_gw2r]
     for ig = 1:Ngwx

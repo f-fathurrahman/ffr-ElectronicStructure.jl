@@ -25,17 +25,17 @@ function KS_solve_Emin_CG_smearing( pw::PWGrid, V_ionic, Focc, Nstates::Int;
                                   Potentials0.XC )
     end
 
-    d = zeros(Complex128, Ngwx, Nstates)
-    g_old = zeros(Complex128, Ngwx, Nstates)
-    d_old = zeros(Complex128, Ngwx, Nstates)
-    Kg = zeros(Complex128, Ngwx, Nstates)
-    Kg_old = zeros(Complex128, Ngwx, Nstates)
+    d = zeros(ComplexF64, Ngwx, Nstates)
+    g_old = zeros(ComplexF64, Ngwx, Nstates)
+    d_old = zeros(ComplexF64, Ngwx, Nstates)
+    Kg = zeros(ComplexF64, Ngwx, Nstates)
+    Kg_old = zeros(ComplexF64, Ngwx, Nstates)
 
-    d_Haux = zeros(Complex128, Nstates, Nstates)
-    g_Haux_old = zeros(Complex128, Nstates, Nstates)
-    d_Haux_old = zeros(Complex128, Nstates, Nstates)
-    Kg_Haux = zeros(Complex128, Nstates, Nstates)
-    Kg_Haux_old = zeros(Complex128, Nstates, Nstates)
+    d_Haux = zeros(ComplexF64, Nstates, Nstates)
+    g_Haux_old = zeros(ComplexF64, Nstates, Nstates)
+    d_Haux_old = zeros(ComplexF64, Nstates, Nstates)
+    Kg_Haux = zeros(ComplexF64, Nstates, Nstates)
+    Kg_Haux_old = zeros(ComplexF64, Nstates, Nstates)
 
     β        = 0.0
     β_Haux   = 0.0
@@ -63,7 +63,7 @@ function KS_solve_Emin_CG_smearing( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 
     const κ = 0.1
 
-    Haux = zeros(Complex128,Nstates,Nstates)
+    Haux = zeros(ComplexF64,Nstates,Nstates)
     for ist = 1:Nstates
         Haux[ist,ist] = evals[ist]
     end

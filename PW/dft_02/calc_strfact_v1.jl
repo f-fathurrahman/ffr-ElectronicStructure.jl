@@ -9,7 +9,7 @@ function calc_strfact( Xpos::Array{Float64,2}, G::Array{Float64,2} )
 
     Ng = size(G)[2]
     Na = size(Xpos)[2]
-    Sf = zeros(Complex128,Ng)
+    Sf = zeros(ComplexF64,Ng)
     for ia = 1:Na
         for ig = 1:Ng
             GX = Xpos[1,ia]*G[1,ig] + Xpos[2,ia]*G[2,ig] + Xpos[3,ia]*G[3,ig]

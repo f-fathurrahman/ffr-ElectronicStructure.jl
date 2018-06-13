@@ -1,7 +1,7 @@
 # psi is assumed to be already orthonormalized elsewhere
 # Potentials are not updated
 function calc_Energies( PW::PWGrid, Potentials, Focc::Array{Float64},
-                        psi::Array{Complex128,2}, E_NN )
+                        psi::Array{ComplexF64,2}, E_NN )
 
     Ω = PW.Ω
     Ns = PW.Ns

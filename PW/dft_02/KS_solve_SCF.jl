@@ -14,12 +14,12 @@ function KS_solve_SCF( pw::PWGrid,
     # starting rho
     if rho0 == nothing
         srand(1234)
-        v = rand( Complex128, Ngwx, Ncols )
+        v = rand( ComplexF64, Ngwx, Ncols )
         v = ortho_gram_schmidt( v )
         rho = calc_rho( pw, Focc, v )
     else
         srand(1234)
-        v = rand( Complex128, Ngwx, Ncols ) # What if v0 is provided ?
+        v = rand( ComplexF64, Ngwx, Ncols ) # What if v0 is provided ?
         rho = copy( rho )
     end
 

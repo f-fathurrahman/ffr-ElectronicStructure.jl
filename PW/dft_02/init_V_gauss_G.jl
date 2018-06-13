@@ -1,7 +1,7 @@
 function init_V_gauss_G(strf, Ω, Ns, G2, A, alpha)
     Npoints = size(strf)[1]
     Nspecies = size(strf)[2]
-    Vg = zeros(Complex128,Npoints)
+    Vg = zeros(ComplexF64,Npoints)
     V = zeros(Float64,Npoints)
     for isp = 1:Nspecies
         pf = -A[isp]*(pi/alpha[isp])^1.5/Ω

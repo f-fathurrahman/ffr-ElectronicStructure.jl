@@ -1,6 +1,6 @@
-function calc_grad_Haux(pw::PWGrid, Potentials, Focc, evals, psi::Array{Complex128,2}, kT)
+function calc_grad_Haux(pw::PWGrid, Potentials, Focc, evals, psi::Array{ComplexF64,2}, kT)
     Nstates = size(Focc)[1]
-    g = zeros(Complex128,Nstates,Nstates)
+    g = zeros(ComplexF64,Nstates,Nstates)
     #
     denum_dmudeta = 0.0
     for ist = 1:Nstates

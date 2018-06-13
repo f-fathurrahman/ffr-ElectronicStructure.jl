@@ -61,7 +61,7 @@ function test_main( Ns, xx; method="SCF" )
     E_nn = calc_ewald( pw, Sf, Xpos, Nspecies, atm2species, Zv )
     #@printf("E_nn = %18.10f\n", E_nn)
 
-    Vg = zeros(Complex128,Npoints)
+    Vg = zeros(ComplexF64,Npoints)
     prefactor = -4*pi/Ω
     for ig=2:Npoints
         Vg[ig] = prefactor/G2[ig]

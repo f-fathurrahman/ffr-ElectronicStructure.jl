@@ -56,7 +56,7 @@ function test_main( Ns )
     const rloc = 0.2
     const c1 = -4.180237
     const c2 = 0.725075
-    Vg = zeros(Complex128,Npoints)
+    Vg = zeros(ComplexF64,Npoints)
     pre1 = -4*pi*Zion/Ω
     pre2 = sqrt(8*pi^3)*rloc^3/Ω
     #

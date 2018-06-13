@@ -7,8 +7,8 @@ function  chebyfilt(pw, Potentials, X, degree, lb, ub)
     sigma = e/(lb-ub)
     sigma1 = sigma
     #
-    Y = zeros(Complex128,Ngwx,Nstates)
-    Y1 = zeros(Complex128,Ngwx,Nstates)
+    Y = zeros(ComplexF64,Ngwx,Nstates)
+    Y1 = zeros(ComplexF64,Ngwx,Nstates)
     #
     Y = op_H(pw, Potentials, X) - X*c
     Y = Y*sigma1/e
