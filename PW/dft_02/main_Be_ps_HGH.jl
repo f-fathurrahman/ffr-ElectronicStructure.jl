@@ -1,7 +1,11 @@
+using Printf
+using LinearAlgebra
+using Random
+
 include("../common/PWGrid_v02.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
-
+include("../common/gen_lattice_pwscf.jl")
 include("EnergiesT.jl")
 include("PotentialsT.jl")
 include("op_K.jl")
@@ -26,27 +30,27 @@ include("KS_solve_SCF.jl")
 
 function test_main( Ns )
 
-    const LatVecs = 16.0*diagm( ones(3) )
+    LatVecs = gen_lattice_sc(16.0)
 
     pw = PWGrid( Ns, LatVecs )
 
-    const Ω  = pw.Ω
-    const r  = pw.r
-    const G  = pw.gvec.G
-    const G2 = pw.gvec.G2
-    const Npoints = prod(Ns)
-    const Ngwx = pw.gvecw.Ngwx
+    Ω  = pw.Ω
+    r  = pw.r
+    G  = pw.gvec.G
+    G2 = pw.gvec.G2
+    Npoints = prod(Ns)
+    Ngwx = pw.gvecw.Ngwx
 
     @printf("Ns   = (%d,%d,%d)\n", Ns[1], Ns[2], Ns[3])
     @printf("Ngwx = %d\n", Ngwx)
 
-    const actual = Npoints/Ngwx
-    const theor = 1/(4*pi*0.25^3/3)
+    actual = Npoints/Ngwx
+    theor = 1/(4*pi*0.25^3/3)
     @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
     # Helium atom
     Zion = 4.0
-    const Nstates = 2
+    Nstates = 2
     Focc = [2.0, 2.0]
 
     Xpos = reshape( [1.0, 1.0, 1.0], (3,1) )
@@ -56,11 +60,11 @@ function test_main( Ns )
 
     # Set up potential, using HGH pseudopotential for H
     # contains only local pseudopotential
-    const rloc = 0.325000
-    const c1 = -24.015041
-    const c2 = 17.204014
-    const c3 = -3.326390
-    const c4 = 0.165419
+    rloc = 0.325000
+    c1 = -24.015041
+    c2 = 17.204014
+    c3 = -3.326390
+    c4 = 0.165419
     #
     Vg = zeros(ComplexF64,Npoints)
     pre1 = -4*pi*Zion/Ω
@@ -87,14 +91,14 @@ function test_main( Ns )
 
     Y = ortho_gram_schmidt(psi)
     mu = Y' * op_H( pw, Potentials, Y )
-    evals, evecs = eig(mu)
+    evals, evecs = eigen(mu)
     psi = Y*evecs
 
     #@printf("Solution by self-consistent field method\n")
     #Energies, Potentials, psi, evals = KS_solve_SCF( pw, V_ionic, Focc, Nstates, β=0.3 )
 
     for ist = 1:Nstates
-        @printf("State # %d, Energy = %f\n", ist, real(evals[ist]))
+        @printf("State # %d, Energy = %18.10f\n", ist, real(evals[ist]))
     end
 
     print_Energies(Energies)

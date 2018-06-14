@@ -17,7 +17,7 @@ function calc_grad( pw::PWGrid, Potentials, Focc, W::Array{ComplexF64,2} )
 
     #println("Pass here ...")
 
-    F = diagm(Focc)
+    F = Matrix(Diagonal(Focc))
     HW = op_H( pw, Potentials, W )
     ℍ = W' * HW
     HFH = ℍ*F - F*ℍ

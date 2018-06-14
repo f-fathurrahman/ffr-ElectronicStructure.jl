@@ -38,7 +38,7 @@ function pulaymix!(vin::Array{Float64,1}, vout::Array{Float64,1},
             A = b*ones(1,ncols) - A
             U,S,V = svd(A,thin=true)
         end
-        g2 = V*(diagm(S)\(U'*b))
+        g2 = V*(Matrix(Diagonal(S))\(U'*b))
         g1 = 1 - sum(g2)
         g = [g1;g2]
         vnew = ( vmat[:,ibeg-1:iend] + beta*dvmat[:,ibeg-1:iend] )*g

@@ -2,8 +2,8 @@
 function calc_Focc(evals, Nelectrons, kT::Float64; is_spinpol=false, verbose=false)
 
     Nstates = length(evals)
-    const TOL = 1e-10
-    const MAXITER = 100
+    TOL = 1e-10
+    MAXITER = 100
 
     Focc = zeros(Nstates)
     Nocc = round(Int64,Nelectrons/2)  # normally

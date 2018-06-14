@@ -1,14 +1,15 @@
 function diag_lobpcg( pw::PWGrid, Potentials, X0;
-                      tol=1e-5, tol_avg=1e-7, maxit=200, verbose=false,
+                      tol=1e-5, tol_avg=1e-7, NiterMax=200, verbose=false,
                       verbose_last=false )
     # get size info
+    Nbasis = size(X0)[1]
     ncols = size(X0)[2]
     if ncols <= 0
         @printf("diag_lobpcg requires at least one initial wave function!\n");
         return
     end
     # orthonormalize the initial wave functions.
-    X = ortho_gram_schmidt(X0)  # normalize (again)
+    X = ortho_gram_schmidt(X0)  # normalize (again)?
 
     HX = op_H( pw, Potentials, X )
 
@@ -16,10 +17,13 @@ function diag_lobpcg( pw::PWGrid, Potentials, X0;
     iter = 1
     resnrm = ones(ncols,1)
 
+    P = zeros(ComplexF64,Nbasis,ncols)
+    HP = zeros(ComplexF64,Nbasis,ncols)
+
     sum_evals = 0.0
     sum_evals_old = 0.0
     conv = 0.0
-    while iter <= maxit && nconv < ncols
+    while iter <= NiterMax && nconv < ncols
         # Rayleigh quotient (approximate eigenvalue, obj func)
         S = X'*HX
         lambda = real(eigvals(S))  #
@@ -53,7 +57,7 @@ function diag_lobpcg( pw::PWGrid, Potentials, X0;
         #
         C  = W'*W
         C = ( C + C' )/2
-        R  = chol(C)
+        R  = (cholesky(C)).U
         W  = W/R
         HW = HW/R
         #
@@ -67,7 +71,7 @@ function diag_lobpcg( pw::PWGrid, Potentials, X0;
         T = Q'*(HQ); T = (T+T')/2;
         G = Q'*Q; G = (G+G')/2;
 
-        sd, S = eig( T, G ) # evals, evecs
+        sd, S = eigen( T, G ) # evals, evecs
         U = S[:,1:ncols]
         X = Q*U
         HX = HQ*U
@@ -78,7 +82,7 @@ function diag_lobpcg( pw::PWGrid, Potentials, X0;
             HP = HW*U[set2,:] + HP*U[set3,:]
             C = P'*P
             C = (C + C')/2
-            R = chol(C)
+            R = (cholesky(C)).U
             P = P/R
             HP = HP/R
         else
@@ -91,13 +95,13 @@ function diag_lobpcg( pw::PWGrid, Potentials, X0;
 
     S = X'*HX
     S = (S+S')/2
-    lambda, Q = eig(S)
+    lambda, Q = eigen(S)
+    lambda = real(lambda)
     X = X*Q
     if verbose_last
         for j = 1:ncols
             @printf("eigval[%2d] = %18.10f, resnrm = %18.10e\n", j, lambda[j], resnrm[j] )
         end
     end
-    #@printf("LOBPCG converge: %d iter\n", iter)
     return lambda, X
 end

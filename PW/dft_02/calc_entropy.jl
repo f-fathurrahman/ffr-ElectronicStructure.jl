@@ -2,7 +2,7 @@
 # F = E - TS
 # S = -k \sum( .... )
 function calc_entropy( Focc::Array{Float64,1}, kT::Float64; is_spinpol=false )
-    const SMALL = 1.e-10
+    SMALL = 1.e-10
     Nstates = length(Focc)
     e = 0.0
     if is_spinpol

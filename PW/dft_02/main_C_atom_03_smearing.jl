@@ -1,7 +1,11 @@
+using Printf
+using LinearAlgebra
+using Random
+
 include("../common/PWGrid_v03.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
-
+include("../common/gen_lattice_pwscf.jl")
 include("EnergiesT.jl")
 include("PotentialsT.jl")
 include("op_K.jl")
@@ -32,29 +36,29 @@ include("sum_upto_E_fermi.jl")
 
 function test_main( ecutwfc_Ry::Float64 )
 
-    const LatVecs = 16.0*diagm( ones(3) )
+    LatVecs = gen_lattice_sc(16.0)
 
     pw = PWGrid( 0.5*ecutwfc_Ry, LatVecs )
 
-    const Ω  = pw.Ω
-    const r  = pw.r
-    const G  = pw.gvec.G
-    const G2 = pw.gvec.G2
-    const Ns = pw.Ns
-    const Npoints = prod(Ns)
-    const Ngwx = pw.gvecw.Ngwx
+    Ω  = pw.Ω
+    r  = pw.r
+    G  = pw.gvec.G
+    G2 = pw.gvec.G2
+    Ns = pw.Ns
+    Npoints = prod(Ns)
+    Ngwx = pw.gvecw.Ngwx
 
     @printf("ecutwfc (Ha) = %f\n", ecutwfc_Ry*0.5)
     @printf("Ns = (%d,%d,%d)\n", Ns[1], Ns[2], Ns[3])
     @printf("Ngwx = %d\n", Ngwx)
 
-    const actual = Npoints/Ngwx
-    const theor = 1/(4*pi*0.25^3/3)
+    actual = Npoints/Ngwx
+    theor = 1/(4*pi*0.25^3/3)
     @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
     # C atom
-    const Zatm = 6.0;
-    const Nstates = 8
+    Zatm = 6.0;
+    Nstates = 8
     # initial Focc
     Focc = [2.0, 2.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0]
     #
@@ -76,11 +80,11 @@ function test_main( ecutwfc_Ry::Float64 )
     # We simply need reshape because we only have one species type here.
     V_ionic = reshape( V_ionic, (Npoints) )
 
-    Energies, Potentials, psi, evals = KS_solve_SCF_smearing( pw, V_ionic, Focc, Nstates, Nelectrons, β=0.1, E_NN=E_nn )
-
+    Energies, Potentials, psi, evals =
+    KS_solve_SCF_smearing( pw, V_ionic, Focc, Nstates, Nelectrons, β=0.1, E_NN=E_nn )
 
     for st = 1:Nstates
-        @printf("State # %d, Energy = %f\n", st, real(evals[st]))
+        @printf("State # %d, Energy = %18.10f\n", st, real(evals[st]))
     end
 
     print_Energies(Energies)
