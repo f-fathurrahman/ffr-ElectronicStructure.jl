@@ -1,7 +1,11 @@
+using Printf
+using LinearAlgebra
+using Random
+
 include("../common/PWGrid_v02.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
-
+include("../common/gen_lattice_pwscf.jl")
 include("EnergiesT.jl")
 include("PotentialsT.jl")
 include("gen_dr.jl")
@@ -34,36 +38,36 @@ include("norm_matrix_induced.jl")
 
 function test_main( Ns; method="SCF" )
 
-    const LatVecs = 6.0*diagm( ones(3) )
+    LatVecs = gen_lattice_sc(6.0)
 
     pw = PWGrid( Ns, LatVecs )
 
-    const Ω  = pw.Ω
-    const r  = pw.r
-    const G  = pw.gvec.G
-    const G2 = pw.gvec.G2
-    const Npoints = prod(Ns)
-    const Ngwx = pw.gvecw.Ngwx
+    Ω  = pw.Ω
+    r  = pw.r
+    G  = pw.gvec.G
+    G2 = pw.gvec.G2
+    Npoints = prod(Ns)
+    Ngwx = pw.gvecw.Ngwx
 
     @printf("Ns   = (%d,%d,%d)\n", Ns[1], Ns[2], Ns[3])
     @printf("Ngwx = %d\n", Ngwx)
 
-    const actual = Npoints/Ngwx
-    const theor = 1/(4*pi*0.25^3/3)
+    actual = Npoints/Ngwx
+    theor = 1/(4*pi*0.25^3/3)
     @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
     #
     # Generate array of distances
     #
-    center = sum(LatVecs,2)/2
+    center = sum(LatVecs,dims=2)/2
     dr = gen_dr( r, center )
     #
     # Setup potential
     #
     V_ionic = init_pot_harm_3d( pw, dr )
-    print("sum(Vpot)*Ω/Npoints = $(sum(V_ionic)*Ω/Npoints)\n");
+    println("sum(Vpot)*Ω/Npoints = ", sum(V_ionic)*Ω/Npoints)
     #
-    const Nstates = 4
+    Nstates = 4
     Focc = 2.0*ones(Nstates)
     
     if method == "SD"
@@ -89,19 +93,19 @@ function test_main( Ns; method="SCF" )
     if method == "SD" || method == "CG"
         Y = ortho_gram_schmidt(psi)
         mu = Y' * op_H( pw, Potentials, Y )
-        evals, evecs = eig(mu)
+        evals, evecs = eigen(mu)
         Psi = Y*evecs
     end
 
     print_Energies(Energies)
-    for st = 1:Nstates
-        @printf("=== State # %d, Energy = %f ===\n", st, real(evals[st]))
+    for ist = 1:Nstates
+        @printf("State # %d, Energy = %18.10f ===\n", ist, real(evals[ist]))
     end
 end
 
 #@time test_main( [30, 30, 30], method="SD" )
-#@time test_main( [30, 30, 30], method="CG" )
-@time test_main( [30, 30, 30], method="SCF" )
-@time test_main( [30, 30, 30], method="SCF_andersonmix" )
-@time test_main( [30, 30, 30], method="SCF_pulaymix")
+@time test_main( [30, 30, 30], method="CG" )
+#@time test_main( [30, 30, 30], method="SCF" )
+#@time test_main( [30, 30, 30], method="SCF_andersonmix" )
+#@time test_main( [30, 30, 30], method="SCF_pulaymix")
 #@time test_main( [30, 30, 30], method="ChebySCF" )

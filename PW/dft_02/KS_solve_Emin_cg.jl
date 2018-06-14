@@ -40,17 +40,43 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
         Energies = EnergiesT( 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 )
     end
 
+    CONVERGED = 0
+
     for iter = 1:NiterMax
 
         g = calc_grad( pw, Potentials, Focc, psi)
         Kg = Kprec(pw,g)
 
         if iter != 1
+            # Fletcher-Reeves
             #β = real(sum(conj(g).*Kg))/real(sum(conj(g_old).*Kg_old))
+
+            # Polak-Ribiere
             β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g_old).*Kg_old))
+            
+            # Hestenes-Stiefel
             #β = real(sum(conj(g-g_old).*Kg))/real(sum(conj(g-g_old).*d))
+
+            # Dai-Yuan
             #β = real(sum(conj(g).*Kg))/real(sum((g-g_old).*conj(d_old)))
+
+            # CG descent
+            #β = -real(sum(conj(g).*Kg))/real(sum(conj(d_old).*Kg_old))
+
+            # Liu-Storey
+            #β = -real(sum(conj(g-g_old).*Kg))/real(sum(conj(d_old).*Kg_old))
+
+            # Muhamed-Rivaie-Mustafa
+            #gknorm = real( sum(conj(g).*g) )
+            #gk1norm = real( sum(conj(g_old).*g_old) )
+            #gknorm = real( sum(conj(g).*Kg) )
+            #gk1norm = real( sum(conj(g_old).*Kg_old) )
+            #
+            #gg = g .- gknorm/gk1norm*g_old
+            #β = real(sum( conj(g).*gg )) / ( gk1norm^2 + real( sum(conj(g).*d_old) ) )
+            #β = real(sum( conj(gg).*Kg )) / ( gk1norm^2 + real( sum(conj(d_old).*Kg) ) )
         end
+        
         if β < 0.0
             @printf("β is smaller than 0, setting it to zero\n")
             β = 0.0
@@ -86,7 +112,14 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
 
         diff = abs(Etot-Etot_old)
         @printf("CG step %8d = %18.10f %10.7e\n", iter, Etot, diff)
+        
         if diff < 1e-6
+            CONVERGED = CONVERGED + 1
+        else
+            CONVERGED = 0
+        end
+
+        if CONVERGED >= 2
             @printf("CONVERGENCE ACHIEVED\n")
             break
         end
