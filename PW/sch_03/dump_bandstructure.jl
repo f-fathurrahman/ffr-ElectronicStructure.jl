@@ -1,6 +1,9 @@
 function dump_bandstructure( evals, kpath; filename="TEMP_bands.dat")
     Nkpt = size(kpath)[2]
     Nstates = size(evals)[1]
+    
+    Nkspin = size(evals)[2]
+    @assert( Nkpt == Nkspin )
 
     Xcoords = Array{Float64}(undef,Nkpt)
     Xcoords[1] = 0.0
