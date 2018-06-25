@@ -1,4 +1,4 @@
-if VERSION > v"0.6.2"
+if VERSION > v"0.6.3"
     using Printf
 end
 
@@ -8,10 +8,9 @@ include("PGBF.jl")
 include("CGBF.jl")
 include("overlap.jl")
 
-if VERSION <= v"0.6.2"
-    using PyPlot
-    const plt = PyPlot
-end
+#=
+using PyPlot
+const plt = PyPlot
 
 function do_plot_x( bf::PGBF, filesave::String )
     const N = 100
@@ -25,6 +24,8 @@ function do_plot_x( bf::PGBF, filesave::String )
     plt.grid()
     plt.savefig(filesave, dpi=300)
 end
+=#
+
 
 function test_main()
     bf1 = PGBF(0.3, (0.0,0.0,0.0), (1,0,0))

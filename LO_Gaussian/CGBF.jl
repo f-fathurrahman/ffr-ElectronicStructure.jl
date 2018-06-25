@@ -39,6 +39,7 @@ end
 
 primitives(a::CGBF) = zip(a.coefs,a.pgbfs)
 
+#import Base.push!
 # This should become the constructor along with center and power
 function push!(cbf::CGBF,expn,coef)
     Base.push!(cbf.pgbfs, PGBF(expn, cbf.center, cbf.power))
