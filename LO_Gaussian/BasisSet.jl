@@ -23,10 +23,10 @@ function build_basis( atoms::Atoms, name="sto3g" )
             sym,primlist = btuple
             for (I,J,K) in sym2power[sym]
                 cbf = init_CGBF( (x,y,z), (I,J,K) )
-                push!(basis,cbf)
                 for (expn,coef) in primlist
                     push!(cbf,expn,coef)
                 end
+                push!(basis,cbf)
             end
         end
 
