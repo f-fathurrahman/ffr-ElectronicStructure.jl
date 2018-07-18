@@ -31,12 +31,12 @@ end
 
 
 function test_coul1()
-  @printf("Calling test_coul1\n")
-  s = PGBF(1.0)
-  px = PGBF( 1.0, (0.0,0.0,0.0),  (1,0,0) )
-  @assert coulomb(s,s,s,px)==0 # 0
-  @assert isapprox(coulomb(s,s,px,px), 0.9403159725793305 )
-  @printf("Pass test_coul1\n")
+    @printf("Calling test_coul1\n")
+    s = PGBF(1.0)
+    px = PGBF( 1.0, (0.0,0.0,0.0),  (1,0,0) )
+    @assert coulomb(s,s,s,px)==0 # 0
+    @assert isapprox(coulomb(s,s,px,px), 0.9403159725793305 )
+    @printf("Pass test_coul1\n")
 end
 
 test_two_terms()
