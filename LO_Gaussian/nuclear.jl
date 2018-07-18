@@ -57,22 +57,26 @@ function nuclear_attraction(
     return val
 end
 
-function nuclear_attraction( a::PGBF, b::PGBF, ccenter::Tuple3F64 )
+function nuclear_attraction( a::PGBF, b::PGBF, ccenter::Tuple3F64, atno )
     Vab = nuclear_attraction(a.expn, a.center, a.power,
                              b.expn, b.center, b.power, ccenter)
-    return a.NORM*b.NORM*Vab
+    return atno*a.NORM*b.NORM*Vab
 end
 
 #nuclear_attraction(a::PGBF,b::PGBF,c::Atom) = c.atno*nuclear_attraction(a,b,c.x,c.y,c.z)
 
-function nuclear_attraction( a::PGBF, b::PGBF, atoms::Atoms)
+function nuclear_attraction( a::PGBF, b::PGBF, atoms::Atoms )
     Natoms = atoms.Natoms
     Vab = 0.0
+    Zatoms = get_Zatoms( atoms )
+    atm2species = atoms.atm2species
     for ia = 1:Natoms
         cx = atoms.positions[1,ia]
         cy = atoms.positions[2,ia]
         cz = atoms.positions[3,ia]
-        Vab = Vab + nuclear_attraction(a,b,(cx,cy,cz))
+        isp = atm2species[ia]
+        atno = Zatoms[isp]
+        Vab = Vab + nuclear_attraction( a,b,(cx,cy,cz),atno )
     end
     return Vab
 end
@@ -150,8 +154,8 @@ end
 
 
 # Need a nested scope to squeeze this into the contract function
-function nuclear_attraction( a::CGBF, b::CGBF, ccenter::Tuple3F64 )
-    na(a,b) = nuclear_attraction( a, b, ccenter)
+function nuclear_attraction( a::CGBF, b::CGBF, ccenter::Tuple3F64, atno )
+    na(a,b) = nuclear_attraction( a, b, ccenter, atno )
     contract(na,a,b)
 end
 
@@ -161,6 +165,29 @@ end
 #end
 
 function nuclear_attraction( a::CGBF, b::CGBF, atoms::Atoms)
-    na(a,b) = nuclear_attraction( a, b, atoms)
+    na(a,b) = nuclear_attraction( a, b, atoms )
     contract(na,a,b)
+end
+
+
+function nuclear_repulsion( ZA, posA, ZB, posB )
+    a.atno*b.atno/sqrt( dist2( ax-bx, ay-by, az-bz) )
+end
+
+function nuclear_repulsion( atoms::Atoms )
+    nr = 0.0
+    Zatoms = get_Zatoms( atoms )
+    Natoms = atoms.Natoms
+    atm2species = atoms.atm2species
+    for ia = 1:Natoms
+        for ja = ia+1:Natoms
+            isp = atm2species[ia]
+            jsp = atm2species[ja]
+            Zi = Zatoms[isp]
+            Zj = Zatoms[jsp]
+            dr = atoms.positions[:,ia] - atoms.positions[:,ja]
+            nr = nr + Zi*Zj/norm(dr)
+        end
+    end
+    return nr
 end
