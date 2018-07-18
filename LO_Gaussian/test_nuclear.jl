@@ -129,16 +129,6 @@ end
 
 test_LiH()
 
-#nuclear_repulsion(a::Atom,b::Atom)= a.atno*b.atno/sqrt(dist2(a.x-b.x,a.y-b.y,a.z-b.z))
-#function nuclear_repulsion(mol::Molecule)
-#    nr = 0
-#    for (i,j) in pairs(nat(mol),"subdiag")
-#        nr += nuclear_repulsion(mol.atomlist[i],mol.atomlist[j])
-#    end
-#    return nr
-#end
-
-
 
 
 """
