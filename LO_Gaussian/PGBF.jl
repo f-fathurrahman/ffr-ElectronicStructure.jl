@@ -62,10 +62,10 @@ function evaluate( bf::PGBF, x::Float64, y::Float64, z::Float64 )
     return NORM*(dx^I)*(dy^J)*(dz^K)*exp(-expn*r2)
 end
 
+import Base: println
 """
 Display basic information about PGBF
 """
-import Base: println
 function println( bf::PGBF )
     @printf("\n")
     @printf("Primitive Gaussian:\n")
