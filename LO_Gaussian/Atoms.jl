@@ -171,3 +171,15 @@ function get_Zatoms( atoms::Atoms )
     end
     return Zatoms
 end
+
+function get_Nelectrons( atoms:: Atoms )
+    Zatoms = get_Zatoms(atoms)
+    Natoms = atoms.Natoms
+    atm2species = atoms.atm2species
+    Nelectrons = 0.0
+    for ia = 1:Natoms
+        isp = atm2species[ia]
+        Nelectrons = Nelectrons + Zatoms[isp]
+    end
+    return Nelectrons
+end
