@@ -1,9 +1,4 @@
-
 const BasisSet = Array{CGBF,1}
-
-function push!(basis::BasisSet,cbf::CGBF)
-    Base.push!(basis,cbf)
-end
 
 function build_basis( atoms::Atoms, name="sto3g" )
     data = basis_set_data[name]

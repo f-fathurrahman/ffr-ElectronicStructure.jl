@@ -1,4 +1,3 @@
-
 # TODO: make this immutable, possibly by changing the mechanism to build
 # the `BasisSet`
 mutable struct CGBF
@@ -40,7 +39,8 @@ end
 primitives(a::CGBF) = zip(a.coefs,a.pgbfs)
 
 # This should become the constructor along with center and power
-function push!(cbf::CGBF,expn,coef)
+import Base: push!
+function push!(cbf::CGBF, expn, coef)
     Base.push!(cbf.pgbfs, PGBF(expn, cbf.center, cbf.power))
     Base.push!(cbf.coefs, coef)
     normalize!(cbf)

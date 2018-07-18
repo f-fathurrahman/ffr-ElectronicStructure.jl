@@ -25,7 +25,8 @@ end
 function nuclear_attraction(
         aexpn::Float64, acenter::Tuple3F64, apower::Tuple3I64,
         bexpn::Float64, bcenter::Tuple3F64, bpower::Tuple3I64,
-        ccenter::Tuple3F64)
+        ccenter::Tuple3F64
+    )
     
     ax, ay, az = acenter[1],acenter[2],acenter[3]
     bx, by, bz = bcenter[1],bcenter[2],bcenter[3]
@@ -136,7 +137,7 @@ function gcf(a::Float64,x::Float64,ITMAX::Int64=200,EPS::Float64=3e-9,FPMIN::Flo
         if abs(c) < FPMIN
             c = FPMIN
         end
-        d = 1./d
+        d = 1.0/d
         delt = d*c
         h = h*delt
         if abs(delt-1.0) < EPS

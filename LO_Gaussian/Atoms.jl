@@ -50,7 +50,7 @@ function init_atoms_xyz(filexyz; in_bohr=false, verbose=false)
     l = readline(f)
     Natoms = parse(Int64, l)
     positions = zeros(3,Natoms)
-    atsymbs = Array{String}(Natoms)
+    atsymbs = Array{String}(undef,Natoms)
     l = readline(f)
     for ia = 1:Natoms
         ll = split( readline(f) )
@@ -89,7 +89,7 @@ function init_atoms_xyz(filexyz; in_bohr=false, verbose=false)
         end
     end
 
-    SpeciesSymbols = Array{String}(Nspecies)
+    SpeciesSymbols = Array{String}(undef,Nspecies)
 
     idx1 = 0
     for ia = 1:Natoms
@@ -107,7 +107,7 @@ function init_atoms_xyz(filexyz; in_bohr=false, verbose=false)
     end
 
     # Mapping of atoms to species index
-    atm2species = Array{Int64}(Natoms)
+    atm2species = Array{Int64}(undef,Natoms)
     for ia = 1:Natoms
         for isp = 1:Nspecies
             if atsymbs[ia] == SpeciesSymbols[isp]

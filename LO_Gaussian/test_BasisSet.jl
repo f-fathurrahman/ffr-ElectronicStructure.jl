@@ -1,6 +1,4 @@
-if VERSION > v"0.6.3"
-    using Printf
-end
+using Printf
 
 include("constants.jl")
 include("alias.jl")
