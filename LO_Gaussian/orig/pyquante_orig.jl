@@ -50,9 +50,9 @@ trace2(A,B) = sum(A.*B)
 
 function test_utils()
   @assert factorial2(6)==48
-  @assert collect(pairs(3)) == {(1,1),(1,2),(1,3),(2,2),(2,3),(3,3)}
-  @assert collect(pairs(3,"subdiag")) == {(1,2),(1,3),(2,3)}
-  @assert collect(pairs(2,"rect")) == {(1,1),(1,2),(2,1),(2,2)}
+  @assert collect(pairs(3)) == Any[(1,1),(1,2),(1,3),(2,2),(2,3),(3,3)]
+  @assert collect(pairs(3,"subdiag")) == Any[(1,2),(1,3),(2,3)]
+  @assert collect(pairs(2,"rect")) == Any[(1,1),(1,2),(2,1),(2,2)]
   @assert iindex(1,1,1,1) == 1
   @assert iindex(1,1,1,2) == iindex(1,1,2,1) == iindex(1,2,1,1) == iindex(2,1,1,1) == 2
   @assert iindex(1,1,2,2) == iindex(2,2,1,1) == 4
@@ -458,13 +458,13 @@ function test_gamma()
   # gammainc test functions. Test values taken from Mathematica
   # println("a=0.5 test")
   @assert maximum([gammainc(0.5,float(x)) for x in 0:10]
-      -{0, 1.49365, 1.69181, 1.7471, 1.76416, 1.76968,
-        1.77151, 1.77213, 1.77234, 1.77241, 1.77244}) < 1e-5
+      -Any[0, 1.49365, 1.69181, 1.7471, 1.76416, 1.76968,
+        1.77151, 1.77213, 1.77234, 1.77241, 1.77244]) < 1e-5
 
   # println("a=1.5 test")
   @assert maximum([gammainc(1.5,float(x)) for x in 0:10]
-      -{0, 1.49365, 1.69181, 1.7471, 1.76416, 1.76968,
-        1.77151, 1.77213, 1.77234, 1.77241, 1.77244}) < 1e-5
+      -Any[0, 1.49365, 1.69181, 1.7471, 1.76416, 1.76968,
+        1.77151, 1.77213, 1.77234, 1.77241, 1.77244]) < 1e-5
   # println("a=2.5 test")
   @assert maximum([gammainc(2.5,float(x)) for x in 0:10]
       -{0, 0.200538, 0.59898, 0.922271, 1.12165, 1.22933,
@@ -1178,7 +1178,7 @@ sto3g = {
     (1.9162661999999999, 0.60768372000000004),
       (0.62322929999999999, 0.39195739000000002)])]
 }
-basis_set_data = {"sto3g" => sto3g};
+basis_set_data = Dict("sto3g" => sto3g);
 
 
 # ## Atoms and Molecules
@@ -1267,11 +1267,11 @@ function build_basis(mol::Molecule,name="sto3g")
   return basis_set
 end
 
-sym2power = {
+sym2power = Dict(
   'S' => [(0,0,0)],
   'P' => [(1,0,0),(0,1,0),(0,0,1)],
   'D' => [(2,0,0),(0,2,0),(0,0,2),(1,1,0),(1,0,1),(0,1,1)]
-  }
+)
 
 
 function test_geo_basis()
@@ -1402,25 +1402,25 @@ function test_h2o()
 end
 
 function test()
-  test_utils()
-  test_pgbf()
-  test_cgbf()
-  test_overlap()
-  test_kinetic()
-  test_a_terms()
-  test_gamma()
-  test_na()
-  test_fgamma()
-  test_one()
-  test_na2()
-  test_two_terms()
-  test_coul1()
-  test_vrr()
-  test_hrr()
-  test_geo_basis()
+  #test_utils()
+  #test_pgbf()
+  #test_cgbf()
+  #test_overlap()
+  #test_kinetic()
+  #test_a_terms()
+  #test_gamma()
+  #test_na()
+  #test_fgamma()
+  #test_one()
+  #test_na2()
+  #test_two_terms()
+  #test_coul1()
+  #test_vrr()
+  #test_hrr()
+  #test_geo_basis()
   test_h2()
-  test_lih()
-  test_h2o()
+  #test_lih()
+  #test_h2o()
 end
 
 test()
