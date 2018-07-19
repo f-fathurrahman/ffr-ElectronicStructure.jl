@@ -23,4 +23,5 @@ end
 
 #test_main("H2_v2.xyz")
 #test_main("H2O.xyz")
-test_main("LiH.xyz")
+#test_main("LiH.xyz")
+test_main("I2.xyz")

@@ -7,8 +7,11 @@ include("CGBF.jl")
 include("overlap.jl")
 
 function test_CGBF()
+    
     c1 = init_CGBF( 0.0,0.0,0.0 )  # specifying center
     push!(c1, 1.0, 1.0)
+    println(c1)
+
     @printf("Test CGBF evaluate: %f\n", abs(evaluate(c1, 0.0, 0.0, 0.0)-0.71270547))
 
     c2 = init_CGBF( 0.0, 0.0, 0.0 )
