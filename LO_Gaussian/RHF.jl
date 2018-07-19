@@ -119,48 +119,32 @@ end
 dmat(U::Array{Float64,2},nocc::Int64) = U[:,1:nocc]*U[:,1:nocc]'
 
 function RHF( atoms::Atoms, MaxIter::Int64=20, verbose::Bool=true)
-    @printf("Starting RHF calculation:")
+    @printf("Starting RHF calculation:\n")
+    
+    Nelectrons = get_Nelectrons(atoms)
+    nclosed,nopen = divrem( Int64(Nelectrons), 2 )
+    @printf("Nel = %d, Nclosed = %d, nopen = %d\n", Nelectrons, nclosed, nopen)
 
-    @printf("Building basis ...")
-    bfs = build_basis(atoms)
-    @printf("... done\n\n")
-
-    @printf("1e integrals ...")
+    @printf("Building basis ...\n")
+    bfs = build_basis_new(atoms)
+    
+    @printf("1e integrals ...\n")
     S,T,V = all_1e_ints(bfs,atoms)
-    @printf("... done\n\n")
 
-    @printf("2e integrals ...")
+    @printf("2e integrals ...\n")
     Ints = all_twoe_ints(bfs)
-    @printf("... done\n\n")
 
     h = T+V
     E,U = eigen(h,S)
     println("E = ", E)
     Enuke = nuclear_repulsion(atoms)
-    Nelectrons = get_Nelectrons(atoms)
-    nclosed,nopen = divrem( Int64(Nelectrons), 2 )
     Eold = 0.0
     Energy = 0.0
-
-    @printf("Nel = %d, Nclosed = %d, nopen = %d\n", Nelectrons, nclosed, nopen)
   
-    if verbose
-        println("S=\n$S")
-        println("h=\n$h")
-        println("T=\n$T")
-        println("V=\n$V")
-        println("E: $E")
-        println("U: $U")
-        println("2e ints:\n$Ints")
-    end
-
     IS_CONVERGED = false
     dEtot = 1.0
     for iter in 1:MaxIter
         D = dmat(U,nclosed)
-        #if verbose
-        #    println("D=\n$D")
-        #end
         G = make2JmK(D,Ints)
         H = h + G
         E,U = eigen(H,S)
