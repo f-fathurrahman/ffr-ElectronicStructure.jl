@@ -160,7 +160,25 @@ const ZATOMS = Dict(
     "As" => 33,
     "Se" => 34,
     "Br" => 34,
-    "Kr" => 36, )
+    "Kr" => 36,
+    "Rb" => 37,
+    "Sr" => 38,
+    "Y"  => 39,
+    "Zr" => 40,
+    "Nb" => 41,
+    "Mo" => 42,
+    "Tc" => 43,
+    "Ru" => 44,
+    "Rh" => 45,
+    "Pd" => 46,
+    "Ag" => 47,
+    "Cd" => 48,
+    "In" => 49,
+    "Sn" => 50,
+    "Sb" => 51,
+    "Te" => 52,
+    "I"  => 53,
+    "Xe" => 54, )
 
 function get_Zatoms( atoms::Atoms )
     Nspecies = atoms.Nspecies
