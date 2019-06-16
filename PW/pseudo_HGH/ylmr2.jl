@@ -5,7 +5,7 @@ function ylmr2( lmax::Int, Gvec::Array{Float64,2} )
   Ng = size(Gvec)[2]
   lmax2 = (lmax+1)^2
 
-  const SMALL = 1e-9
+  SMALL = 1e-9
 
   cost = zeros(Float64, Ng)
   sint = zeros(Float64, Ng)
