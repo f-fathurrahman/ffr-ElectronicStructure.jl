@@ -61,7 +61,7 @@ function test_main( ns1::Int64,ns2::Int64,ns3::Int64 )
 
     #
     Nstates = 1
-    srand(2222)
+    Random.seed!(2222)
     psi = randn(Npoints,Nstates) + im*randn(Npoints,Nstates)
     psi = ortho_gram_schmidt(psi)
     #

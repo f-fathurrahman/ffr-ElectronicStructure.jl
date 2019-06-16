@@ -43,7 +43,7 @@ function test_main( ns1::Int,ns2::Int,ns3::Int )
     println("sum(Vpot)*Ω/Npoints = ", (sum(Vpot)*Ω/Npoints));
     #
     Nstates = 4
-    srand(2222)
+    Random.seed!(2222)
     psi = rand(ComplexF64,Npoints,Nstates)
     psi = ortho_gram_schmidt(psi)
     #
