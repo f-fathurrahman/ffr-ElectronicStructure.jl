@@ -1,5 +1,7 @@
 # ffr-ElectronicStructure.jl
 
+**This is not (yet) a proper Julia package**
+
 Simple electronic structure calculations implemented in
 Julia programming language.
 
