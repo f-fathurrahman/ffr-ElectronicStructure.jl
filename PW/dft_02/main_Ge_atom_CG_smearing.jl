@@ -1,3 +1,7 @@
+using Printf
+using LinearAlgebra
+using Random
+
 include("../common/PWGrid_v02.jl")
 include("../common/ortho_gram_schmidt.jl")
 include("../common/wrappers_fft.jl")
@@ -31,23 +35,25 @@ include("printMatrix.jl")
 
 function test_main( Ns )
 
-    const a = 5.66/0.52917721 # Lattice constant (converted from angstroms to bohrs)
-    const LatVecs = a*diagm(ones(3))
+    Random.seed!(1234)
+
+    a = 5.66/0.52917721 # Lattice constant (converted from angstroms to bohrs)
+    LatVecs = a*diagm(0 => ones(3))
 
     pw = PWGrid( Ns, LatVecs )
 
-    const Ω  = pw.Ω
-    const r  = pw.r
-    const G  = pw.gvec.G
-    const G2 = pw.gvec.G2
-    const Npoints = prod(Ns)
-    const Ngwx = pw.gvecw.Ngwx
+    Ω  = pw.Ω
+    r  = pw.r
+    G  = pw.gvec.G
+    G2 = pw.gvec.G2
+    Npoints = prod(Ns)
+    Ngwx = pw.gvecw.Ngwx
 
     @printf("Ns = (%d,%d,%d)\n", Ns[1], Ns[2], Ns[3])
     @printf("Ngwx = %d\n", Ngwx)
 
-    const actual = Npoints/Ngwx
-    const theor = 1/(4*pi*0.25^3/3)
+    actual = Npoints/Ngwx
+    theor = 1/(4*pi*0.25^3/3)
     @printf("Compression: actual, theor: %f , %f\n", actual, theor)
 
     # diamond lattice in cubic cell
@@ -70,27 +76,29 @@ function test_main( Ns )
     Z = Zv[1]
     λ = 18.5
     rc = 1.052
-    Gm = sqrt.(G2)
 
-    Vps[:] = -2*pi*exp.(-pi*Gm/λ).*cos.(Gm*rc).*(Gm/λ)./(1-exp.(-2*pi*Gm/λ))
-    for n = 0:4
-        Vps[:] = Vps[:] + (-1)^n*exp(-λ*rc*n)./(1+(n*λ./Gm).^2)
+    Vps = zeros(ComplexF64,Npoints)
+    for i = 2:Npoints
+        Gm = sqrt(G2[i])
+        Vps[i] = -2*pi*exp(-pi*Gm/λ)*cos(Gm*rc)*(Gm/λ)/(1 - exp(-2*pi*Gm/λ))
+        for n = 0:4
+            Vps[i] = Vps[i] + (-1.0)^n*exp(-λ*rc*n)/(1 + (n*λ/Gm)^2)
+        end
+        Vps[i] = Vps[i]*4*pi*Z/Gm^2*(1+exp(-λ*rc)) - 4*pi*Z/Gm^2
     end
-
-    Vps[:] = Vps.*4*pi*Z./Gm.^2*(1+exp(-λ*rc)) - 4*pi*Z./Gm.^2
 
     n = collect(1:4)
     Vps[1] = 4*pi*Z*(1+exp(-λ*rc))*(rc^2/2+1/λ^2 *
                      (pi^2/6 + sum((-1).^n.*exp.(-λ*rc*n)./n.^2)))
 
-    Vps = Vps[:]/Ω
+    Vps[:] = Vps[:]/Ω
 
     V_ionic = real( G_to_R(Ns, Vps .* Sf) ) * Npoints
 
     # needed to sum up over Nspecies for more than one species
     V_ionic = reshape( V_ionic, (Npoints) )
 
-    const Nstates = 7
+    Nstates = 7
     # Initial Focc
     Focc = zeros(Nstates)
     Focc[1] = 2.0

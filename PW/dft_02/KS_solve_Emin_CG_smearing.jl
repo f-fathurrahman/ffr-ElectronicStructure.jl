@@ -7,7 +7,6 @@ function KS_solve_Emin_CG_smearing( pw::PWGrid, V_ionic, Focc, Nstates::Int;
     Ngwx = pw.gvecw.Ngwx
 
     if psi0 == nothing
-        srand(2222)
         psi = randn(Ngwx,Nstates) + im*randn(Ngwx,Nstates)
         psi = ortho_gram_schmidt(psi)
     else
@@ -61,7 +60,7 @@ function KS_solve_Emin_CG_smearing( pw::PWGrid, V_ionic, Focc, Nstates::Int;
     end
     @printf("E_fermi = %18.10f\n", E_fermi)
 
-    const κ = 0.1
+    κ = 0.1
 
     Haux = zeros(ComplexF64,Nstates,Nstates)
     for ist = 1:Nstates
@@ -101,8 +100,6 @@ function KS_solve_Emin_CG_smearing( pw::PWGrid, V_ionic, Focc, Nstates::Int;
         Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
         gt = calc_grad( pw, Potentials, Focc, psic )
 
-        exit()
-
         denum = real(sum(conj(g-gt).*d))
         if denum != 0.0
             α = abs( α_t*real(sum(conj(g).*d))/denum )
@@ -121,12 +118,12 @@ function KS_solve_Emin_CG_smearing( pw::PWGrid, V_ionic, Focc, Nstates::Int;
         Potentials.XC = excVWN( rho ) + rho .* excpVWN( rho )
 
         Energies = calc_Energies(pw, Potentials, Focc, psi, Energies.NN)
-        Entropies = calc_entropies(Focc, kT, is_spinpol=false)
+        Entropies = calc_entropy(Focc, kT, is_spinpol=false)
         Etot = Energies.Total + Entropies
 
-        diff = abs(Etot-Etot_old)
-        @printf("CG step %8d = %18.10f %10.7e\n", iter, Etot, diff)
-        if diff < 1e-6
+        diffE = abs(Etot-Etot_old)
+        @printf("CG step %8d = %18.10f %10.7e\n", iter, Etot, diffE)
+        if diffE < 1e-6
             @printf("CONVERGENCE ACHIEVED\n")
             break
         end

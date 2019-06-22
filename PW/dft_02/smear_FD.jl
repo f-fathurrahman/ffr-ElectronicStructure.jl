@@ -2,7 +2,7 @@
 # f_n = \left( 1 + \exp\left[ \epsilon_{n} - \mu \right]/kY \right)^{-1}
 # kT = smearing width
 function smear_FD( ev::Array{Float64,1}, efermi::Float64, kT::Float64; is_spinpol=false )
-    x = (ev[:] - efermi)/kT
+    x = (ev[:] .- efermi)/kT
     #
     Nstates = length(ev)
     f = zeros(Nstates)
