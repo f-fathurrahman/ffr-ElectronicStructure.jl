@@ -23,6 +23,9 @@ include("LDA_VWN.jl")
 include("Kprec.jl")
 
 function test_main( ns1::Int64,ns2::Int64,ns3::Int64 )
+
+    Random.seed!(1234)
+
     #
     Ns = [ns1,ns2,ns3]
     LatVecs = gen_lattice_sc(6.0)

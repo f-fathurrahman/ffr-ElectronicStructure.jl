@@ -5,7 +5,6 @@ function KS_solve_Emin_sd( pw::PWGrid, V_ionic, Focc, Nstates::Int;
     Npoints = prod(Ns)
 
     if psi0 == nothing
-        srand(2222)
         psi = randn(Npoints,Nstates) + im*randn(Npoints,Nstates)
         psi = ortho_gram_schmidt(psi)
     else

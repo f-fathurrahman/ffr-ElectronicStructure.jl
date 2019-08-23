@@ -6,7 +6,6 @@ function KS_solve_Emin_cg( pw::PWGrid, V_ionic, Focc, Nstates::Int;
     Npoints = prod(Ns)
 
     if psi0 == nothing
-        srand(2222)
         psi = rand(ComplexF64,Npoints,Nstates)
         psi = ortho_gram_schmidt(psi)
     else
