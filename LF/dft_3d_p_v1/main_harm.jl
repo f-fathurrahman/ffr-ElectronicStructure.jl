@@ -1,3 +1,7 @@
+using Printf
+using LinearAlgebra
+using SparseArrays
+
 include("../LF_common/m_LF1d.jl")
 include("../LF_common/m_LF3d.jl")
 include("../LF_common/m_Gvectors.jl")
@@ -31,6 +35,7 @@ include("../LF_common/solve_poisson_FFT.jl")
 include("LDA_VWN.jl")
 include("diag_lobpcg.jl")
 
+speye(N::Int64) = sparse( Matrix(1.0I, N, N) )
 
 function test_main( ; method = "Emin_cg" )
     # LF parameters
@@ -46,7 +51,7 @@ function test_main( ; method = "Emin_cg" )
 
     # Initialize G-vectors
     L = BB - AA
-    Gv = GvectorsT( NN, diagm(L) )
+    Gv = GvectorsT( NN, diagm( 0 => L) )
 
     # Parameter for potential
     center = AA + 0.5*(BB-AA)
@@ -60,7 +65,7 @@ function test_main( ; method = "Emin_cg" )
     if method == "Emin_cg_sparse"
         #
         ∇2 = get_Laplacian3d_kron(LF)
-        precH = prec_mkl_ilu0( -0.5*∇2 + spdiagm(V_ionic) )
+        precH = prec_mkl_ilu0( -0.5*∇2 + spdiagm( 0 => V_ionic) )
         #precH = speye(Npoints)  # for testing unpreconditioned code
         Energies, evecs, Potentials = KS_solve_Emin_pcg( LF, Gv, ∇2, precH,
                                         V_ionic, Focc, Ncols, verbose=true )

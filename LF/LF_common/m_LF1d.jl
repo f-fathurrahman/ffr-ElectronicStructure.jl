@@ -32,7 +32,7 @@ function init_LF1d_p( N::Int64, A::Float64, B::Float64, verbose=false )
     Nprimed = (N-1)/2
     for j = 1:N
         # the diagonal elements of D1jl are already zero
-        D2jl[j,j] = -(2.*pi/L)^2 * Nprimed * (Nprimed+1)/3.
+        D2jl[j,j] = -(2.0*pi/L)^2 * Nprimed * (Nprimed+1)/3.
     end
     #
     # Off diagonal elements
@@ -80,7 +80,7 @@ function init_LF1d_c( N::Int64, A::Float64, B::Float64, verbose=false )
     #
     # Diagonal part
     #
-    pre = -pi^2/(2.*L^2)
+    pre = -pi^2/(2.0*L^2)
     for i = 1:N
         t1 = ( 2.0*(N+1)^2 + 1 )/3.0
         t2 = sin( i*pi/(N+1) )^2
@@ -94,8 +94,8 @@ function init_LF1d_c( N::Int64, A::Float64, B::Float64, verbose=false )
             nnm = l - j
             nnp = l + j
             pre = -pi^2 / (2*L^2) * (-1.0)^nnm
-            t1 = sin( pi*nnm/2./(N+1) )^2
-            t2 = sin( pi*nnp/2./(N+1) )^2
+            t1 = sin( pi*nnm/2.0/(N+1) )^2
+            t2 = sin( pi*nnp/2.0/(N+1) )^2
             #
             D2jl[l,j] = pre*( 1.0/t1 - 1.0/t2 )
             D2jl[j,l] = pre*( 1.0/t1 - 1.0/t2 )  # XXX is it faster to just recalculate?
