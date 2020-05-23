@@ -1,6 +1,6 @@
-icc -I/home/efefer/intel/mkl/include -c -fPIC -O3 mkl_ilu0.c
-icc -I/home/efefer/intel/mkl/include -c -fPIC -O3 mkl_dfgmres.c
-icc -shared -o libmkl.so -Wl,--whole-archive \
+gcc -I/home/efefer/mysoftwares/LIBMKL/include -c -fPIC -O3 mkl_ilu0.c
+gcc -I/home/efefer/mysoftwares/LIBMKL/include -c -fPIC -O3 mkl_dfgmres.c
+gcc -shared -o libmkl.so -L/home/efefer/mysoftwares/LIBMKL -Wl,--whole-archive \
    mkl_dfgmres.o mkl_ilu0.o \
    libmkl_core.so libmkl_intel_ilp64.so libmkl_sequential.so \
    libmkl_mc3.so libmkl_def.so \
