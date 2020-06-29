@@ -120,4 +120,4 @@ function MuffinTinRadialVars(Nspecies)
 
 end
 
-mtr_vars = MuffinTinRadialVars(2)
+#mtr_vars = MuffinTinRadialVars(2)
