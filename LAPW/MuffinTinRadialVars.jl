@@ -87,7 +87,7 @@ function MuffinTinRadialVars(Nspecies)
     wrcmt = zeros(Float64,1,1) 
     wprcmt = zeros(Float64,1,1,1)
     maxlapw = 50
-    lmaxapw = 0
+    lmaxapw = 8 # default
     lmmaxapw = 0
     lmaxo  = 0
     lmmaxo = 0
