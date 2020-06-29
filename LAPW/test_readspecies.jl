@@ -1,14 +1,21 @@
+include("r3frac.jl")
+include("r3mv.jl")
+include("LatticeVars.jl")
+include("AtomicVars.jl")
+include("AtomicSpeciesVars.jl")
+include("MuffinTinRadialVars.jl")
+include("readspecies.jl")
 
 function main()
-    atomic_species_vars = AtomicSpeciesVars(2)
-    
-    println(atomic_species_vars.spsymb) # before reading information from species file
+    Nspecies = 2
+    atsp_vars = AtomicSpeciesVars(Nspecies)
+    mtr_vars = MuffinTinRadialVars(Nspecies)
 
-    readspecies!(1, atomic_species_vars, "DATA_species/Si.in")
-    readspecies!(2, atomic_species_vars, "DATA_species/Pt.in")
+    readspecies!(1, "DATA_species/Si.in", atsp_vars, mtr_vars)
+    readspecies!(2, "DATA_species/Pt.in", atsp_vars, mtr_vars)
 
-    println(atomic_species_vars.spsymb)
-    println(atomic_species_vars.nstsp)
+    println(atsp_vars.spsymb)
+    println(atsp_vars.nstsp)
 end
 
 main()

@@ -1,53 +1,63 @@
-function readspecies!(isp::Int64, vars::AtomicSpeciesVars, filename)
+function readspecies!( isp::Int64, filename,
+    atsp_vars::AtomicSpeciesVars,
+    mtr_vars::MuffinTinRadialVars
+)
     f = open(filename, "r")
     
     # species symbol
     line = readline(f)
-    vars.spsymb[isp] = replace(split(line)[1], "'" => "")
-    println("spsymb = ", vars.spsymb[isp])
+    atsp_vars.spsymb[isp] = replace(split(line)[1], "'" => "")
+    println("spsymb = ", atsp_vars.spsymb[isp])
     
     # species name
     line = readline(f)
-    vars.spname[isp] = replace(split(line)[1], "'" => "")
-    println("spname = ", vars.spname[isp])
+    atsp_vars.spname[isp] = replace(split(line)[1], "'" => "")
+    println("spname = ", atsp_vars.spname[isp])
     
     # atomic number
     line = readline(f)
-    vars.spzn[isp] = parse(Float64, split(line)[1])
-    println("spzn   = ", vars.spzn[isp])
+    atsp_vars.spzn[isp] = parse(Float64, split(line)[1])
+    println("spzn   = ", atsp_vars.spzn[isp])
 
     # mass
     line = readline(f)
-    vars.spmass[isp] = parse(Float64, split(line)[1])
-    println("spmass = ", vars.spmass[isp])
+    atsp_vars.spmass[isp] = parse(Float64, split(line)[1])
+    println("spmass = ", atsp_vars.spmass[isp])
 
     # Radial mesh
     line = readline(f)
     ll = split(line)
-    vars.rminsp[isp] = parse(Float64, ll[1])
-    rmt = parse(Float64, ll[2])  # muffin tin
-    vars.rmaxsp[isp] = parse(Float64, ll[3])
-    nrmt = parse(Int64, ll[4])
-    println("rminsp = ", vars.rminsp[isp])
-    println("rmt    = ", rmt)
-    println("rmaxsp = ", vars.rmaxsp[isp])
-    println("nrmt   = ", nrmt)
+    
+    atsp_vars.rminsp[isp] = parse(Float64, ll[1])
+    
+    mtr_vars.rmt[isp] = parse(Float64, ll[2])  # muffin tin
+    
+    atsp_vars.rmaxsp[isp] = parse(Float64, ll[3])
+    
+    mtr_vars.nrmt[isp] = parse(Int64, ll[4])
+    
+    println("rminsp = ", atsp_vars.rminsp[isp])
+    println("rmt    = ", mtr_vars.rmt[isp])
+    println("rmaxsp = ", atsp_vars.rmaxsp[isp])
+    println("nrmt   = ", mtr_vars.nrmt[isp])
 
     # Atomic states
     line = readline(f)
-    vars.nstsp[isp] = parse(Int64, split(line)[1])
-    for ist in 1:vars.nstsp[isp]
+    atsp_vars.nstsp[isp] = parse(Int64, split(line)[1])
+    #
+    for ist in 1:atsp_vars.nstsp[isp]
+        #
         line = readline(f)
         ll = split(line)
         #
-        vars.nsp[ist,isp] = parse(Int64, ll[1])
-        vars.lsp[ist,isp] = parse(Int64, ll[2])
-        vars.ksp[ist,isp] = parse(Int64, ll[3]) # whats this?
-        vars.occsp[ist,isp] = parse(Float64, ll[4])
+        atsp_vars.nsp[ist,isp] = parse(Int64, ll[1])
+        atsp_vars.lsp[ist,isp] = parse(Int64, ll[2])
+        atsp_vars.ksp[ist,isp] = parse(Int64, ll[3]) # whats this?
+        atsp_vars.occsp[ist,isp] = parse(Float64, ll[4])
         if ll[5] == "T"
-            vars.spcore[ist,isp] = true
+            atsp_vars.spcore[ist,isp] = true
         elseif ll[5] == "F"
-            vars.spcore[ist,isp] = false
+            atsp_vars.spcore[ist,isp] = false
         else
             error("Unable to parse spcore")
         end
