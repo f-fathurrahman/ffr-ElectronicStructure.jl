@@ -1,5 +1,12 @@
 # TODO: make this immutable, possibly by changing the mechanism to build
 # the `BasisSet`
+
+"""
+Contracted Gaussian basis function.
+```
+CGBF = sum_{i=Ncontr} coefs[i]*PGBF(expn, center, power)
+```
+"""
 mutable struct CGBF
     center::Tuple3F64
     power::Tuple3I64
@@ -9,8 +16,9 @@ mutable struct CGBF
 end
 
 import Base.println
-function println(bf::CGBF)
+function println( bf::CGBF )
     Ncontr = length(bf.pgbfs)
+    @printf("\nContracted Gaussian basis function\n")
     @printf("\nNcontr = %d\n\n", Ncontr)
     for i = 1:Ncontr
         @printf("Coef = %18.10f", bf.coefs[i])
@@ -46,7 +54,7 @@ function push!(cbf::CGBF, expn, coef)
     normalize!(cbf)
 end
 
-function contract(f,a::CGBF,b::CGBF)
+function contract(f, a::CGBF, b::CGBF)
     s = 0.0
     for (ca,abf) in primitives(a)
     for (cb,bbf) in primitives(b)
