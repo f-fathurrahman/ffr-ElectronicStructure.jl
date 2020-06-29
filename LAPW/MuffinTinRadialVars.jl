@@ -66,3 +66,58 @@ mutable struct MuffinTinRadialVars
     npmtmax::Int64
     npcmtmax::Int64
 end
+
+function MuffinTinRadialVars(Nspecies)
+
+    nrmtscf = 0
+    nrmt = zeros(Int64,Nspecies)
+    nrmtmax = 0
+    rmtall = 0
+    rmtdelta = 0.0
+    rmt = zeros(Nspecies)
+    omegamt = 0.0
+    lradstp = 0
+    nrcmt = zeros(Int64,Nspecies)
+    nrcmtmax = 0
+    rcmt = zeros(Float64,1,1)
+    rlmt = zeros(Float64,1,1,1)
+    rlcmt = zeros(Float64,1,1,1) 
+    wrmt = zeros(Float64,1,1)
+    wprmt = zeros(Float64,1,1,1)
+    wrcmt = zeros(Float64,1,1) 
+    wprcmt = zeros(Float64,1,1,1)
+    maxlapw = 50
+    lmaxapw = 0
+    lmmaxapw = 0
+    lmaxo  = 0
+    lmmaxo = 0
+    lmaxi  = 0
+    lmmaxi = 0
+    fracinr = 0
+    
+    nrmti = zeros(Int64,Nspecies)
+    nrcmti = zeros(Int64,Nspecies)
+    
+    idxlm = zeros(Int64,1,1)
+    idxil = zeros(Int64,1)
+    idxim = zeros(Int64,1)
+
+    npmti = zeros(Int64,Nspecies)
+    npmt = zeros(Int64,Nspecies)
+    npcmti = zeros(Int64,Nspecies)
+    npcmt = zeros(Int64,Nspecies)
+    
+    npmtmax = 0
+    npcmtmax = 0
+
+    return MuffinTinRadialVars(
+        nrmtscf, nrmt, nrmtmax, rmtall, rmtdelta, rmt, omegamt, lradstp,
+        nrcmt, nrcmtmax, rcmt, rlmt, rlcmt, wrmt, wprmt, wrcmt, wprcmt,
+        maxlapw, lmaxapw, lmmaxapw, lmaxo, lmmaxo, lmaxi, lmmaxi, fracinr,
+        nrmti, nrcmti, idxlm, idxil, idxim, npmti, npmt, npcmti, npcmt,
+        npmtmax, npcmtmax,
+    )
+
+end
+
+mtr_vars = MuffinTinRadialVars(2)
