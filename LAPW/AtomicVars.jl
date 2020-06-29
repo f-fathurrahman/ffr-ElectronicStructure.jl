@@ -24,9 +24,99 @@ struct AtomicVars
     rndatposc::Float64
 end
 
-function init_AtomicVars()
-    # maximum allowed species
-    maxspecies = 8
-    # maximum allowed atoms per species
-    maxatoms = 200
+include("LatticeVars.jl")
+include("r3frac.jl")
+include("r3mv.jl")
+
+function AtomicVars(
+    nspecies::Int64,
+    natoms_::Vector{Int64},
+    atposl_::Array{Float64,3},
+    lattice_vars::LatticeVars
+)
+
+    epslat = lattice_vars.epslat
+    avec = lattice_vars.avec
+
+    natoms = copy(natoms_)
+
+    # FIXME: Should not have this limitation
+    maxspecies = 8 # maximum allowed species
+    maxatoms = 200 # maximum allowed atoms per species
+
+    atposl = copy(atposl_)
+    atposc = zeros(3,maxatoms,maxspecies)
+
+    for is in 1:nspecies
+        for ia in 1:natoms[is]
+            # map atomic lattice coordinates to [0,1)
+            @views r3frac!( epslat, atposl[:,ia,is] )
+            # determine atomic Cartesian coordinates
+            @views r3mv!( avec,atposl[:,ia,is], atposc[:,ia,is])
+        end
+    end
+
+    molecule = false
+    rndatposc = 0.0
+    primcell = false
+
+    idxas = zeros(Int64, maxatoms, maxspecies)
+    # inverse atoms and species indices
+    idxis = zeros(Int64, maxatoms*maxspecies)
+    idxia = zeros(Int64, maxatoms*maxspecies)
+    natmmax = 0
+    ias = 0
+    for is in 1:nspecies
+        for ia in 1:natoms[is]
+            ias = ias + 1
+            idxas[ia,is] = ias
+            idxis[ias] = is
+            idxia[ias] = ia
+        end
+        # maximum number of atoms over all species
+        natmmax = max(natmmax, natoms[is])
+    end
+    # total number of atoms
+    natmtot = ias
+
+    display(atposc[:,1,1]); println();
+    display(atposc[:,1,2]); println();    
+
+    return AtomicVars(
+        nspecies, natoms, natmmax, natmtot,
+        idxas, idxis, idxia,
+        molecule, primcell, atposl, atposc, rndatposc
+    )
+
 end
+
+function create_lattice_vars()
+    LatVecs = zeros(3,3)
+    LatVecs[1,:] = [5.0, 5.0, 0.0]
+    LatVecs[2,:] = [5.0, 0.0, 5.0]
+    LatVecs[3,:] = [0.0, 5.0, 5.0]
+    lattice_vars = LatticeVars( LatVecs )
+    return lattice_vars
+end
+
+
+function test_AtomicVars()
+
+    lattice_vars = create_lattice_vars()
+
+    maxatoms = 200
+    maxspecies = 8
+    atposl = zeros(3,maxatoms,maxspecies)
+    
+    nspecies = 2
+    natoms = [1,1]
+
+    # species 1, atom 1
+    atposl[:,1,1] = [0.1, 0.1, 0.1]
+    # species 2, atom 1
+    atposl[:,1,2] = [0.25, 0.25, 0.25]
+
+    atomic_vars = AtomicVars(nspecies, natoms, atposl, lattice_vars)
+end
+
+test_AtomicVars()
