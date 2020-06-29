@@ -19,11 +19,20 @@ struct LatticeVars
     epslat::Float64
 end
 
+#=
+case('avec')
+  read(50,*,err=20) avec(:,1)
+  read(50,*,err=20) avec(:,2)
+  read(50,*,err=20) avec(:,3)
+
+avec is stored like lattice vectors in Quantum Espresso
+=#
+
 function LatticeVars( LatVecs )
     @assert size(LatVecs,1) == 3
     @assert size(LatVecs,2) == 3
     
-    avec[:] = LatVecs[:]
+    avec = LatVecs[:,:]
     ainv = inv(avec)
     
     bvec = 2*pi*inv(avec')
