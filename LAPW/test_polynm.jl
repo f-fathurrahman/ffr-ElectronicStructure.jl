@@ -19,18 +19,18 @@ function test_main()
     xa = range(1.0, 1.5, length=Npoints)
     ya = my_sin.(xa)
 
-    m = -1
+    m = 0
     for i in 1:Npoints
         x = xa[i]
-        y = polynm(m, xa, ya, x)
-        #@printf("%18.10f %18.10f %18.10f\n", x, y, ya[i])
+        y = polynm(m, Npoints, xa, ya, x)
+        @printf("%18.10f %18.10f %18.10f\n", x, y, ya[i])
     end
 
     x_plt = range(1.0, 1.5, length=5*Npoints)
     for x in x_plt
-        y = polynm(m, xa, ya, x)
+        y = polynm(m, Npoints, xa, ya, x)
         #@printf("%18.10f %18.10f %18.10f\n", x, y, my_sin(x))
-        @printf("%18.10f %18.10f %18.10f\n", x, y, integ_my_sin(x))
+        #@printf("%18.10f %18.10f %18.10f\n", x, y, integ_my_sin(x))
     end
 end
 

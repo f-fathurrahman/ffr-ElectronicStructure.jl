@@ -1,6 +1,5 @@
-function polynm(m::Int64, xa, ya, x::Float64)
+function polynm(m::Int64, np::Int64, xa, ya, x::Float64)
 
-    np = size(xa)[1]
     res = 0.0
     
     if np == 1
