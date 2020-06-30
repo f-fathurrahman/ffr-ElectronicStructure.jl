@@ -1,0 +1,1 @@
+Adapted from ELK code http://elk.sourceforge.net/
