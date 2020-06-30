@@ -46,7 +46,7 @@ mutable struct APWLOVars
     # (lolmax+1)^2
     lolmmax::Int64
     # local-orbital initial energies
-    orbe0::Array{Float64,3} # (maxlorbord,maxlorb,maxspecies)
+    lorbe0::Array{Float64,3} # (maxlorbord,maxlorb,maxspecies)
     # local-orbital energies
     lorbe::Array{Float64,3} #(:,:,:)
     # local-orbital derivative order
@@ -108,7 +108,7 @@ function APWLOVars(Nspecies::Int64, maxlapw::Int64)
     lorbl = zeros(Float64,maxlorb,Nspecies)
     lolmax = 0
     lolmmax = 0
-    orbe0 = zeros(Float64,maxlorbord,maxlorb,Nspecies)
+    lorbe0 = zeros(Float64,maxlorbord,maxlorb,Nspecies)
     lorbe = zeros(Float64,1,1,1)
     lorbdm = zeros(Int64,maxlorbord,maxlorb,Nspecies)
     lorbve = zeros(Bool,maxlorbord,maxlorb,Nspecies)
@@ -128,7 +128,7 @@ function APWLOVars(Nspecies::Int64, maxlapw::Int64)
         lmoapw, npapw, apwe0, apwe, apwdm, apwve, apwfr, apwdfr,
         maxlorb, maxlorbord, nlorb, nlomax, nlotot, lorbord,
         lorbordmax, nplorb, lorbl, lolmax,
-        lolmmax, orbe0, lorbe, lorbdm, lorbve,
+        lolmmax, lorbe0, lorbe, lorbdm, lorbve,
         lofr, epsband, demaxbnd, e0min, autolinengy,
         dlefe, lorbcnd, lorbordc, nxoapwlo, nxlo
     )

@@ -14,8 +14,8 @@ function main()
     #apwlo_vars = APWLOVars(Nspecies, mtr_vars.maxlapw) # XXX use lmaxapw instead of maxlapw?
     apwlo_vars = APWLOVars(Nspecies, mtr_vars.lmaxapw)
 
-    readspecies!(1, "DATA_species/Si.in", atsp_vars, mtr_vars)
-    readspecies!(2, "DATA_species/Pt.in", atsp_vars, mtr_vars)
+    readspecies!(1, "DATA_species/Si.in", atsp_vars, mtr_vars, apwlo_vars)
+    readspecies!(2, "DATA_species/Pt.in", atsp_vars, mtr_vars, apwlo_vars)
 
     println(atsp_vars.spsymb)
     println(atsp_vars.nstsp)
