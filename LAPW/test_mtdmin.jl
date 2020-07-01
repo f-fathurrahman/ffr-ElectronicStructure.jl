@@ -48,7 +48,7 @@ function main()
     readspecies!(1, "DATA_species/Si.in", atsp_vars, mtr_vars, apwlo_vars)
     readspecies!(2, "DATA_species/Pt.in", atsp_vars, mtr_vars, apwlo_vars)
 
-    is, js, dmin = mtdmin( latt_vars, atm_vars, mtr_vars.rmt, 1, 2 )
+    dmin, is, js = mtdmin( latt_vars, atm_vars, mtr_vars.rmt )
     
     println("is = ", is)
     println("js = ", js)

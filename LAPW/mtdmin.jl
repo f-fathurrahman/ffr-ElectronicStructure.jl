@@ -1,5 +1,5 @@
 function mtdmin(
-    latt_vars::LatticeVars, atm_vars::AtomicVars, rmt, is, js
+    latt_vars::LatticeVars, atm_vars::AtomicVars, rmt
 )
     v1 = zeros(Float64,3)
     v2 = zeros(Float64,3)
@@ -42,7 +42,7 @@ function mtdmin(
         end
     end
 
-    return is, js, dmin
+    return dmin, is, js
 
 end
 
