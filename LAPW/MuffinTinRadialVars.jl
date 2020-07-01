@@ -76,7 +76,7 @@ function MuffinTinRadialVars(Nspecies)
     rmtdelta = 0.05 # default
     rmt = zeros(Nspecies)
     omegamt = 0.0
-    lradstp = 0
+    lradstp = 4
     nrcmt = zeros(Int64,Nspecies)
     nrcmtmax = 0
     rcmt = zeros(Float64,1,1)
@@ -89,7 +89,7 @@ function MuffinTinRadialVars(Nspecies)
     maxlapw = 50
     lmaxapw = 8 # default
     lmmaxapw = 0
-    lmaxo  = 0
+    lmaxo  = 6
     lmmaxo = 0
     lmaxi  = 0
     lmmaxi = 0
@@ -120,4 +120,25 @@ function MuffinTinRadialVars(Nspecies)
 
 end
 
+
+function init_zero!( mtr_vars::MuffinTinRadialVars )
+    
+    nrmt = mtr_vars.nrmt
+    nspecies = size(nrmt)[1]
+
+    nrcmt = mtr_vars.nrcmt
+    lradstp = mtr_vars.lradstp
+    
+    # make the muffin-tin mesh commensurate with lradstp
+    for is in 1:nspecies
+        nrmt[is] = nrmt[is] - (nrmt[is]-1)%lradstp
+        nrcmt[is] =( nrmt[is] - 1)/lradstp + 1
+    end
+    mtr_vars.nrmtmax = maximum(nrmt)
+    mtr_vars.nrcmtmax = maximum(nrcmt)
+
+    @assert mtr_vars.lmaxo <= mtr_vars.lmaxapw
+
+    return
+end
 #mtr_vars = MuffinTinRadialVars(2)

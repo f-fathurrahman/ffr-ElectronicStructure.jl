@@ -136,3 +136,10 @@ function APWLOVars(Nspecies::Int64, maxlapw::Int64)
 end
 
 #apwlo_vars = APWLOVars(2,50)
+
+# indexing for array allocated with lmaxo
+# allocate array((-lmaxo-1:lmaxo+2))
+# from lmaxo idx to the usual 1-based indexing
+function lmaxo2idx(idx, lmaxo)
+    return idx + lmaxo + 2
+end
