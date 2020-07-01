@@ -88,11 +88,11 @@ function MuffinTinRadialVars(Nspecies)
     wprcmt = zeros(Float64,1,1,1)
     maxlapw = 50
     lmaxapw = 8 # default
-    lmmaxapw = 0
+    lmmaxapw = (lmaxapw+1)^2
     lmaxo  = 6
-    lmmaxo = 0
-    lmaxi  = 0
-    lmmaxi = 0
+    lmmaxo = (lmaxo+1)^2
+    lmaxi  = 1 # min(lmaxi,lmaxo)
+    lmmaxi = (lmaxi+1)^2
     fracinr = 0.01
     
     nrmti = zeros(Int64,Nspecies)
@@ -141,4 +141,34 @@ function init_zero!( mtr_vars::MuffinTinRadialVars )
 
     return
 end
-#mtr_vars = MuffinTinRadialVars(2)
+
+
+# Should be called after genrmesh
+function init_packed_mtr!( mtr_vars::MuffinTinRadialVars )
+    #
+    nrmti = mtr_vars.nrmti
+    nspecies = size(nrmti,1)
+    nrmt = mtr_vars.nrmt
+    #
+    nrcmt = mtr_vars.nrcmt
+    nrcmti = mtr_vars.nrcmti
+    #
+    lmmaxo = mtr_vars.lmmaxo
+    lmmaxi = mtr_vars.lmmaxi
+    #
+    mtr_vars.npmtmax  = 1
+    mtr_vars.npcmtmax = 1
+    #
+
+    for is in 1:nspecies
+        #
+        mtr_vars.npmti[is] = lmmaxi*nrmti[is]
+        mtr_vars.npmt[is] = mtr_vars.npmti[is] + lmmaxo*(nrmt[is] - nrmti[is])
+        mtr_vars.npmtmax = max(mtr_vars.npmtmax, mtr_vars.npmt[is])
+        #
+        mtr_vars.npcmti[is] = lmmaxi*nrcmti[is]
+        mtr_vars.npcmt[is] = mtr_vars.npcmti[is] + lmmaxo*(nrcmt[is] - nrcmti[is])
+        mtr_vars.npcmtmax = max(mtr_vars.npcmtmax, mtr_vars.npcmt[is])
+    end
+    return
+end

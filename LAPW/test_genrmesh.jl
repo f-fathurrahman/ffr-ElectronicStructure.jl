@@ -49,6 +49,7 @@ function main()
 
     checkmt!( latt_vars, atm_vars, atsp_vars.spsymb, mtr_vars )
     genrmesh!( atm_vars, atsp_vars, mtr_vars )
+    init_packed_mtr!(mtr_vars)
 
     println("after nrsp = ", atsp_vars.nrsp)
     println("atsp_vars.rsp = ", size(atsp_vars.rsp))
@@ -89,6 +90,12 @@ function main()
         #println("wprmt 4 = ")
         #println(mtr_vars.wprmt[4,1:5,1])
     end
+
+    println("lmmaxi   = ", mtr_vars.lmmaxi)
+    println("npmtmax  = ", mtr_vars.npmtmax)
+    println("npmt     = ", mtr_vars.npmt)
+    println("npcmtmax = ", mtr_vars.npcmtmax)
+    println("npcmt    = ", mtr_vars.npcmt)
 
 end
 
