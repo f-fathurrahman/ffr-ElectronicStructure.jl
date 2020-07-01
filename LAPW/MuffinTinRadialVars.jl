@@ -93,7 +93,7 @@ function MuffinTinRadialVars(Nspecies)
     lmmaxo = 0
     lmaxi  = 0
     lmmaxi = 0
-    fracinr = 0
+    fracinr = 0.01
     
     nrmti = zeros(Int64,Nspecies)
     nrcmti = zeros(Int64,Nspecies)

@@ -93,51 +93,67 @@ function genrmesh!(atm_vars, atsp_vars, mtr_vars)
         @views wsplintp!(nr, rsp[:,is], wprmt[:,:,is])
     end
 
-#=
-! determine the fraction of the muffin-tin radius which defines the inner part
-if (fracinr.lt.0.d0) fracinr=sqrt(dble(lmmaxi)/dble(lmmaxo))
 
-! set up the coarse radial meshes and find the inner part of the muffin-tin
-! where rho is calculated with lmaxi
-if (allocated(rcmt)) deallocate(rcmt)
-allocate(rcmt(nrcmtmax,nspecies))
-if (allocated(rlcmt)) deallocate(rlcmt)
-allocate(rlcmt(nrcmtmax,-lmaxo-1:lmaxo+2,nspecies))
-if (allocated(wrcmt)) deallocate(wrcmt)
-allocate(wrcmt(nrcmtmax,nspecies))
-if (allocated(wprcmt)) deallocate(wprcmt)
-allocate(wprcmt(4,nrcmtmax,nspecies))
-do is=1,nspecies
-  t1=fracinr*rmt(is)
-  nrmti(is)=1
-  nrcmti(is)=1
-  irc=0
-  do ir=1,nrmt(is),lradstp
-    irc=irc+1
-    rcmt(irc,is)=rsp(ir,is)
-    if (rsp(ir,is).lt.t1) then
-      nrmti(is)=ir
-      nrcmti(is)=irc
-    end if
-  end do
-! store r^l on the coarse radial mesh
-  do l=-lmaxo-1,lmaxo+2
-    irc=0
-    do ir=1,nrmt(is),lradstp
-      irc=irc+1
-      rlcmt(irc,l,is)=rlmt(ir,l,is)
-    end do
-  end do
-! determine the weights for spline integration on the coarse radial mesh
-  nrc=nrcmt(is)
-  call wsplint(nrc,rcmt(:,is),wrcmt(:,is))
-! multiply by r^2
-  wrcmt(1:nrc,is)=wrcmt(1:nrc,is)*rlcmt(1:nrc,2,is)
-! determine the weights for partial integration on coarse radial mesh
-  call wsplintp(nrc,rcmt(:,is),wprcmt(:,:,is))
-end do
+    # determine the fraction of the muffin-tin radius which defines the inner part
+    if mtr_vars.fracinr < 0.0
+        # be explicit about conversion to Float64 (not really needed actually for Julia)
+        mtr_vars.fracinr = sqrt( Float64(lmmaxi) / Float64(lmmaxo) )
+    end
 
-=#
+    fracinr = mtr_vars.fracinr
+    nrcmtmax = mtr_vars.nrcmtmax
+    nrcmt = mtr_vars.nrcmt
+    nrmti = mtr_vars.nrmti
+    nrcmti = mtr_vars.nrcmti
+    lradstp = mtr_vars.lradstp
+    println("nrcmtmax = ", nrcmtmax)
+    println("nrcmt    = ", nrcmt[1:nspecies])
+
+    # set up the coarse radial meshes and find the inner part of the muffin-tin
+    # where rho is calculated with lmaxi
+    mtr_vars.rcmt = zeros(Float64, nrcmtmax, nspecies)
+    mtr_vars.rlcmt = zeros(Float64, nrcmtmax, 2*(lmaxo+2), nspecies)
+    mtr_vars.wrcmt = zeros(Float64, nrcmtmax, nspecies)
+    mtr_vars.wprcmt = zeros(Float64, 4, nrcmtmax, nspecies)
+
+    rcmt = mtr_vars.rcmt
+    rlcmt = mtr_vars.rlcmt
+    wrcmt = mtr_vars.wrcmt
+    wprcmt = mtr_vars.wprcmt
+
+    for is in 1:nspecies
+        t1 = fracinr*rmt[is]
+        nrmti[is] = 1
+        nrcmti[is] = 1
+        irc = 0
+        for ir in range(1,stop=nrmt[is],step=lradstp)
+            irc = irc + 1
+            rcmt[irc,is] = rsp[ir,is]
+            if rsp[ir,is] < t1
+                nrmti[is] = ir
+                nrcmti[is] = irc
+            end
+        end
+        # store r^l on the coarse radial mesh
+        for l in range(-lmaxo-1, stop=lmaxo+2)
+            irc = 0
+            il1 = lmaxo2idx(l,lmaxo)
+            for ir in range(1,stop=nrmt[is],step=lradstp)
+                irc = irc + 1
+                rlcmt[irc,il1,is] = rlmt[ir,il1,is]
+            end
+        end
+        # determine the weights for spline integration on the coarse radial mesh
+        nrc = nrcmt[is]
+        @views wsplint!(nrc, rcmt[:,is], wrcmt[:,is])
+        # multiply by r^2
+        il1 = lmaxo2idx(2,lmaxo)
+        for ir in 1:nrc
+            wrcmt[ir,is] = wrcmt[ir,is] * rlcmt[ir,il1,is]
+        end
+        # determine the weights for partial integration on coarse radial mesh
+        @views wsplintp!(nrc, rcmt[:,is], wprcmt[:,:,is])
+    end
 
     return
 end 

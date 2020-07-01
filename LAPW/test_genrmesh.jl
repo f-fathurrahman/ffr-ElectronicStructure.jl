@@ -53,29 +53,42 @@ function main()
     println("after nrsp = ", atsp_vars.nrsp)
     println("atsp_vars.rsp = ", size(atsp_vars.rsp))
 
-    println("rsp = ")
-    println(atsp_vars.rsp[1:5,1])
-    println(atsp_vars.rsp[1:5,2])
+    for is in 1:Nspecies
+       
+        println()
+        println("species: ", is)
+        println()
 
-    println("wmrt = ")
-    println(mtr_vars.wrmt[1:5,1])
-    println(mtr_vars.wrmt[1:5,2])
+        println("rsp = ")
+        println(atsp_vars.rsp[1:5,is])
 
-    #println("wprmt 1 = ")
-    #println(mtr_vars.wprmt[1,1:5,1])
-    #println(mtr_vars.wprmt[1,1:5,2])
+        println("wmrt = ")
+        println(mtr_vars.wrmt[1:5,is])
+   
+        println("wcmrt = ")
+        println(mtr_vars.wrcmt[1:5,is])
 
-    #println("wprmt 2 = ")
-    #println(mtr_vars.wprmt[2,1:5,1])
-    #println(mtr_vars.wprmt[2,1:5,2])
+        #println("wprmt 1 = ")
+        #println(mtr_vars.wprmt[1,1:5,is])
 
-    #println("wprmt 3 = ")
-    #println(mtr_vars.wprmt[3,1:5,1])
-    #println(mtr_vars.wprmt[3,1:5,2])
+        println("wprcmt 1 = ")
+        println(mtr_vars.wprcmt[1,1:5,is])
+        println("wprcmt 2 = ")
+        println(mtr_vars.wprcmt[2,1:5,is])
+        println("wprcmt 3 = ")
+        println(mtr_vars.wprcmt[3,1:5,is])
+        println("wprcmt 4 = ")
+        println(mtr_vars.wprcmt[4,1:5,is])
 
-    println("wprmt 4 = ")
-    println(mtr_vars.wprmt[4,1:5,1])
-    println(mtr_vars.wprmt[4,1:5,2])
+        #println("wprmt 2 = ")
+        #println(mtr_vars.wprmt[2,1:5,1])
+
+        #println("wprmt 3 = ")
+        #println(mtr_vars.wprmt[3,1:5,1])
+
+        #println("wprmt 4 = ")
+        #println(mtr_vars.wprmt[4,1:5,1])
+    end
 
 end
 
