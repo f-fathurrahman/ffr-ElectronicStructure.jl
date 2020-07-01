@@ -75,9 +75,6 @@ function AtomicVars(
     # total number of atoms
     natmtot = ias
 
-    display(atposc[:,1,1]); println();
-    display(atposc[:,1,2]); println();    
-
     return AtomicVars(
         nspecies, natoms, natmmax, natmtot,
         idxas, idxis, idxia,
