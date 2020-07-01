@@ -1,29 +1,30 @@
 function readspecies!( isp::Int64, filename,
     atsp_vars::AtomicSpeciesVars,
     mtr_vars::MuffinTinRadialVars,
-    apwlo_vars::APWLOVars
+    apwlo_vars::APWLOVars;
+    verbose=false
 )
     f = open(filename, "r")
     
     # species symbol
     line = readline(f)
     atsp_vars.spsymb[isp] = replace(split(line)[1], "'" => "")
-    println("spsymb = ", atsp_vars.spsymb[isp])
+    verbose && println("spsymb = ", atsp_vars.spsymb[isp])
     
     # species name
     line = readline(f)
     atsp_vars.spname[isp] = replace(split(line)[1], "'" => "")
-    println("spname = ", atsp_vars.spname[isp])
+    verbose && println("spname = ", atsp_vars.spname[isp])
     
     # atomic number
     line = readline(f)
     atsp_vars.spzn[isp] = parse(Float64, split(line)[1])
-    println("spzn   = ", atsp_vars.spzn[isp])
+    verbose && println("spzn   = ", atsp_vars.spzn[isp])
 
     # mass
     line = readline(f)
     atsp_vars.spmass[isp] = parse(Float64, split(line)[1])
-    println("spmass = ", atsp_vars.spmass[isp])
+    verbose && println("spmass = ", atsp_vars.spmass[isp])
 
     # Radial mesh
     line = readline(f)
@@ -37,10 +38,10 @@ function readspecies!( isp::Int64, filename,
     
     mtr_vars.nrmt[isp] = parse(Int64, ll[4])
     
-    println("rminsp = ", atsp_vars.rminsp[isp])
-    println("rmt    = ", mtr_vars.rmt[isp])
-    println("rmaxsp = ", atsp_vars.rmaxsp[isp])
-    println("nrmt   = ", mtr_vars.nrmt[isp])
+    verbose && println("rminsp = ", atsp_vars.rminsp[isp])
+    verbose && println("rmt    = ", mtr_vars.rmt[isp])
+    verbose && println("rmaxsp = ", atsp_vars.rmaxsp[isp])
+    verbose && println("nrmt   = ", mtr_vars.nrmt[isp])
 
     # Atomic states
     line = readline(f)
