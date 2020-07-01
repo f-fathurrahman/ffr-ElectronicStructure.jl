@@ -73,7 +73,7 @@ function MuffinTinRadialVars(Nspecies)
     nrmt = zeros(Int64,Nspecies)
     nrmtmax = 0
     rmtall = 0
-    rmtdelta = 0.0
+    rmtdelta = 0.05 # default
     rmt = zeros(Nspecies)
     omegamt = 0.0
     lradstp = 0
