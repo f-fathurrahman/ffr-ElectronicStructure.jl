@@ -129,3 +129,28 @@ function AtomicSpeciesVars( Nspecies::Int64 )
         nsp, lsp, ksp, spcore, nstcr, evalsp, occsp, rsp, rlsp, rhosp, vrsp, xctsp
     )
 end
+
+
+# Setting up vcln
+function init_nuclear_pot!( atsp_vars::AtomicSpeciesVars )
+    # spherical harmonic for l=m=0
+    y00=0.28209479177387814347
+
+    rsp = atsp_vars.rsp
+    nrsp = atsp_vars.nrsp
+    nspecies = size(nrsp,1)
+    ptnucl = atsp_vars.ptnucl
+    nrspmax = atsp_vars.nrspmax
+    spzn = atsp_vars.spzn
+
+    # determine the nuclear Coulomb potential
+    atsp_vars.vcln = zeros(Float64,nrspmax,nspecies)
+    vcln = atsp_vars.vcln
+    t1 = 1.0/y00
+    for is in 1:nspecies
+        nr = nrsp[is]
+        @views potnucl!(ptnucl, nr, rsp[:,is], spzn[is], vcln[:,is])
+        vcln[1:nr,is] = t1*vcln[1:nr,is]
+    end
+    return
+end

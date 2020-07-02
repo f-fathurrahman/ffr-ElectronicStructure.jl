@@ -1,12 +1,14 @@
 function potnucl!(ptnucl::Bool, nr, r, zn, vn )
     SMALL = 1e-10
-    if zn <= SMALL
+    if abs(zn) <= SMALL
         vn[:] .= 0.0
         return
     end
     if ptnucl
         # nucleus is taken to be a point particle
-        vn[:] = zn/r[:]
+        for ir in 1:nr
+            vn[ir] = zn/r[ir]
+        end
     else
         # approximate nuclear radius
         rn = radnucl(zn)

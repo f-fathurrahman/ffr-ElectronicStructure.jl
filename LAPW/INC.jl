@@ -9,6 +9,8 @@ include("readspecies.jl")
 include("mtdmin.jl")
 include("checkmt.jl")
 include("genrmesh.jl")
+include("radnucl.jl")
+include("potnucl.jl")
 
 include("polynm.jl")
 include("splint.jl")
