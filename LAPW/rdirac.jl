@@ -6,7 +6,7 @@
 #   nr   : number of radial mesh points (in,integer)
 #   r    : radial mesh (in,real(nr))
 #   vr   : potential on radial mesh (in,real(nr))
-#   eigval : eigenvalue without rest-mass energy (inout,real)
+#   evals : eigenvalue without rest-mass energy (inout,real)
 #   g0   : major component of the radial wavefunction (out,real(nr))
 #   f0   : minor component of the radial wavefunction (out,real(nr))
 # !DESCRIPTION:
@@ -17,13 +17,13 @@
 #   provide an initial estimate for the eigenvalue. Note that the arrays
 #   {\tt g0} and {\tt f0} represent the radial functions multiplied by $r$.
 
-function rdirac!(sol, n, l, k, nr, r, vr, eigval, g0, f0)
+function rdirac!(sol, n, l, k, nr, r, vr, evals, g0, f0)
 
     # ! arguments
     # real(8), intent(in) :: sol
     # integer, intent(in) :: n,l,k,nr
     # real(8), intent(in) :: r(nr),vr(nr)
-    # real(8), intent(inout) :: eigval
+    # real(8), intent(inout) :: evals
     # real(8), intent(out) :: g0(nr),f0(nr)
 
     @assert k > 0
@@ -72,13 +72,13 @@ function rdirac!(sol, n, l, k, nr, r, vr, eigval, g0, f0)
             break
         end 
         # integrate the Dirac equation
-        nn = rdiracint!(sol, kpa, eigval, nr, r, vr, g0, g1, f0, f1)
+        nn, evals = rdiracint!(sol, kpa, evals, nr, r, vr, g0, g1, f0, f1)
         # check the number of nodes
         nnd = nn - (n-l-1)
         if nnd > 0
-            eigval = eigval - de
+            evals = evals - de
         else
-            eigval = eigval + de
+            evals = evals + de
         end
         #
         if it > 1
@@ -92,7 +92,7 @@ function rdirac!(sol, n, l, k, nr, r, vr, eigval, g0, f0)
         end
         #
         nndp = nnd
-        if de < SMALL*(abs(eigval) + 1.0)
+        if de < SMALL*(abs(evals) + 1.0)
             break
         end
     end
@@ -133,5 +133,5 @@ function rdirac!(sol, n, l, k, nr, r, vr, eigval, g0, f0)
     end
     g0[:] = t1*g0[:]
     f0[:] = t1*f0[:]
-    return
+    return evals
 end

@@ -86,14 +86,14 @@ function rdiracint!(sol, kpa, e, nr, r, vr, g0, g1, f0, f1)
             g1[ir:nr] .= g1[ir]
             f0[ir:nr] .= f0[ir]
             f1[ir:nr] .= f1[ir]
-            return nn
+            return nn, e
         end
         # check for node
         if g0[ir-1]*g0[ir] < 0.0
             nn = nn + 1
         end
     end
-    return nn
+    return nn, e
 end
 
 function poly3(xa, ya, x)
