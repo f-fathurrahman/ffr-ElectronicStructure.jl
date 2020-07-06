@@ -193,9 +193,11 @@ function solve_atom!(
             vr[ir] = vr[ir] + vn[ir]
         end
 
-        println("iscl = ", iscl, " dv = ", dv)
+        @printf("iscl = %5d dv = %18.10f\n", iscl, dv)
+
         # check for convergence
         if ( (iscl > 2) && (dv < SMALL) )
+            println(".... Converged ....")
             is_converged = true
             break
         end

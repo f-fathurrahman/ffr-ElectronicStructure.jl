@@ -91,6 +91,9 @@ function main()
             occsp[:,is], xctsp, xcgrad, nrsp[is], rsp[:,is], evalsp[:,is], rhosp[:,is],
             vrsp[:,is], rwf
         )
+        for ist in 1:nstsp[is]
+            @printf("%3d %18.10f\n", ist, evalsp[ist,is])
+        end
     end
 
 end
