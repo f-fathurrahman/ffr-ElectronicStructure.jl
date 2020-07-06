@@ -16,3 +16,7 @@ include("polynm.jl")
 include("splint.jl")
 include("wsplint.jl")
 include("wsplintp.jl")
+
+include("solve_atom.jl")
+include("rdirac.jl")
+include("rdiracint.jl")

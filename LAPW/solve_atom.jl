@@ -45,7 +45,7 @@ function solve_atom!(
     # potential convergence tolerance
     SMALL = 1.0e-6
 
-    @assert nst <= 0
+    @assert nst > 0
 
     # allocate local arrays
     vn = zeros(Float64,nr)
@@ -100,6 +100,9 @@ function solve_atom!(
     # start of self-consistent loop
     is_converged = false
     for iscl in 1:maxscl
+
+        println("iscl = ", iscl)
+
         # solve the Dirac equation for each state
         for ist in 1:nst
             @views evals[ist] = rdirac!( sol, n[ist], l[ist], k[ist], nr, r, vr, evals[ist],
