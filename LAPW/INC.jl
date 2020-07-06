@@ -12,6 +12,9 @@ include("genrmesh.jl")
 include("radnucl.jl")
 include("potnucl.jl")
 
+include("XC_funcs/XC_x_slater.jl")
+include("XC_funcs/XC_c_vwn.jl")
+
 include("polynm.jl")
 include("splint.jl")
 include("splintwp.jl")

@@ -148,9 +148,22 @@ function solve_atom!(
             #xcifc(xctype,n=nr,rho=rho,grho=grho,g2rho=g2rho,g3rho=g3rho,ex=ex, ec=ec,vx=vx,vc=vc)
         else
             # LDA functional
-            println("Pass here")
             #call xcifc(xctype,n=nr,rho=rho,ex=ex,ec=ec,vx=vx,vc=vc)
+            for ir in 1:nr
+                if rho[ir] <= 10e-12
+                    #println("small rho = ", rho[ir])
+                    ex[ir] = vx[ir] = 0.0
+                    ec[ir] = vc[ir] = 0.0
+                else
+                    ex[ir], vx[ir] = XC_x_slater( rho[ir] )
+                    ec[ir], vc[ir] = XC_c_vwn( rho[ir] )
+                end
+            end
         end
+        
+        #println("sum(vx) = ", sum(vx))
+        #println("sum(vc) = ", sum(vc))
+        #exit()
     
         # self-consistent potential
         @views vr[1:nr] = vh[1:nr] + vx[1:nr] + vc[1:nr]
