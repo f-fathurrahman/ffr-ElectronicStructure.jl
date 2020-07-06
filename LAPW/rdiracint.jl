@@ -64,17 +64,17 @@ function rdiracint!(sol, kpa, e, nr, r, vr, g0, g1, f0, f1)
         if ir0 < 1
             ir0 = 1
         end
-        g1[ir] = poly3(r[ir0], g1[ir0], r[ir])
-        f1[ir] = poly3(r[ir0], f1[ir0], r[ir])
+        @views g1[ir] = poly3(r[ir0:ir0+2], g1[ir0:ir0+2], r[ir])
+        @views f1[ir] = poly3(r[ir0:ir0+2], f1[ir0:ir0+2], r[ir])
         # integrate to find wavefunction
-        g0[ir] = poly4i( r[ir0], g1[ir0], r[ir]) + g0[ir0]
-        f0[ir] = poly4i( r[ir0], f1[ir0], r[ir]) + f0[ir0]
+        @views g0[ir] = poly4i( r[ir0:ir0+3], g1[ir0:ir0+3], r[ir]) + g0[ir0]
+        @views f0[ir] = poly4i( r[ir0:ir0+3], f1[ir0:ir0+3], r[ir]) + f0[ir0]
         # compute the derivatives
         g1[ir] = t3*f0[ir] - t2*g0[ir]
         f1[ir] = t4*g0[ir] + t2*f0[ir]
         # integrate for correction
-        g0[ir] = poly4i(r[ir0], g1[ir0], r[ir]) + g0[ir0]
-        f0[ir] = poly4i(r[ir0], f1[ir0], r[ir]) + f0[ir0]
+        @views g0[ir] = poly4i(r[ir0:ir0+3], g1[ir0:ir0+3], r[ir]) + g0[ir0]
+        @views f0[ir] = poly4i(r[ir0:ir0+3], f1[ir0:ir0+3], r[ir]) + f0[ir0]
         # compute the derivatives again
         g1[ir] = t3*f0[ir] - t2*g0[ir]
         f1[ir] = t4*g0[ir] + t2*f0[ir]

@@ -61,6 +61,11 @@ function rdirac!(sol, n, l, k, nr, r, vr, evals, g0, f0)
         println("Error: incompatible l and k")
     end
 
+    #println("n   = ", n)
+    #println("l   = ", l)
+    #println("k   = ", k)
+    #println("kpa = ", kpa)
+
     de = 1.0
     nndp = 0
     it = 0
@@ -72,6 +77,9 @@ function rdirac!(sol, n, l, k, nr, r, vr, evals, g0, f0)
             break
         end 
         # integrate the Dirac equation
+        #println("calling rdiracint")
+        #println("kpa = ", kpa)
+        #println("nr  = ", nr)
         nn, evals = rdiracint!(sol, kpa, evals, nr, r, vr, g0, g1, f0, f1)
         # check the number of nodes
         nnd = nn - (n-l-1)

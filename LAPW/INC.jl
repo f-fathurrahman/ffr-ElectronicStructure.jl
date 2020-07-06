@@ -14,6 +14,7 @@ include("potnucl.jl")
 
 include("polynm.jl")
 include("splint.jl")
+include("splintwp.jl")
 include("wsplint.jl")
 include("wsplintp.jl")
 

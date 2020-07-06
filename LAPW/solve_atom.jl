@@ -101,8 +101,6 @@ function solve_atom!(
     is_converged = false
     for iscl in 1:maxscl
 
-        println("iscl = ", iscl)
-
         # solve the Dirac equation for each state
         for ist in 1:nst
             @views evals[ist] = rdirac!( sol, n[ist], l[ist], k[ist], nr, r, vr, evals[ist],
@@ -155,7 +153,7 @@ function solve_atom!(
         end
     
         # self-consistent potential
-        vr[:] = vh[:] + vx[:] + vc[:]
+        @views vr[1:nr] = vh[1:nr] + vx[1:nr] + vc[1:nr]
     
         # determine change in potential
         ss = 0.0
@@ -181,6 +179,8 @@ function solve_atom!(
             # add nuclear potential
             vr[ir] = vr[ir] + vn[ir]
         end
+
+        println("iscl = ", iscl, " dv = ", dv)
         # check for convergence
         if ( (iscl > 2) && (dv < SMALL) )
             is_converged = true
