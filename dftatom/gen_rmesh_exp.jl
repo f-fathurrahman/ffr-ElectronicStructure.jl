@@ -16,15 +16,15 @@ function gen_rmesh_exp(
     elseif abs(a - 1.0) < SMALL
         α = (r_max - r_min) / N
         for i in 1:N+1
-            rmesh[i] = α * (i - 1.0) + r_min
+            rmesh[i] = α * (i - 1) + r_min
         end
     #
     else
         if N > 1
-            β = log(a) / (N-1)
+            β = log(a)/(N-1)
             α = (r_max - r_min) / (exp(β*N) - 1)
             for i in 1:N+1
-                rmesh[i] = α * (exp(β*(i-1)) - 1) + r_min
+                rmesh[i] = α * ( exp(β*(i-1)) - 1 ) + r_min
             end
         elseif N == 1
             rmesh[1] = r_min
