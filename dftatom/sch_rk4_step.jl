@@ -1,36 +1,42 @@
+# Integrates the following set of equations outwards:
+# dy1/dx =                y2
+# dy2/dx = C1 * y1 + C2 * y2
 function sch_rk4_step!(
-    R, # Grid
-    y0, # Initial condition
-    C1, C2, C1mid, C2mid, # Coefficients C1 and C2 at grid points and midpoints:
-    max_val,  # Maximum value (if y1 > max_val, the integration stops)
-    y1, y2 # Solution y1 and y2
+    rmesh::Array{Float64,1}, # Grid
+    y0::Array{Float64,1}, # Initial condition
+    C1::Array{Float64,1},
+    C2::Array{Float64,1},
+    C1mid::Array{Float64,1},
+    C2mid::Array{Float64,1},
+    y1::Array{Float64,1},
+    y2::Array{Float64,1}, # Solution y1 and y2
+    maxval_stop::Float64,  # Maximum value (if y1 > max_val, the integration stops)
 )
-    # Integrates the following set of equations outwards:
-    # dy1/dx =                y2
-    # dy2/dx = C1 * y1 + C2 * y2
 
     Neqn = size(y0,1)  # should be hardcoded at 2 ?
-    dym = zeros(Float64, Neqn)
-    dyt = zeros(Float64, Neqn)
-    yt = zeros(Float64, Neqn)
-    dydx = zeros(Float64, Neqn)
+    @assert Neqn == 2
+
+    dym = zeros(Float64,2)
+    dyt = zeros(Float64,2)
+    yt = zeros(Float64,2)
+    dydx = zeros(Float64,2)
     y = zeros(Float64, Neqn)
 
-    N = size(R,1)
+    N = size(rmesh,1)
     y = copy(y0)
     y1[1] = y[1]
     y2[1] = y[2]
     
     for i in 2:N
         # rk4 step size
-        h = R[i] - R[i-1]
+        h = rmesh[i] - rmesh[i-1]
 
-        # k1
+        # k1, evaluate F
         dydx[1] = y[2]
         dydx[2] = C1[i-1] * y[1] + C2[i-1] * y[2]
         #
         yt = y + h/2 * dydx  # yi + h/2*k1
-        # k2
+        # k2, evaluate F at x_i + h/2 and yi + k1/2
         dyt[1] = yt[2]
         dyt[2] = C1mid[i-1] * yt[1] + C2mid[i-1] * yt[2]
         #
@@ -50,7 +56,7 @@ function sch_rk4_step!(
         y2[i] = y[2]
 
         # The integration stops at R(imax)
-        if abs(y[1]) >= max_val
+        if abs(y[1]) >= maxval_stop
             imax = i
             return imax
         end

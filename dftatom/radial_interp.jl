@@ -36,8 +36,6 @@ function radial_interp(r, f, x::Float64, i::Int64)
         n2 = N
     end
   
-    #ri = @views r[n1:n2]
-    #fi = @views f[n1:n2]
     return @views lagrange_interp( r[n1:n2], f[n1:n2], x )
 end
 
