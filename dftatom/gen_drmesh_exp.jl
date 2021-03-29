@@ -1,13 +1,6 @@
-function gen_drmesh_exp(r_min, r_max, a, N)
-    # Generates dR/dt where R(t) is the mesh returned by mesh_exp()
-    #
-    # IThe variable "t" is defined by:
-    # t = 1, 2, ..., N+1
-    # So it describes a uniform mesh, with a step size 1, and the corresponding
-    # physical points are given by the R(t) array.
-    #
-    # Output parameters:
-    #     Rp(N+1) ....... dR/dt
+function gen_drmesh_exp(r_min, r_max, a, Nr)
+
+    N = Nr - 1
 
     drmesh = zeros(Float64,N+1)
     SMALL = eps()

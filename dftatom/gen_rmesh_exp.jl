@@ -5,8 +5,10 @@ function gen_rmesh_exp(
     r_min::Float64,
     r_max::Float64,
     a::Float64,
-    N::Int64
-)    
+    Nr::Int64
+)
+    N = Nr - 1
+
     rmesh = zeros(Float64,N+1)
     SMALL = eps()
     
