@@ -22,12 +22,12 @@ function sch_rk4_step!(
     dydx = zeros(Float64,2)
     y = zeros(Float64, Neqn)
 
-    N = size(rmesh,1)
+    Nr = size(rmesh,1)
     y = copy(y0)
     y1[1] = y[1]
     y2[1] = y[2]
     
-    for i in 2:N
+    for i in 2:Nr
         # rk4 step size
         h = rmesh[i] - rmesh[i-1]
 
@@ -61,6 +61,6 @@ function sch_rk4_step!(
             return imax
         end
     end
-    imax = n
+    imax = Nr
     return imax
 end

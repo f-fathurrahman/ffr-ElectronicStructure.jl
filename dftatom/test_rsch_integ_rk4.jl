@@ -5,6 +5,8 @@ include("lagrange_interp.jl")
 include("radial_interp.jl")
 include("rsch_integ_rk4.jl")
 include("sch_rk4_step.jl")
+include("get_min_idx.jl")
+include("get_n_nodes.jl")
 
 function main()
     # Build radial function
@@ -21,7 +23,7 @@ function main()
     Q = zeros(Float64,Nr)
     V = -Z ./ rmesh
 
-    E = -0.5
+    E = -0.125
     imax = rsch_integ_rk4!( E, Z, l, rmesh, V, P, Q )
     println("imax = ", imax)
 
@@ -34,7 +36,16 @@ function main()
         @printf("%8d %20.10e %20.10e\n", i, P[i], Q[i])
     end
 
+    minidx = get_min_idx(imax, P)
+    println("minidx = ", minidx)
+    println("imax   = ", imax)
+
+    Nnodes = get_n_nodes( minidx-1, P )
+    println("Nnodes = ", Nnodes)
+
+
     println("Pass here")
 end
 
-main()
+@time main()
+@time main()
