@@ -16,7 +16,7 @@ function main()
     Nr = 3001
     rmesh = gen_rmesh_exp(r_min, r_max, a, Nr)
 
-    Z = 1
+    Z = 3
     n = 1
     l = 0
 

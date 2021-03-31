@@ -12,14 +12,14 @@ function rsch_integ_rk4!(
         Vmid[i] = radial_interp(rmesh, V, rmid, i+1)
     end
 
-    @printf("Some Vmid\n")
-    for i in 1:4
-        @printf("%8d %20.10e\n", i, Vmid[i])
-    end
-    @printf("...\n")
-    for i in Nr-4:Nr-1
-        @printf("%8d %20.10e\n", i, Vmid[i])
-    end
+    #@printf("Some Vmid\n")
+    #for i in 1:4
+    #    @printf("%8d %20.10e\n", i, Vmid[i])
+    #end
+    #@printf("...\n")
+    #for i in Nr-4:Nr-1
+    #    @printf("%8d %20.10e\n", i, Vmid[i])
+    #end
 
     # BC at r -> 0
     y0 = zeros(Float64,2)
