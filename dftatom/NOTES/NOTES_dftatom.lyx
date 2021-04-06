@@ -1,0 +1,195 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\usepackage{babel}
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language american
+\language_package default
+\inputencoding iso8859-15
+\fontencoding T1
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 0
+\use_package mathtools 0
+\use_package mhchem 0
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 3cm
+\topmargin 3cm
+\rightmargin 3cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip smallskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Subsection*
+Radial mesh
+\end_layout
+
+\begin_layout Standard
+To allow general, nonuniform meshes, all methods first transform equations
+ on general mesh 
+\begin_inset Formula $R(t)$
+\end_inset
+
+, with 
+\begin_inset Formula $1\leq t\leq N+1$
+\end_inset
+
+, to equations on auniform mesh 
+\begin_inset Formula $t$
+\end_inset
+
+ with step size 
+\begin_inset Formula $h=1$
+\end_inset
+
+.
+ If the solution of a general mesh is 
+\begin_inset Formula $P(r)$
+\end_inset
+
+ and the transformed solution on the uniform mesh is 
+\begin_inset Formula $u(t)$
+\end_inset
+
+ then:
+\begin_inset Formula 
+\begin{align*}
+u(t) & =P(R(t))\\
+u'(t) & =\frac{\mathrm{d}u}{\mathrm{d}t}=\frac{\mathrm{d}P}{\mathrm{d}R}R'(t)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Runge-Kutta method (4th-order)
+\end_layout
+
+\begin_layout Standard
+Assume an equation of the form y = F(x,y) and step size h = 1:
+\begin_inset Formula 
+\begin{align*}
+y_{i+1} & =y_{i}+\frac{1}{6}\left(k_{1}+2k_{2}+2k_{3}+k_{4}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Within onestep in advancing from 
+\begin_inset Formula $i$
+\end_inset
+
+ to 
+\begin_inset Formula $i+1$
+\end_inset
+
+, RK4 method need to call 
+\begin_inset Formula $F(x,y)$
+\end_inset
+
+ four times, each for calculating the following terms:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+k_{1} & =F(x_{i},y_{i})\\
+k_{2} & =F\left(x_{i+\frac{1}{2}},y_{i}+\frac{1}{2}k_{1}\right)\\
+k_{3} & =F\left(x_{i+\frac{1}{2}},y_{i}+\frac{1}{2}k_{2}\right)\\
+k_{4} & =F\left(x_{i+1},y_{i}+k_{3}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+s
+\end_layout
+
+\begin_layout Standard
+s
+\end_layout
+
+\begin_layout Standard
+s
+\end_layout
+
+\begin_layout Standard
+s
+\end_layout
+
+\begin_layout Standard
+s
+\end_layout
+
+\begin_layout Standard
+s
+\end_layout
+
+\end_body
+\end_document
