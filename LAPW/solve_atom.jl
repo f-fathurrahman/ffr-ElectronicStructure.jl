@@ -16,11 +16,6 @@
 #   vr     : self-constistent potential (out,real(nr))
 #   rwf    : major and minor components of radial wavefunctions for each state
 #            (out,real(nr,2,nst))
-# !DESCRIPTION:
-#   Solves the Dirac-Kohn-Sham equations for an atom using the
-#   exchange-correlation functional {\tt xctype} and returns the self-consistent
-#   radial wavefunctions, eigenvalues, charge densities and potentials. Requires
-#   the exchange-correlation interface routine {\tt xcifc}.
 function solve_atom!(
     sol, ptnucl, zn, nst, n, l, k, occ,
     xctype, xcgrad, nr, r, evals, rho, vr, rwf

@@ -12,22 +12,6 @@
 #   f0   : m th energy derivative of the minor component multiplied by r
 #          (out,real(nr))
 #   f1   : radial derivative of f0 (out,real(nr))
-# !DESCRIPTION:
-#   Integrates the radial Dirac equation from $r=0$ outwards. This involves
-#   using the predictor-corrector method to solve the coupled first-order
-#   equations (in atomic units)
-#   \begin{align*}
-#    \left(\frac{d}{dr}+\frac{\kappa}{r}\right)G_{\kappa}&=\frac{1}{c}
-#    \{2E_0+E-V\}F_{\kappa}\\
-#    \left(\frac{d}{dr}-\frac{\kappa}{r}\right)F_{\kappa}&=
-#    -\frac{1}{c}\{E-V\}G_{\kappa},
-#   \end{align*}
-#   where $G_{\kappa}=rg_{\kappa}$ and $F_{\kappa}=rf_{\kappa}$ are the major
-#   and minor components multiplied by $r$, respectively; $V$ is the external
-#   potential; $E_0$ is the electron rest energy; $E$ is the eigen energy
-#   (excluding $E_0$); and $\kappa=l$ for $j=l-\frac{1}{2}$ or $\kappa=-(l+1)$
-#   for $j=l+\frac{1}{2}$.
-
 function rdiracint!(sol, kpa, e, nr, r, vr, g0, g1, f0, f1)
 
     # rescaling limit
